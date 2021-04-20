@@ -1,0 +1,448 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Deep Docking 2.0</title>
+        <link rel="icon" type="image/png" href="https://www.prostatecentre.com/sites/default/files/fav2.png">
+        <!-- Covid link: https://upload.wikimedia.org/wikipedia/commons/thumb/8/82/SARS-CoV-2_without_background.png/220px-SARS-CoV-2_without_background.png -->
+        <!-- Getting all dependencies: -->
+        <script src="public/js/bundle.js"></script>
+        <!-- <script src="https://cdn.jsdelivr.net/npm/chart.js@2.8.0"></script> -->
+        
+        <!-- Zoom and pan functionallity for chartjs: -->
+        <script src="https://cdn.jsdelivr.net/npm/chart.js@2.9.3"></script>
+        <script src="https://cdn.jsdelivr.net/npm/hammerjs@2.0.8"></script>
+        <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-zoom@0.7.7"></script>
+        
+        <link rel="stylesheet" type="text/css" href="./public/css/oldSchool.css">
+        <!-- Importing the fonts: Cairo, K2D-->
+        <link href="https://fonts.googleapis.com/css2?family=Cairo&family=K2D&display=swap" rel="stylesheet">
+    </head>
+    <body>
+        <!-- Tab links -->
+        <div class="tabs disable-select">
+            <button class="tablinks active" id="startRBtn" >Start a Run</button>
+            <button class="tablinks" id="progBtn" disabled>Progress</button>
+            <button class="tablinks" id="modelsBtn" disabled>Models</button>
+            <button class="tablinks" id="topScoringBtn" disabled>Top Scoring</button>
+        </div>
+        
+        <!-- Tab content -->
+        <div class="content">
+            <!-- Loading content tab (displayed when the requested content is not yet available) -->
+            <div id="loadingContent" class="tabcontent" >
+                <h1>Content not yet available!</h1>
+            </div>
+
+            <!-- Start Tab -->
+            <div id="startR" class="tabcontent" style="display: block;">
+                <div id='startR-container'>
+                    <!-- Info center -->
+                    <div id='infoCenter-container' class="disable-select">
+                        <div class="content-box" id="infoCenter">
+                            <h3 class="centered">Information center</h3>
+                            <p>Please create a project!</p>
+                        </div>
+                    </div>
+
+                        
+                    <!-- Buttons to load a project or create new one -->
+                    <div id='load-project-btn-container' class="disable-select">
+                        <!-- New/load Project buttons -->
+                        <div class='content-box centered' id='projectbtns'>
+                            <button class='largeBtn' id='newProjBtn' disabled>Create New Project</button>
+                            <button class='largeBtn' id='loadProjBtn'disabled>Load Existing Project</button>
+                        </div>
+
+                        <!-- Utility btns: -->
+                        <div class='content-box centered' id='utilitybtns'>
+                            <button class='mediumBtn badBtn' id='deleteProjBtn' disabled>Delete Project</button>
+                            <button class='mediumBtn badBtn' id='resetPhase' disabled>Reset Last Phase</button>
+                        </div>
+                    </div>
+
+                    <!-- Project name and buttons -->
+                    <div id='nameandBtn-container'>
+                        <!-- Name of current project -->
+                        <div class='content-box centered'>
+                            <h2 id='curr_project_name' >Current Project: no data...</h2>
+                        </div>
+                        
+                        <!-- Project info stuff -->
+                        <div id='proj-info-container'>
+                             <!-- Specs -->
+                            <div id='specs-container'>
+                                <div id='specs' class='content-box centered'>
+                                    <h3 class="disable-select">Specifications</h3>
+
+                                    <div class='specField'>
+                                        <h4 class="disable-select">Number of CPUs</h4>
+                                        <input type="text" id="num_cpu" placeholder="24">
+                                    </div>
+                                    <div class='specField'>
+                                        <h4 class="disable-select">GPU Partition</h4>
+                                        <input type="text" id="partition" placeholder="Default">
+                                    </div>
+                                    <div class='specField'>
+                                        <h4 class="disable-select">Total Iterations</h4>
+                                        <input type="text" id="total_iterations" placeholder="12">
+                                    </div>
+                                    <div class='specField'>
+                                        <h4 class="disable-select" title='The greater this value the more strict the cut-off threshold will be'>Threshold/Recall</h4>
+                                        <input type="text" id="threshold" placeholder="0.9">
+                                    </div>
+                                    <div class='specField'>
+                                        <h4 class="disable-select" title='Percentage of how much of the molecules to have at the end of the iterations (decimal value)'>Percent Last Molecules</h4>
+                                        <input type="text" id="percent_last_mol" placeholder="0.001">
+                                    </div>
+                                    <div class='specField'>
+                                        <h4 class="disable-select">Training Sample Size</h4>
+                                        <input type="text" id="sample_size" placeholder="10000000">
+                                    </div>
+                                    <div class='specField'>
+                                        <h4 class="disable-select">Final Number of <br>Molecules to Dock</h4>
+                                        <input type="text" id="top_n" placeholder="All">
+                                    </div>
+                                    <div>
+                                        <button id='updateSpecsBtn' class='disable-select' disabled>Update Specifications</button>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Phase Runner -->
+                            <div id='phaseRunner' class='content-box centered disable-select'>
+                                <h3>Run Phases</h3>
+                                <button class='largeBtn' id='runAllPhases' disabled>Run All Phases</button>
+                                <button id="startPhase1" disabled>Run Phase 1</button>
+                                <button id="startPhase2" disabled>Run Phase 2</button>
+                                <button id="startPhase3" disabled>Run Phase 3</button>
+                                <button id="startPhase4" disabled>Run Phase 4</button>
+                                <button id="startPhase5" disabled>Run Phase 5</button>
+                                <button class='mediumBtn' id='startPhaseFinal' disabled>Run Final Phase</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Top Scoring visualization tab -->
+            <div id="topScoring" class="tabcontent disable-select">
+                <div id='topScoring-container'>
+                    <div id='topscoring-molec' class="content-box">
+                        <div>
+                            <h2>Top Scoring Molecules</h2>
+                        </div>
+
+                        <div id="top-scoring-list">
+                            <ul class="list scrollable">
+                                <li><a>LOOKING FOR SMILES...</a></li>
+                            </ul>
+                        </div>
+
+                        <div id='download-list'>
+                            <img src="../public/img/download_icon.png" alt="DOWNLOAD">
+                        </div>
+                    </div>
+
+                    <div id='murckov-scaffold' class="content-box">
+                        <div>
+                            <h2>Most Common Murcko Scaffold</h2>
+                            <div id='reload-Murcko'>
+                                <img src="../public/img/reload_icon.svg" alt="RELOAD">
+                            </div>
+                        </div>
+
+                        <div id='scaffoldImage-container'>
+                            <img id='scaffoldImage' alt="Scaffold...">
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Progress tab -->
+            <div id="prog" class="tabcontent disable-select">
+                <div class="progInfo">
+                    <div class="content-box vbox center-text" id="currentInfo">
+                        <div class="hbox" id="current-Iter">
+                            <h2>Current Iteration</h2>
+                            <div class="number-display">
+                                <p>-1</p>
+                            </div>
+                        </div>
+                        <div class="hbox" id="current-Phase">
+                            <h2>Current Phase</h2>
+                            <div class="number-display">
+                                <p>-1</p>
+                                <img id='idleStatus' class='indicatorlight' src='../public/img/Indicator_light_y.svg'>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- ETAs: -->
+                    <div class="content-box vbox center-text" id="ETA-Full">
+                        <h2>Percent Complete Full Run:</h2>
+                        <h3 class="percent"></h3>
+                    </div>
+                    <div class="content-box vbox center-text" id="ETA-Iteration">
+                        <h2>Percent Complete Iteration:</h2>
+                        <h3 class="percent"></h3>
+                    </div>
+                    <div class="content-box vbox center-text" id="ETA-Phase">
+                        <h2>ETA to Complete Phase:</h2>
+                        <h3 class="bestETA">Best - </h3>
+                        <h3 class="worstETA">Worst - </h3>
+                        <h3 class="averageETA">Average - </h3>
+                    </div>
+                </div>
+
+                <div id="molecRemainingChartContainer" class="chart-container content-box vbox">
+                    <canvas id="molecRemainingChart"></canvas>
+                </div>
+            </div>
+            
+            <!-- Models tab -->
+            <div id="models" class="tabcontent">
+                <!-- Charts for the current model -->
+                <div id="modelCharts">
+                    <div class="content-box hbox center-text">
+                        <div class="vbox" id="carousel">     
+                            <div class="hbox disable-select" id="chart-carousel-btns">
+                                <a class="arrow-btn" id="carousel-left-arrow"><img src="../public/img/left_switch.svg"></a>
+                                <h2 class="center-text" id="chart-carousel-name">Chart selector</h2>
+                                <a class="arrow-btn" id="carousel-right-arrow"><img src="../public/img/right_switch.svg"></a>
+                            </div>
+                            
+                            <div id="carouselChartContainer" class="chart-container">
+                                <canvas id="carouselChart"></canvas>
+                            </div>
+                        </div>
+
+                        <div class="vbox" id="timeCharts">
+                            <div id="topRightChartContainer" class="chart-container vbox">
+                                <canvas id="topRightChart"></canvas>
+                            </div>
+                            
+                            <div id="bottomRightChartContainer" class="chart-container vbox">
+                                <canvas id="bottomRightChart"></canvas> 
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Model selection and achitecture -->
+                <div id="modelNav">
+                    <div class="content-box hbox center-text disable-select"> 
+                        <div id="select-iteration">
+                            <h2>Selected Iteration</h2>
+                            <div class="number-display">
+                                <a class="arrow-btn left-arrow" id="iteration-left-arrow"><img src="../public/img/left_switch.svg"></a>
+                                <p id="selected-iteration">01</p>
+                                <a class="arrow-btn right-arrow" id="iteration-right-arrow"><img src="../public/img/right_switch.svg"></a>
+                            </div>                            
+                        </div>
+
+                        <div id="select-model">
+                            <h2>Selected Model</h2>
+                            <div class="number-display">
+                                <a class="arrow-btn left-arrow" id="model-left-arrow"><img src="../public/img/left_switch.svg"></a>
+                                <p id="selected-model">00</p>
+                                <a class="arrow-btn right-arrow" id="model-right-arrow"><img src="../public/img/right_switch.svg"></a>
+                            </div>                            
+                        </div>
+
+                        <div id="select-average">
+                            <h2>Average?</h2>
+                            <input id="selected-average" type="checkbox">
+                        </div>
+                        <div id="navbtn">
+                            <button id="view-achitecture-btn">View Architecture</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </body>
+
+    <!-- New project Popup -->
+    <div class="popup startRP" id="newProject-popup">
+        <div>
+            <a class="closePopupBtn"><img src="../public/img/close_button.svg"></a>
+            <div class='popupContent'>
+                
+                <div id='specForm' class='centered'>
+                    <h2 class="disable-select">Mutable Parameters</h2>
+                    <div class='centered'>
+                        <div class='specField'>
+                            <h4 class="disable-select" title='Number of CPUs to use when running'>Number of CPUs</h4>
+                            <input type="text" id="num_cpu-popup" placeholder="24">
+                        </div>
+                        <div class='specField'>
+                            <h4 class="disable-select" title='The GPU partition to run on (leave blank for default)'>GPU Partition</h4>
+                            <input type="text" id="partition-popup" placeholder="Default">
+                        </div>
+                        <div class='specField'>
+                            <h4 class="disable-select" title='Total number of iterations to run through'>Total Iterations</h4>
+                            <input type="text" id="total_iterations-popup" placeholder="11">
+                        </div>
+                        <div class='specField'>
+                            <h4 class="disable-select" title='The greater this value the more strict the cut-off threshold will be'>Threshold/Recall</h4>
+                            <input type="text" id="threshold-popup" placeholder="0.9">
+                        </div>
+                        <div class='specField'>
+                            <h4 class="disable-select" title='Percentage of how much of the molecules to have at the end of the iterations (decimal value)'>Percent Last Molecules</h4>
+                            <input type="text" id="percent_last_mol-popup" placeholder="0.01">
+                        </div>
+                        <div class='specField'>
+                            <h4 class="disable-select" title='For phase 1'>Training Sample Size</h4>
+                            <input type="text" id="sample_size-popup" placeholder="1000000">
+                        </div>
+                        <div class='specField'>
+                            <h4 class="disable-select" title='Molecules to dock and rank at the end'>Final Number of Molecules to Dock</h4>
+                            <input type="text" id="top_n-popup" placeholder="All">
+                        </div>
+                    </div>
+                </div>
+                
+                <div id='logsForm' class='centered'>
+                    <h2 class="disable-select">Immutable Parameters</h2>
+
+                    <div class='specField'>
+                        <h4 class="disable-select" title="Be creative!" >Project Name</h4>
+                        <input class='required' type="text" id="project_name" placeholder="DD_project_1">
+                    </div>
+
+                    <div>
+                        <div>
+                            <div class='specField'>
+                                <h4 class="disable-select" title='The grid file that describes the protein to dock with'>fld File Path</h4>
+                                <input class='required' type="text" id="path_to_fld" placeholder="/path/to/grid_maps.fld">
+                            </div>
+                            <div class='specField'>
+                                <h4 class="disable-select" title="Path to where the morgan fingerprints are stored on the cluster">Morgan File Path</h4>
+                                <input class='required' type="text" id="morgan_file" placeholder="/path/to/morgan_1024_2D">
+                            </div>
+                            <div class='specField'>
+                                <h4 class="disable-select" title="Path to where the SMILES are stored on the cluster">SMILE File Path</h4>
+                                <input class='required' type="text" id="smile_file" placeholder="/path/to/2D_SMILES">
+                            </div>
+                            <div class='specField'>
+                                <h4 class="disable-select" title="Increase this to train a larger variety of models">Number of Hyperparameters</h4>
+                                <input type="text" id="n_hyperparameters" placeholder="24">
+                            </div>
+                            <div class='specField'>
+                                <h4 class="disable-select" title='Percentage of how much of the molecules to have at the start of the run (decimal value)'>Percent First Molecules</h4>
+                                <input type="text" id="percent_first_mol" placeholder="1">
+                            </div>
+                        </div>
+                        <div>
+                            <div class='specField'>
+                                <h4 class="disable-select" title='Number of molecules to use for validation and testing during training'>Validation/Test Size</h4>
+                                <input type="text" id="n_molecules" placeholder="1000000">
+                            </div>
+                            <div class='specField'>
+                                <h4 class="disable-select" title="Name of docking Software (currently can only run on AUTODOCK)">Docking Software</h4>
+                                <input type="text" id="docking_software" title='Currently we only support AUTODOCK' disabled value="AUTODOCK_GPU">
+                            </div>
+                            <div class='specField'>
+                                <h4 class="disable-select" title='Increase this value to distribute docking over more GPUs (if you have that many)'>Number of Chunks</h4>
+                                <input type="text" id="num_chunks" placeholder="10">
+                            </div>
+                            <div class='specField'>
+                                <h4 class="disable-select" title='For autodock (phase 3)'>Number of Energy Evaluations</h4>
+                                <input type="text" id="num_energy_evaluations" placeholder="5000000">
+                            </div>
+                            <div class='specField'>
+                                <h4 class="disable-select" title='For autodock (phase 3)'>Number of LGA Runs</h4>
+                                <input type="text" id="num_runs" placeholder="10">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="centered">
+                        <button id='addExtraParamBtn'>Extra Header Parameters?</button>
+                        <button id='submitNewProjBtn'>Submit</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Popup for extra parameters -->
+    <div class="popup startRP" id="extraParam-popup">
+        <div>
+            <a class="closePopupBtn"><img src="../public/img/close_button.svg"></a>
+            <div class='popupContent'>
+                <h2 id="promptText-load">Extra Parameters for Job Submission</h2>
+                <p>Extra Header lines that are needed for your specific cluster to submit a job. <br>
+                    Note that <b>partition, ntask, gres, cpus-per-task, job-name, mem, time, output,</b> and <b>error</b> options are automatically generated.</p>
+                <textarea id='slurm_headers' placeholder="#SBATCH -- "></textarea>
+                <button id='saveExtraParam'>Add Extra Headers</button>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- Load existing project Popup -->
+    <div class="popup startRP" id="loadProject-popup">
+        <div>
+            <a class="closePopupBtn"><img src="../public/img/close_button.svg"></a>
+            <div class='popupContent'>
+                <h2 id="promptText-load">Load Existing Project</h2>
+                <form name="loadprojectform" id="form1" >
+                    Project: 
+                    <select name="project" id="load-project-cascade">
+                       <option value="" selected="selected">Select a project</option>
+                    </select>
+                </form>
+                <button id='loadSelectedProjectBtn'>Load Project</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Model Architecture popupwindow -->
+    <div class="popup" id="modelArch">
+        <div>
+            <a class="closePopupBtn"><img src="../public/img/close_button.svg"></a>
+            <div class="popupContent">
+                <div id="modelNameImage">
+                    <h2 class="popupSection">Model Number-Name: </h2>
+                    <div class="popupSection" id="modelArchImageContainer">
+                        <img id='modelArchImage' src="../public/img/model_sample.png" alt="Model Architecture...">
+                    </div>
+                </div>
+                
+                <div class="popupSection" id="Hyperparameters">
+                    <h2>Hyperparameters</h2>
+                    <ul class="list scrollable" id="HyperparametersList">
+                        <li>dropout_rate: 0</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Popup prompt -->
+    <div class="popup" id="popupPrompt">
+        <div>
+            <a class="closePopupBtn"><img src="../public/img/close_button.svg"></a>
+            <div class='popupContent centered'>
+                <h2 id="promptText">Are you sure you sure?</h2>
+                <p></p>
+                <button id="promptBtn" class='popupBtn'>Delete Project</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Loading SVG -->
+    <div class="popup" id="loading">
+        <img src="/public/img/loading_svg_ripple.svg" alt="Loading...">
+    </div>
+
+    <script src="src/mainPagejs/basics.js"></script>
+    <script src="src/mainPagejs/startarun.js"></script>
+    <script src="src/mainPagejs/topScoring.js"></script>
+    <script src="src/mainPagejs/progress.js"></script>
+    <script src="src/mainPagejs/models.js"></script>
+</html>

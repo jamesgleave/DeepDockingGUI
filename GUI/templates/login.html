@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Deep Docking 2.0</title>
+        <link rel="icon" type="image/png" href="https://www.prostatecentre.com/sites/default/files/fav2.png">
+        <!-- Getting all dependencies: -->
+        <script src="public/js/bundle.js"></script>
+        <link rel="stylesheet" type="text/css" href="./public/css/oldSchool.css">
+        <!-- Importing the fonts: Cairo, K2D-->
+        <link href="https://fonts.googleapis.com/css2?family=Cairo&family=K2D&display=swap" rel="stylesheet">
+    </head>
+    <body>
+        <div class="title-creds disable-select">
+            <h1 name="title">Deep Docking 2.0</h1>
+            <form id="cred-form">
+                <input type="text" id="username" name="username" placeholder="Username">
+                <input type="password" id="pwd" name="pwd" placeholder="Password">
+                <button type="button" id="login-btn" name="login-btn">Login</button>
+            </form>
+        </div>
+        <div class="copyright-info disable-select">
+            <h2>Cherkasov Lab, UBC</h2>
+            <a href="https://doi.org/10.1021/acscentsci.0c00229">doi.org/10.1021/acscentsci.0c00229</a>
+        </div>
+    </body>
+
+    <div class="popup" id="loading">
+        <img src="/public/img/loading_svg_ripple.svg" alt="Loading...">
+    </div>
+    
+    <script src="/src/login.js"></script>
+</html>

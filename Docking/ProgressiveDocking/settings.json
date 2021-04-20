@@ -1,0 +1,11 @@
+{
+  "progressive_docking": {
+    "metrics": ["accuracy", "recall", "precision"],
+    "epochs": 500,
+    "early_stopping_monitor": "val_loss",
+    "early_stopping_min_delta": 0,
+    "early_stopping_patience": 10,
+    "early_stopping_mode": "auto",
+    "time_limit": 36000
+  }
+}

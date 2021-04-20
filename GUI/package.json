@@ -1,0 +1,56 @@
+{
+  "name": "dd_gui",
+  "version": "2.0.0",
+  "description": "Deep Docking GUI",
+  "main": "server.js",
+  "dependencies": {
+    "chai": "^4.2.0",
+    "chart.js": "^2.9.4",
+    "jquery": "^3.5.1",
+    "kekule": "^0.9.3",
+    "lodash": "^4.17.20",
+    "mocha": "^8.2.1",
+    "react": "^17.0.1",
+    "react-dom": "^17.0.1",
+    "react-router-dom": "^5.2.0",
+    "style-loader": "^2.0.0"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.12.9",
+    "@babel/preset-env": "^7.12.7",
+    "babel": "^6.23.0",
+    "babel-core": "^6.26.3",
+    "babel-loader": "^8.2.1",
+    "babel-preset-es2015": "^6.24.1",
+    "babel-preset-react": "^6.24.1",
+    "babel-preset-stage-2": "^6.24.1",
+    "body-parser": "^1.19.0",
+    "cors": "^2.8.5",
+    "css-loader": "^5.0.1",
+    "errorhandler": "^1.5.1",
+    "express": "^4.17.1",
+    "file-loader": "^6.2.0",
+    "morgan": "^1.10.0",
+    "url-loader": "^4.1.1",
+    "webpack": "^4.44.1",
+    "webpack-cli": "^4.2.0"
+  },
+  "scripts": {
+    "test": "mocha",
+    "start-lin": "conda activate DeepDockingLocal && export FLASK_APP=server.py && export FLASK_ENV=local_host && flask run",
+    "start-win": "conda activate DeepDockingLocal && set FLASK_APP=server.py && set FLASK_ENV=local_host && flask run",
+    "start-dev": "conda activate DeepDockingLocal && set FLASK_APP=server.py && set FLASK_ENV=development && set FLASK_DEBUG=1 && flask run",
+    "build": "webpack --progress --config webpack.config.js",
+    "dev-build": "webpack -d --progress --config webpack.config.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/jamesgleave/Deep-Docking.git"
+  },
+  "author": "Jean Charle Yaacoub and James Gleave",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/jamesgleave/Deep-Docking/issues"
+  },
+  "homepage": "https://github.com/jamesgleave/Deep-Docking"
+}

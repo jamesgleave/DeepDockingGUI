@@ -1,0 +1,13 @@
+name: DeepDockingLocal
+channels:
+  - conda-forge
+  - bioconda
+  - defaults
+dependencies:
+  - python=3.6
+  - paramiko
+  - ipython
+  - rdkit
+  - flask
+  - flask-cors
+  - python-dotenv
