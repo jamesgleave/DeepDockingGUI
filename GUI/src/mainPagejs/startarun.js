@@ -90,15 +90,15 @@ function enableValidBtns(projectInfo){
 
 
                     // Switching on the currently running phase button
-                    const curr_phase = data.currentInfo.phase;
-                    const completed = data.is_idle; // if false -> stil running
-                    if (curr_phase == 0 ){
-                        document.getElementById('startPhase1').disabled = false;
-                        if (data.currentInfo.iter > 1)
-                            document.getElementById('startPhaseFinal').disabled = false;
-                    }else {
-                        document.getElementById('startPhase'+ (curr_phase)).disabled = false;
-                    }
+                    // const curr_phase = data.currentInfo.phase;
+                    // const completed = data.is_idle; // if false -> stil running
+                    // if (curr_phase == 0){
+                    //     document.getElementById('startPhase1').disabled = false;
+                    //     if (data.currentInfo.iter > 1)
+                    //         document.getElementById('startPhaseFinal').disabled = false;
+                    // }else {
+                    //     document.getElementById('startPhase'+ (curr_phase)).disabled = false;
+                    // }
                     
                     // If it is done then we also show the next phase:
                     if  (completed){

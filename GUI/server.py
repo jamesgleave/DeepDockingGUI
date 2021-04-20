@@ -187,7 +187,7 @@ def getModelData():
     global BACKEND
     DATA_HISTORY = BACKEND.pull() 
     data = {}
-    print(DATA_HISTORY.plots.keys())
+    print(DATA_HISTORY.plots[selectedIter])
     plots = DATA_HISTORY.averages[selectedIter] if averaged else DATA_HISTORY.plots[selectedIter][selectedModel-1]
     titles = [x for x in plots.keys()]
     titles.remove('Time Per Epoch')
