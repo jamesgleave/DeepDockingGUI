@@ -147,6 +147,7 @@ def getProgressData():
     phaseNum = DATA_HISTORY.current_phase 
 
     data['is_idle'] = DATA_HISTORY.is_idle  # tells us if anything is currently running
+    data['pending'] = DATA_HISTORY.pending
     data['currentInfo'] = {'iter': iterNum, 'phase': phaseNum}
 
     ETAs = {
@@ -324,14 +325,26 @@ def newProject():
                                             "n_hyperparameters": arguments['n_hyperparameters'], 
                                             "n_molecules": arguments['n_molecules'], 
                                             "glide_input": "NA"}) 
-    BACKEND.start()
     
-    
+    # Waiting for it to be created:
     while BACKEND.status() == "fetching":
         time.sleep(1)
 
-    DATA_HISTORY = BACKEND.pull() # forces it to finish
-    return {'project_name': arguments['project_name']}, 200
+    # Loading that project:
+    project_name = arguments['projectName']
+    BACKEND.load_project(project_name)
+    BACKEND.start()
+
+    # Waiting for it to load
+    while BACKEND.status() == "fetching":
+        if BACKEND.core.num_updates > 1 and BACKEND.core.model_data == {}:
+            BACKEND.reset()
+            return {}, 404
+        time.sleep(1)
+    
+    DATA_HISTORY = BACKEND.pull() # forces it to finish 
+    BACKEND.start()
+    return {'project_name': project_name}, 200
 
 @app.route('/getProjectInfo', methods=['GET'])
 def getProjectInfo():

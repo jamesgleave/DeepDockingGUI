@@ -178,16 +178,34 @@ document.getElementById("progBtn").onclick = function() {
                 clearInterval(IDLE_ASNYC_ID);
                 IDLE_ASNYC_ID = null;
             }
-            
-            // activating if appropriate.
+        
+            indicator = document.getElementById('idleStatus');
+            // Checking to see if there is anything running:
             if (!data.is_idle){
-                // Switching to green svg
-                indicator = document.getElementById('idleStatus');
-                indicator.src = indicator.src.substr(0, indicator.src.length - 5) + 'g.svg';
+                console.log(data.pending);
+                // Flashing green when we have stuff running and most are not pending
+                pending_no = parseInt(data.pending.pending);
+                running_no = parseInt(data.pending.running);
+                tot_no = pending_no + running_no;
+                percent_pending = pending_no/tot_no;
+                flashing = true;
+                console.log(percent_pending);
+                
+                // If none are pending 0.0 we display a blinking green (default)
+                if (percent_pending === 0){
+                    indicator.src = indicator.src.substr(0, indicator.src.length - 5) + 'g.svg';
+                } else if (percent_pending < 1){ // blinking yellow if some pending
+                    indicator.src = indicator.src.substr(0, indicator.src.length - 5) + 'y.svg';
+                } else { // stale yellow if all pending
+                    indicator.src = indicator.src.substr(0, indicator.src.length - 5) + 'y.svg';
+                    flashing = false
+                }
                 // flashing
-                IDLE_ASNYC_ID = setInterval(function(){flash('idleStatus')}, 500);
+                if (flashing) IDLE_ASNYC_ID = setInterval(function(){flash('idleStatus')}, 500);
+            } else { //stale green if nothing is running or pending.
+                indicator.src = indicator.src.substr(0, indicator.src.length - 5) + 'g.svg';
+                indicator.style.filter = 'brightness(50%)';
             }
-
             // if pending then we apply a yellow filter before flashing
             switchTab(event, 'prog');
         },

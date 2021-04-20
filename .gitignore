@@ -3,7 +3,7 @@
 *.code-workspace
 *.pyc
 db.json
-installation_information.json
+installation/installation_information.json
 activation_script.sh
 GUI/src/backend/projects/*.json
 __pycache__
@@ -13,4 +13,3 @@ util/__pycache__/__init__.cpython-36.pyc
 util/__pycache__/__init__.cpython-37.pyc
 util/__pycache__/ProgressBar.cpython-36.pyc
 util/__pycache__/ProgressBar.cpython-37.pyc
-
