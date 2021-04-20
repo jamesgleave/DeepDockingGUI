@@ -90,6 +90,7 @@ function enableValidBtns(projectInfo){
 
 
                     // Switching on the currently running phase button
+                    // TODO: fix this
                     // const curr_phase = data.currentInfo.phase;
                     // const completed = data.is_idle; // if false -> stil running
                     // if (curr_phase == 0){
