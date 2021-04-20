@@ -37,7 +37,7 @@
   },
   "scripts": {
     "test": "mocha",
-    "start-lin": "conda activate DeepDockingLocal && export FLASK_APP=server.py && export FLASK_ENV=local_host && flask run",
+    "start-lin": "export FLASK_APP=server.py && export FLASK_ENV=local_host && flask run",
     "start-win": "conda activate DeepDockingLocal && set FLASK_APP=server.py && set FLASK_ENV=local_host && flask run",
     "start-dev": "conda activate DeepDockingLocal && set FLASK_APP=server.py && set FLASK_ENV=development && set FLASK_DEBUG=1 && flask run",
     "build": "webpack --progress --config webpack.config.js",
