@@ -287,7 +287,7 @@ def loadProject():
             BACKEND.reset()
             return {}, 404
         time.sleep(1)
-
+    
     DATA_HISTORY = BACKEND.pull() # forces it to finish 
     return {}, 200
 
@@ -325,6 +325,7 @@ def newProject():
                                             "n_molecules": arguments['n_molecules'], 
                                             "glide_input": "NA"}) 
     BACKEND.start()
+    
     
     while BACKEND.status() == "fetching":
         time.sleep(1)
