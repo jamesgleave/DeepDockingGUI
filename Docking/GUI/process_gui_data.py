@@ -433,6 +433,7 @@ def read_iterations(project_path, pickle_path, username):
                     final_phase_info = "running"
                     iteration_info["is_idle"] = False
         iteration_info["final_phase"] = final_phase_info
+        iteration_info["pending_info"] = check_pending(gui_path=pickle_path, username=username)
 
         # Delete Later
         print()

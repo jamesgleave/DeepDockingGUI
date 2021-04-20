@@ -55,7 +55,19 @@ def running_job_monitor(project_path, scripts_path, current_iteration, current_p
 
     # Grab error files in scripts directory
     # TODO check to see if these files belong to the project we are looking at
-    parent_errors = glob.glob(scripts_path + "/" + "*.err")
+
+    # Only add parent files that belong to the project
+    # This section checks the lines of the file for the header "Project Name: " followed by the project name
+    parent_errors = []
+    for filename in glob.glob(scripts_path + "/" + "*.err"):
+        belongs_to_project = False
+        with open(filename.replace(".err", ".out"), "r") as f:
+            for line in f.readlines():
+                if "Project Name:" in line and project_name in line:
+                    belongs_to_project = True
+                    break
+        if belongs_to_project:
+            parent_errors.append(filename)
 
     # Grab the error files found in the project
     # These are 100% going to be a part of the project we are looking at because the are in the project folder

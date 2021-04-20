@@ -44,6 +44,9 @@ class DataHistory:
         # Are we running the final phase?
         self.final_phase = self.history[self.current_iteration]['itr']['final_phase']
 
+        # The number of jobs pending and running
+        self.pending = self.history[self.current_iteration]['itr']['pending_info']
+
         try:
             for key in self.molecules_remaining:
                 self.molecules_remaining[key] = data[key]['itr']['molecules_remaining']
