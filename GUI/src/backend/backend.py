@@ -109,7 +109,7 @@ class Core:
 
             # Generate the pickle in the GUI folder
             activation_command = activate_venv() + "; "
-            command = f"cd {self.user_data['remote_path']}; " + activation_command + self.update_command + " > update.log 2>&1"
+            command = f"cd {self.user_data['remote_path']}; " + activation_command + self.update_command + " >| update.log 2>&1"
             out = self.__ssh_connection.command(command)  # Run the command and generate the pickle
 
             # Create the debug message for the updating command
@@ -146,7 +146,7 @@ class Core:
 
             """Here we are updating the current iteration in the project file if it has been changed."""
             current_iteration = len(self.model_data.keys())
-            print(self.loaded_project_information.keys())
+            
             if self.loaded_project_information['specifications']['iteration'] != current_iteration:
                 self.loaded_project_information['specifications']['iteration'] = current_iteration
 
@@ -316,7 +316,7 @@ class Backend:
     """ The following section of the backend deals with user interaction with the cluster"""
     def send_command(self, command, debug):
         cd = "cd {}; ".format(self.user_data['docking_path'])
-        command = cd + command + " > previous_command.log 2>&1"
+        command = cd + command + " >| previous_command.log 2>&1"
         stdout = self.ssh.command(command)
         if debug:
             print("stdout:", stdout.read())
