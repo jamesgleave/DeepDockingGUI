@@ -19,17 +19,14 @@ Deep docking (DD) is a deep learning-based tool developed to accelerate docking-
 ## Installation
 To get started, clone or download the Deep-Docking repository to your local computer. Once downloaded, navigate to the installation directory and run 
 ```bash 
-./install-linux
+bash install-linux.sh or source install-linux.sh
 ```
 for mac and linux users and
 ```bash 
 install-windows
 ```
-for windows users. If the installation files do not work, they may need to be recompiled for your system:
+for windows users.
 
-```bash 
-gcc -o install-{linux/windows}.c install-{linux/windows}.c
-```
 Upon running install-{linux/windows}, you will be prompted with straightforward questions, streamlining the installation process. When installation is complete, the application is ready to use. 
 
 
