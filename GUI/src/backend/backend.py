@@ -377,7 +377,6 @@ class Backend:
 
         # Loop through the smiles
         for line in lines[1:]:
-            print(line.split(" "))
             _, smile, _ = line.split(" ")
             smiles.append(smile)
         return smiles
