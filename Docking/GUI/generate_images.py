@@ -4,7 +4,10 @@ import os
 def generate_model_image(model_path):
     model_name = os.path.basename(model_path)
     iteration = os.path.basename(model_path.replace("/all_models/" + model_name, ""))
-    file_name = "GUI/images/models/{}_{}.png".format(model_name, iteration)
+
+    # Get the project name -> .../project_name/iteration_n/all_models/model_name -> [..., project_name, ., ., .]
+    project_name = model_path.split("/")[-4]
+    file_name = "GUI/images/models/{}_{}_{}.png".format(project_name, model_name, iteration)
 
     # check if the image already exists... if it does then skip generating a new one
     if not os.path.exists(file_name):

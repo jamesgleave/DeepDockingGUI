@@ -314,9 +314,15 @@ class Backend:
         return "fetching" if core_status == 0 else "ready"
 
     """ The following section of the backend deals with user interaction with the cluster"""
-    def send_command(self, command, debug):
+    def send_command(self, command, debug, redirect=True):
         cd = "cd {}; ".format(self.user_data['docking_path'])
-        command = cd + command + " >| previous_command.log 2>&1"
+
+        # We sometimes want the stdout so do not always redirect it
+        if redirect:
+            command = cd + command + " >| previous_command.log 2>&1"
+        else:
+            command = cd + command
+
         stdout = self.ssh.command(command)
         if debug:
             print("stdout:", stdout.read())
@@ -342,7 +348,7 @@ class Backend:
         command = command_prefix + command_args
 
         # Decode output then return the image and hyperparameters
-        stdout = self.send_command(command, debug=True)
+        stdout = self.send_command(command, debug=False, redirect=False)
         decoded_output = stdout.read().decode('ascii').replace("\n", "").split("&&&")
         file_name = self.user_data['docking_path'] + "/" + decoded_output[0]
         hyperparameters = json.loads(decoded_output[1].replace("'", '"'))
@@ -371,7 +377,6 @@ class Backend:
 
         # Loop through the smiles
         for line in lines[1:]:
-            print(line.split(" "))
             _, smile, _ = line.split(" ")
             smiles.append(smile)
         return smiles

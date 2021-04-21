@@ -191,7 +191,9 @@ def running_job_monitor(project_path, scripts_path, current_iteration, current_p
                     # Every parent job's out file created by a project will have the line
                     # "Project Name: project_name".
                     # We can use this to determine if a slurm out file was created by a certain project.
-                    if "Project Name:" in line and project_name in line:
+                    # We can also use the path of the project to determine this since the project path will be embedded
+                    # in the filepath
+                    if "Project Name:" in line and project_name in line or path in p2err:
                         belongs_to_project = True
 
                     # If a batch job was submitted by the passed project it will be added to the submissions.
