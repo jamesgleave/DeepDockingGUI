@@ -189,7 +189,7 @@ function boot(){
         url: "/getProjectInfo?projectName=undefined",
         dataType: 'json',
         success: function (data, status, settings) {
-            displayProjectInfo(data); //null so that it displays 'nodata...'
+            displayProjectInfo(data); //if null it displays 'nodata...'
         },
         error: function (res, opt, err) {
             if (res.status == 400) {
@@ -325,7 +325,7 @@ document.querySelector('#submitNewProjBtn').onclick = function(){
             url: `/newProject?`,
             dataType: 'json',
             contentType: 'application/json',
-            data :JSON.stringify(form_info),
+            data: JSON.stringify(form_info),
             success: function (data, status, settings) {
                 console.log('Project is created!');
                 updateProjectInfo(data.project_name);

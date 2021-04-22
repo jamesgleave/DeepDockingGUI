@@ -13,11 +13,10 @@ function displaySelectedSmile(e){
   displayScaffold(new_smile);
 }
 
-// Displays the scaffold from request (if none is provided than we assume mode)
+// Displays the scaffold from request (if none is provided than we assume mode scaffold)
 function displayScaffold(smile) {
   toggleLoadingScreen(true);
 
-  const smile_arg = 'smile=' + smile
   var new_text = "Most Common Murcko Scaffold";
 
   if (smile) new_text = smile;
@@ -28,20 +27,18 @@ function displayScaffold(smile) {
 
   $.ajax({ 
     type: "POST",
-    url: "/topScoring?image=true&" + smile_arg,
+    url: "/topScoring?image=true&smile="+smile,
     dataType: 'text',
     contentType: 'image/jpeg',
     beforeSend: function (xhr) {
       xhr.overrideMimeType('text/plain; charset=x-user-defined');
     },
     success: function (data, status, settings) {
-
       if(data.length < 1){
           alert("The image doesnt exist");
           $("#scaffoldImage").attr("src", "data:image/png;base64,");
           return
       }
-
       var binary = "";
       var responseText = data;
       var responseTextLen = responseText.length;
@@ -49,16 +46,15 @@ function displayScaffold(smile) {
       for ( i = 0; i < responseTextLen; i++ ) {
           binary += String.fromCharCode(responseText.charCodeAt(i) & 255)
       }
-      $("#scaffoldImage").attr("src", "data:image/jpeg;base64,"+btoa(binary)); 
-
+      $("#scaffoldImage").attr("src", "data:image/jpeg;base64,"+btoa(binary));
     },
     error: function (res, opt, err) {
       alert("Error in retriving Murcko Scaffold")
       console.log(res,opt,err);
     }
   }).done(function (response) {
-    toggleLoadingScreen(false);
     resetImagePos('scaffoldImage');
+    toggleLoadingScreen(false);
   });
 }
 
@@ -112,14 +108,11 @@ document.querySelector('#reload-Murcko > img').onclick = function () {
 // Tab button
 document.getElementById("topScoringBtn").onclick = function() {
   addPanAndZoom('scaffoldImage');
-  // First request to get the Most common Murcko scaffold
-  displayScaffold();
-
   toggleLoadingScreen(true);
-  // Making second request to get list of all molecules:
+  // request to get list of all molecules:
   $.ajax({
     type: "GET",
-    url: "/topScoring?image=false",
+    url: "/topScoring?image=false&smile=undefined",
     dataType: 'json',
     success: function (data, status, settings) {
         addToTopScoringList(data.top_hits);
@@ -130,7 +123,8 @@ document.getElementById("topScoringBtn").onclick = function() {
         console.log(res, opt, err);
     }
   }).done(function (response) {
-      toggleLoadingScreen(false);
+    // request to get the Most common Murcko scaffold
+    displayScaffold();
   });
 
 };

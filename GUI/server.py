@@ -53,7 +53,7 @@ def getModeMurckoScaffoldImage(SMILES_list):
     murckoScaffolds = []
     dict_scaffolds = {}
 
-    for smile in SMILES_list[1:]:
+    for smile in SMILES_list:
         m1 = Chem.MolFromSmiles(smile)
         core = MurckoScaffold.GetScaffoldForMol(m1)
         murckoScaffolds.append(core)
@@ -63,8 +63,8 @@ def getModeMurckoScaffoldImage(SMILES_list):
     # Finding the mode:
     mode = max(set(murckoScaffolds), key=murckoScaffolds.count)
     count = murckoScaffolds.count(mode)
-    PIL_img = MolToImage(mode, size=(700, 700))
-    return PIL_img, dict_scaffolds
+    PIL_img_mode = MolToImage(mode, size=(700, 700))
+    return PIL_img_mode, dict_scaffolds
 
 @app.route('/')
 @cross_origin()
@@ -107,29 +107,39 @@ def getBasics():
 @app.route('/topScoring', methods=['GET', 'POST'])
 def topScoring():
     sendImage = request.args['image'] == 'true'
+    smile = request.args['smile']
 
     global BACKEND, MODE_SCAFFOLD, SCAFFOLDS
     data = {}
-    # Getting the list of molecules from cluster
-    SMILES_list = BACKEND.get_top_hits()[1:] 
-    # TODO: when at final phase use .get_final_phase_results
 
-    if sendImage:
-        smile = request.args['smile']
-        print(smile)
-        # Getting most common murckoscaffold.
-        if smile == 'undefined':
-            if  MODE_SCAFFOLD is None:
-                MODE_SCAFFOLD, SCAFFOLDS = getModeMurckoScaffoldImage(SMILES_list)
-            img_io = serve_pil_image(MODE_SCAFFOLD)
-        
-        # OR get the selected smile if given:
-        else: 
-            img_io = serve_pil_image(MolToImage(SCAFFOLDS[smile], size=(700, 700)))
+    if sendImage and smile != "undefined":
+        # Get the selected smile when given:
+        img_io = serve_pil_image(MolToImage(SCAFFOLDS[smile], size=(700, 700)))
+        return send_file(img_io, mimetype='text/plain'), 200
+    elif sendImage and MODE_SCAFFOLD is not None:
+        # displaying mode when not given a smile
+        img_io = serve_pil_image(MODE_SCAFFOLD)
         return send_file(img_io, mimetype='text/plain'), 200
     else:
-        data['top_hits'] = SMILES_list
-        return data, 200
+        # getting the list of molecules to return or extract the mode from
+        DATA_HISTORY = BACKEND.pull()
+        if DATA_HISTORY.final_phase: # different list for final phase
+            try:
+                SMILES_list = BACKEND.get_final_phase_results()
+            except:
+                SMILES_list = BACKEND.get_top_hits()
+        else:
+            SMILES_list = BACKEND.get_top_hits()
+
+        if sendImage:
+            # Getting most common murckoscaffold when none provided
+            MODE_SCAFFOLD, SCAFFOLDS = getModeMurckoScaffoldImage(SMILES_list)
+            img_io = serve_pil_image(MODE_SCAFFOLD)
+            return send_file(img_io, mimetype='text/plain'), 200
+        else:
+            # getting only the smiles list
+            data['top_hits'] = SMILES_list
+            return data, 200
 
 @app.route('/progressData', methods=['GET'])
 def getProgressData():
