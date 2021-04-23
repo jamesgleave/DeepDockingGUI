@@ -158,7 +158,7 @@ function displayMolecRemainingChart(chartData) {
     resizeFont(chartInstance, {width: document.getElementById("molecRemainingChart").offsetWidth});
 }
 
-var IDLE_ASNYC_ID;
+var IDLE_ASNYC_ID; // Interval id for blinking indicator light
 
 document.getElementById("progBtn").onclick = function() {
     toggleLoadingScreen(true);
@@ -173,7 +173,7 @@ document.getElementById("progBtn").onclick = function() {
             displayETAs(data.ETAs);
             displayMolecRemainingChart(data.molecRemainingData);
             
-            // Clearing  any previously set intervals:
+            // Clearing any previously set intervals:
             if (IDLE_ASNYC_ID) {
                 clearInterval(IDLE_ASNYC_ID);
                 IDLE_ASNYC_ID = null;
@@ -182,14 +182,12 @@ document.getElementById("progBtn").onclick = function() {
             indicator = document.getElementById('idleStatus');
             // Checking to see if there is anything running/pending/canceling:
             if (!data.is_idle){
-                console.log(data.pending);
                 // Flashing green when we have stuff running and most are not pending
                 pending_no = parseInt(data.pending.pending);
                 running_no = parseInt(data.pending.running);
                 tot_no = pending_no + running_no;
                 percent_pending = pending_no/tot_no;
                 flashing = true;
-                console.log(percent_pending);
                 
                 // If none are pending 0.0 we display a blinking green (default)
                 if (percent_pending === 0){

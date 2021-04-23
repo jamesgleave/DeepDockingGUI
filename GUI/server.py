@@ -177,8 +177,13 @@ def getProgressData():
     x_values = [x for x in range(1, int(iterNum)+1)]
     for x in x_values:
         item = molec_remaining['iteration_'+str(x)]
-        modelPred.append(item['estimate'])
-        actual.append(item['true'])
+        # Making sure that we are not adding placeholder numbers(-1)
+        if item['estimate'] != -1 and item['true'] != -1:
+            modelPred.append(item['estimate'])
+            actual.append(item['true'])
+        else: # removing from list
+            x_values.remove(x)
+
         
     # print("molec remaining: ", DATA_HISTORY.molecules_remaining)
     data['molecRemainingData'] = {'modelPred': {'x': x_values, 'y': modelPred},
