@@ -123,7 +123,7 @@ def topScoring():
     else:
         # getting the list of molecules to return or extract the mode from
         DATA_HISTORY = BACKEND.pull()
-        if DATA_HISTORY.final_phase: # different list for final phase
+        if DATA_HISTORY.final_phase == "finished": # different list for final phase
             try:
                 SMILES_list = BACKEND.get_final_phase_results()
             except:
