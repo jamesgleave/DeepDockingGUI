@@ -340,7 +340,7 @@ def newProject():
         time.sleep(1)
 
     # Loading that project:
-    project_name = arguments['projectName']
+    project_name = arguments['project_name']
     BACKEND.load_project(project_name)
     BACKEND.start()
 
