@@ -482,6 +482,8 @@ class Backend:
                 headers += header + ","
             # Remove the trailing comma
             headers = headers[:-1]
+        else:
+            headers = '""'
 
         # update the files on the cluster
         command = "python3 {}/setup_slurm_specifications.py --path {} --n_cpu {} --partition {} --custom_headers {}"
