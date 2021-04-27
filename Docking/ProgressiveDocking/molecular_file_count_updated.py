@@ -79,6 +79,6 @@ if __name__=='__main__':
     mol_ct.to_csv(data_directory+'/Mol_ct_file_updated.csv',sep=',',index=False)
 
     # Adjusting permisions so that it is accessible by all
-
+    import os, stat
+    os.chmod(data_directory+'/Mol_ct_file_updated.csv', stat.S_IRWXO)
     print("Done - Time Taken", time.time()-t)
-
