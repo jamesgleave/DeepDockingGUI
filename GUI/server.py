@@ -123,7 +123,7 @@ def topScoring():
     else:
         # getting the list of molecules to return or extract the mode from
         DATA_HISTORY = BACKEND.pull()
-        if DATA_HISTORY.final_phase: # different list for final phase
+        if DATA_HISTORY.final_phase == "finished": # different list for final phase
             try:
                 SMILES_list = BACKEND.get_final_phase_results()
             except:
@@ -303,7 +303,7 @@ def loadProject():
             return {}, 404
         time.sleep(1)
     
-    DATA_HISTORY = BACKEND.pull() # forces it to finish 
+    DATA_HISTORY = BACKEND.pull() # forces it to finish
     return {}, 200
 
 @app.route('/newProject', methods=['GET', 'POST'])
@@ -345,7 +345,7 @@ def newProject():
         time.sleep(1)
 
     # Loading that project:
-    project_name = arguments['projectName']
+    project_name = arguments['project_name']
     BACKEND.load_project(project_name)
     BACKEND.start()
 

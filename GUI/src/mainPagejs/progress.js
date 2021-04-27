@@ -180,6 +180,7 @@ document.getElementById("progBtn").onclick = function() {
             }
         
             indicator = document.getElementById('idleStatus');
+            console.log(data);
             // Checking to see if there is anything running/pending/canceling:
             if (!data.is_idle){
                 // Flashing green when we have stuff running and most are not pending
