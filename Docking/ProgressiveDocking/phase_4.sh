@@ -19,7 +19,7 @@ echo "Passed Parameters:"
 echo "Current Iteration: $1"
 echo "Number of CPUs: $2"
 echo "Project Path: $3"
-echo Project Name: $(basename "$project_path")
+echo Project Name: $(basename "$3")
 echo "Final Iteration: $4"
 echo "Total Iterations: $5"
 echo "Path To Deep Docking Source Scripts: $6"
