@@ -27,6 +27,9 @@ threshold=${16}
 percent_last_mol=${17}
 extension=".smi"
 
+# Print the start time
+echo Starting Time: $(date)
+
 echo Passed Args:
 echo - Total CPUs: $t_cpu
 echo - Project Path: $project_path
@@ -197,10 +200,11 @@ touch $final_phase
 echo Pending >$final_phase
 sbatch final_extraction.sh $project_path/$project_name $t_cpu $final_iteration $local_path $top_n >>$final_phase
 
+# Print the end time
+echo End Time: $(date)
+
 echo ""
 echo "|================================================================|"
 echo "|                      FINISHED DEEP DOCKING                     |"
 echo "|================================================================|"
 echo ""
-
-# sbatch final_extraction.sh /groups/cherkasvgrp/share/progressive_docking/development/pd_python_pose_v2/test_DD_installation/DeepDockingProjects/t2000 24 6 /groups/cherkasvgrp/share/progressive_docking/development/pd_python_pose_v2/test_DD_installation/DeepDocking/ 10000

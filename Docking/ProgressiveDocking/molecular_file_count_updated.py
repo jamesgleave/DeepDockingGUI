@@ -75,5 +75,9 @@ if __name__=='__main__':
     Total_mols_available = np.sum(mol_ct.Number_of_Molecules)
     mol_ct['Sample_for_million'] = [int(Total_sampling/Total_mols_available*elem) for elem in mol_ct.Number_of_Molecules]
     mol_ct.to_csv(data_directory+'/Mol_ct_file_updated.csv',sep=',',index=False)
+    
+    import os, stat
+    os.chmod(data_directory+'/Mol_ct_file_updated.csv', stat.S_IRWXO)
+
     print("Done - Time Taken", time.time()-t)
 
