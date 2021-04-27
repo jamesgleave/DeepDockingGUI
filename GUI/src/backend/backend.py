@@ -429,13 +429,15 @@ class Backend:
             new_db.write(json.dumps(self.project_data))
 
         # Add the custom headers (if any)
-        headers = '"'
+        headers = ""
         # We loop through the headers and concatenate them into comma separated values to be parsed on the cluster
         if len(self.project_data["specifications"]['slurm_headers']) > 0:
             for header in self.project_data["specifications"]['slurm_headers']:
                 headers += header + ","
             # Remove the trailing comma
-            headers = headers[:-1] + '"'
+            headers = headers[:-1]
+        else:
+            headers = '""'
 
         # update the files on the cluster
         command = "python3 {}/setup_slurm_specifications.py --path {} --n_cpu {} --partition {} --custom_headers {}"
@@ -525,13 +527,15 @@ class Backend:
                 headers += header + ","
             # Remove the trailing comma
             headers = headers[:-1]
+        else:
+            headers = '""'
 
         # update the files on the cluster
         command = "python3 {}/setup_slurm_specifications.py --path {} --n_cpu {} --partition {} --custom_headers {}"
         command = command.format(self.user_data["remote_path"],
                                  self.user_data["remote_path"],
                                  self.project_data["specifications"]["num_cpu"],
-                                 self.project_data["specifications"]["partition"],
+                                 '"' + self.project_data["specifications"]["partition"] + '"',
                                  headers)
         stdout = self.send_command(command, debug=False)
 
