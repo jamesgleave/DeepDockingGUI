@@ -492,7 +492,6 @@ class Backend:
                                  specifications["partition"],
                                  headers)
         stdout = self.send_command(command, debug=False)
-        print(command)
         return out
 
     def load_project(self, project_name):
