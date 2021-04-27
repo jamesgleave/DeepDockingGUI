@@ -28,10 +28,6 @@ def change_slurm(path, n_cpu, partition, specify=None, custom_headers=None):
     else:
         using_custom_headers = False
 
-    # Check if the partition is empty
-    if "No data" in partition:
-        partition = ""
-
     cpu_change_exclusion = ["phase_2.sh", "phase_3.sh", "phase_4.sh", "phase_5.sh", "split_chunks.sh"]
     partition_include = ["phase_4.sh", "autodock_gpu_ad.sh"]
     # Loop through the bash scripts and change them
@@ -93,10 +89,10 @@ def change_slurm(path, n_cpu, partition, specify=None, custom_headers=None):
 if __name__ == "__main__":
     import argparse
     parser = argparse.ArgumentParser()
-    parser.add_argument("--path", type=str)
-    parser.add_argument("--n_cpu", type=int)
-    parser.add_argument("--partition", type=str)
-    parser.add_argument("--custom_headers", type=str)
+    parser.add_argument("--path", type=str, required=True)
+    parser.add_argument("--n_cpu", type=int, required=True)
+    parser.add_argument("--partition", type=str, required=True)
+    parser.add_argument("--custom_headers", type=str, required=True)
 
     args = parser.parse_args()
 

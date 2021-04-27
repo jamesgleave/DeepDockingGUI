@@ -447,7 +447,6 @@ class Backend:
                                  '"' + self.project_data["specifications"]["partition"] + '"',
                                  headers)
         stdout = self.send_command(command, debug=False)
-        print(command)
 
     def create_new_project(self, project_name, log_file_contents, specifications):
         """Creates a new project in the deep docking project directory"""
@@ -479,8 +478,8 @@ class Backend:
         # Add the custom headers (if any)
         headers = ""
         # We loop through the headers and concatenate them into comma separated values to be parsed on the cluster
-        if len(self.project_data["specifications"]['slurm_headers']) > 0:
-            for header in self.project_data["specifications"]['slurm_headers']:
+        if len(specifications['slurm_headers']) > 0:
+            for header in specifications['slurm_headers']:
                 headers += header + ","
             # Remove the trailing comma
             headers = headers[:-1]
@@ -491,10 +490,11 @@ class Backend:
         command = "python3 {}/setup_slurm_specifications.py --path {} --n_cpu {} --partition {} --custom_headers {}"
         command = command.format(self.user_data["remote_path"],
                                  self.user_data["remote_path"],
-                                 self.project_data["specifications"]["num_cpu"],
-                                 self.project_data["specifications"]["partition"],
+                                 specifications["num_cpu"],
+                                 specifications["partition"],
                                  headers)
         stdout = self.send_command(command, debug=False)
+        print(command)
         return out
 
     def load_project(self, project_name):
