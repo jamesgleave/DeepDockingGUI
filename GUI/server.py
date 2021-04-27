@@ -293,7 +293,6 @@ def getModelArch():
 @app.route('/loadProject', methods=['POST'])
 def loadProject():
     project_name = request.args['projectName']
-
     BACKEND.load_project(project_name)
     BACKEND.start()
 
@@ -302,11 +301,10 @@ def loadProject():
             BACKEND.reset()
             return {}, 404
         time.sleep(1)
-    
     DATA_HISTORY = BACKEND.pull() # forces it to finish
     return {}, 200
 
-@app.route('/newProject', methods=['GET', 'POST'])
+@app.route('/newProject', methods=['POST'])
 def newProject():
     arguments = request.get_json()
 
@@ -338,8 +336,8 @@ def newProject():
                                             "docking_software": arguments['docking_software'], # this will always be autodock 
                                             "n_hyperparameters": arguments['n_hyperparameters'], 
                                             "n_molecules": arguments['n_molecules'], 
-                                            "glide_input": "NA"}) 
-    
+                                            "glide_input": "NA"})
+
     # Waiting for it to be created:
     while BACKEND.status() == "fetching":
         time.sleep(1)
@@ -355,9 +353,8 @@ def newProject():
             BACKEND.reset()
             return {}, 404
         time.sleep(1)
-    
-    DATA_HISTORY = BACKEND.pull() # forces it to finish 
-    BACKEND.start()
+
+    DATA_HISTORY = BACKEND.pull() # forces it to finish
     return {'project_name': project_name}, 200
 
 @app.route('/getProjectInfo', methods=['GET'])

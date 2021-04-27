@@ -196,7 +196,7 @@ def create_project(ssh,
         database = json.loads(db)
 
     # Fill in the partition as blank if it is just a default value
-    specifications['partition'] = "" if specifications["partition"] == "Default" else specifications["partition"]
+    specifications['partition'] = '""' if specifications["partition"] == "Default" else specifications["partition"]
     specifications['current_phase'] = 1
     project_location = database['project_path'] + "/" + project_name
     new_project = {"location": project_location, "specifications": specifications, "log_file": logfile_contents}
