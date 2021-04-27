@@ -1,0 +1,412 @@
+Collecting package metadata: ...working... done
+Solving environment: ...working... done
+
+## Package Plan ##
+
+  environment location: /home/jyaacoub/.conda/envs/DeepDockingRemote
+
+  added / updated specs:
+    - python=3.6.8
+
+
+The following NEW packages will be INSTALLED:
+
+  _libgcc_mutex      pkgs/main/linux-64::_libgcc_mutex-0.1-main
+  ca-certificates    pkgs/main/linux-64::ca-certificates-2021.4.13-h06a4308_1
+  certifi            pkgs/main/linux-64::certifi-2020.12.5-py36h06a4308_0
+  libedit            pkgs/main/linux-64::libedit-3.1.20210216-h27cfd23_1
+  libffi             pkgs/main/linux-64::libffi-3.2.1-hf484d3e_1007
+  libgcc-ng          pkgs/main/linux-64::libgcc-ng-9.1.0-hdf63c60_0
+  libstdcxx-ng       pkgs/main/linux-64::libstdcxx-ng-9.1.0-hdf63c60_0
+  ncurses            pkgs/main/linux-64::ncurses-6.2-he6710b0_1
+  openssl            pkgs/main/linux-64::openssl-1.1.1k-h27cfd23_0
+  pip                pkgs/main/linux-64::pip-21.0.1-py36h06a4308_0
+  python             pkgs/main/linux-64::python-3.6.8-h0371630_0
+  readline           pkgs/main/linux-64::readline-7.0-h7b6447c_5
+  setuptools         pkgs/main/linux-64::setuptools-52.0.0-py36h06a4308_0
+  sqlite             pkgs/main/linux-64::sqlite-3.33.0-h62c20be_0
+  tk                 pkgs/main/linux-64::tk-8.6.10-hbc83047_0
+  wheel              pkgs/main/noarch::wheel-0.36.2-pyhd3eb1b0_0
+  xz                 pkgs/main/linux-64::xz-5.2.5-h7b6447c_0
+  zlib               pkgs/main/linux-64::zlib-1.2.11-h7b6447c_3
+
+
+Preparing transaction: ...working... done
+Verifying transaction: ...working... done
+Executing transaction: ...working... done
+#
+# To activate this environment, use
+#
+#     $ conda activate DeepDockingRemote
+#
+# To deactivate an active environment, use
+#
+#     $ conda deactivate
+
+Collecting tensorflow-gpu
+  Using cached tensorflow_gpu-2.4.1-cp36-cp36m-manylinux2010_x86_64.whl (394.3 MB)
+Collecting h5py~=2.10.0
+  Using cached h5py-2.10.0-cp36-cp36m-manylinux1_x86_64.whl (2.9 MB)
+Collecting flatbuffers~=1.12.0
+  Using cached flatbuffers-1.12-py2.py3-none-any.whl (15 kB)
+Collecting opt-einsum~=3.3.0
+  Using cached opt_einsum-3.3.0-py3-none-any.whl (65 kB)
+Collecting tensorflow-estimator<2.5.0,>=2.4.0
+  Using cached tensorflow_estimator-2.4.0-py2.py3-none-any.whl (462 kB)
+Collecting grpcio~=1.32.0
+  Using cached grpcio-1.32.0-cp36-cp36m-manylinux2014_x86_64.whl (3.8 MB)
+Collecting keras-preprocessing~=1.1.2
+  Using cached Keras_Preprocessing-1.1.2-py2.py3-none-any.whl (42 kB)
+Collecting six~=1.15.0
+  Using cached six-1.15.0-py2.py3-none-any.whl (10 kB)
+Collecting wrapt~=1.12.1
+  Using cached wrapt-1.12.1-cp36-cp36m-linux_x86_64.whl
+Collecting absl-py~=0.10
+  Using cached absl_py-0.12.0-py3-none-any.whl (129 kB)
+Collecting tensorboard~=2.4
+  Using cached tensorboard-2.5.0-py3-none-any.whl (6.0 MB)
+Collecting numpy~=1.19.2
+  Using cached numpy-1.19.5-cp36-cp36m-manylinux2010_x86_64.whl (14.8 MB)
+Collecting typing-extensions~=3.7.4
+  Using cached typing_extensions-3.7.4.3-py3-none-any.whl (22 kB)
+Collecting protobuf>=3.9.2
+  Using cached protobuf-3.15.8-cp36-cp36m-manylinux1_x86_64.whl (1.0 MB)
+Collecting google-pasta~=0.2
+  Using cached google_pasta-0.2.0-py3-none-any.whl (57 kB)
+Collecting termcolor~=1.1.0
+  Using cached termcolor-1.1.0-py3-none-any.whl
+Collecting astunparse~=1.6.3
+  Using cached astunparse-1.6.3-py2.py3-none-any.whl (12 kB)
+Collecting gast==0.3.3
+  Using cached gast-0.3.3-py2.py3-none-any.whl (9.7 kB)
+Requirement already satisfied: wheel~=0.35 in ./.conda/envs/DeepDockingRemote/lib/python3.6/site-packages (from tensorflow-gpu) (0.36.2)
+Collecting google-auth-oauthlib<0.5,>=0.4.1
+  Using cached google_auth_oauthlib-0.4.4-py2.py3-none-any.whl (18 kB)
+Requirement already satisfied: setuptools>=41.0.0 in ./.conda/envs/DeepDockingRemote/lib/python3.6/site-packages (from tensorboard~=2.4->tensorflow-gpu) (52.0.0.post20210125)
+Collecting werkzeug>=0.11.15
+  Using cached Werkzeug-1.0.1-py2.py3-none-any.whl (298 kB)
+Collecting tensorboard-data-server<0.7.0,>=0.6.0
+  Using cached tensorboard_data_server-0.6.0-py3-none-manylinux2010_x86_64.whl (3.9 MB)
+Collecting markdown>=2.6.8
+  Using cached Markdown-3.3.4-py3-none-any.whl (97 kB)
+Collecting requests<3,>=2.21.0
+  Using cached requests-2.25.1-py2.py3-none-any.whl (61 kB)
+Collecting tensorboard-plugin-wit>=1.6.0
+  Using cached tensorboard_plugin_wit-1.8.0-py3-none-any.whl (781 kB)
+Collecting google-auth<2,>=1.6.3
+  Using cached google_auth-1.30.0-py2.py3-none-any.whl (146 kB)
+Collecting rsa<5,>=3.1.4
+  Using cached rsa-4.7.2-py3-none-any.whl (34 kB)
+Collecting pyasn1-modules>=0.2.1
+  Using cached pyasn1_modules-0.2.8-py2.py3-none-any.whl (155 kB)
+Collecting cachetools<5.0,>=2.0.0
+  Using cached cachetools-4.2.1-py3-none-any.whl (12 kB)
+Collecting requests-oauthlib>=0.7.0
+  Using cached requests_oauthlib-1.3.0-py2.py3-none-any.whl (23 kB)
+Collecting importlib-metadata
+  Using cached importlib_metadata-4.0.1-py3-none-any.whl (16 kB)
+Collecting pyasn1<0.5.0,>=0.4.6
+  Using cached pyasn1-0.4.8-py2.py3-none-any.whl (77 kB)
+Collecting idna<3,>=2.5
+  Using cached idna-2.10-py2.py3-none-any.whl (58 kB)
+Collecting chardet<5,>=3.0.2
+  Using cached chardet-4.0.0-py2.py3-none-any.whl (178 kB)
+Collecting urllib3<1.27,>=1.21.1
+  Using cached urllib3-1.26.4-py2.py3-none-any.whl (153 kB)
+Requirement already satisfied: certifi>=2017.4.17 in ./.conda/envs/DeepDockingRemote/lib/python3.6/site-packages (from requests<3,>=2.21.0->tensorboard~=2.4->tensorflow-gpu) (2020.12.5)
+Collecting oauthlib>=3.0.0
+  Using cached oauthlib-3.1.0-py2.py3-none-any.whl (147 kB)
+Collecting zipp>=0.5
+  Using cached zipp-3.4.1-py3-none-any.whl (5.2 kB)
+Installing collected packages: urllib3, pyasn1, idna, chardet, zipp, typing-extensions, six, rsa, requests, pyasn1-modules, oauthlib, cachetools, requests-oauthlib, importlib-metadata, google-auth, werkzeug, tensorboard-plugin-wit, tensorboard-data-server, protobuf, numpy, markdown, grpcio, google-auth-oauthlib, absl-py, wrapt, termcolor, tensorflow-estimator, tensorboard, opt-einsum, keras-preprocessing, h5py, google-pasta, gast, flatbuffers, astunparse, tensorflow-gpu
+Successfully installed absl-py-0.12.0 astunparse-1.6.3 cachetools-4.2.1 chardet-4.0.0 flatbuffers-1.12 gast-0.3.3 google-auth-1.30.0 google-auth-oauthlib-0.4.4 google-pasta-0.2.0 grpcio-1.32.0 h5py-2.10.0 idna-2.10 importlib-metadata-4.0.1 keras-preprocessing-1.1.2 markdown-3.3.4 numpy-1.19.5 oauthlib-3.1.0 opt-einsum-3.3.0 protobuf-3.15.8 pyasn1-0.4.8 pyasn1-modules-0.2.8 requests-2.25.1 requests-oauthlib-1.3.0 rsa-4.7.2 six-1.15.0 tensorboard-2.5.0 tensorboard-data-server-0.6.0 tensorboard-plugin-wit-1.8.0 tensorflow-estimator-2.4.0 tensorflow-gpu-2.4.1 termcolor-1.1.0 typing-extensions-3.7.4.3 urllib3-1.26.4 werkzeug-1.0.1 wrapt-1.12.1 zipp-3.4.1
+Collecting pybel
+  Using cached pybel-0.15.3-py3-none-any.whl (382 kB)
+Requirement already satisfied: requests in ./.conda/envs/DeepDockingRemote/lib/python3.6/site-packages (from pybel) (2.25.1)
+Collecting bel-resources>=0.0.3
+  Using cached bel_resources-0.0.3-py3-none-any.whl (17 kB)
+Collecting tqdm
+  Using cached tqdm-4.60.0-py2.py3-none-any.whl (75 kB)
+Collecting requests-file
+  Using cached requests_file-1.5.1-py2.py3-none-any.whl (3.7 kB)
+Collecting sqlalchemy
+  Using cached SQLAlchemy-1.4.11-cp36-cp36m-manylinux2014_x86_64.whl (1.5 MB)
+Collecting pystow>=0.1.2
+  Using cached pystow-0.1.4-py3-none-any.whl (15 kB)
+Collecting click-plugins
+  Using cached click_plugins-1.1.1-py2.py3-none-any.whl (7.5 kB)
+Collecting click
+  Using cached click-7.1.2-py2.py3-none-any.whl (82 kB)
+Collecting dataclasses
+  Using cached dataclasses-0.8-py3-none-any.whl (19 kB)
+Collecting networkx>=2.4
+  Using cached networkx-2.5.1-py3-none-any.whl (1.6 MB)
+Collecting pandas
+  Using cached pandas-1.1.5-cp36-cp36m-manylinux1_x86_64.whl (9.5 MB)
+Collecting tabulate
+  Using cached tabulate-0.8.9-py3-none-any.whl (25 kB)
+Collecting pickle5
+  Using cached pickle5-0.0.11-cp36-cp36m-linux_x86_64.whl
+Requirement already satisfied: pyparsing in ./.local/lib/python3.6/site-packages (from pybel) (2.4.7)
+Collecting more-itertools
+  Using cached more_itertools-8.7.0-py3-none-any.whl (48 kB)
+Collecting jsonschema
+  Using cached jsonschema-3.2.0-py2.py3-none-any.whl (56 kB)
+Collecting ratelimit
+  Using cached ratelimit-2.2.1-py3-none-any.whl
+Collecting bioregistry
+  Using cached bioregistry-0.1.3-py3-none-any.whl (868 kB)
+Collecting humanize
+  Using cached humanize-3.4.1-py3-none-any.whl (73 kB)
+Collecting pyobo>=0.4.0
+  Using cached pyobo-0.4.0-py3-none-any.whl (482 kB)
+Collecting multisplitby
+  Using cached multisplitby-0.0.1-py3-none-any.whl (4.0 kB)
+Collecting decorator<5,>=4.3
+  Using cached decorator-4.4.2-py2.py3-none-any.whl (9.2 kB)
+Collecting drugbank-downloader
+  Using cached drugbank_downloader-0.1.0-py3-none-any.whl (7.3 kB)
+Collecting cachier
+  Using cached cachier-1.5.0-py2.py3-none-any.whl (16 kB)
+Collecting more-click>=0.0.2
+  Using cached more_click-0.0.3-py3-none-any.whl (4.8 kB)
+Collecting bioversions>=0.1.2
+  Using cached bioversions-0.1.2-py3-none-any.whl (33 kB)
+Collecting protmapper
+  Using cached protmapper-0.0.21-py3-none-any.whl (34 kB)
+Collecting zenodo-client>=0.0.5
+  Using cached zenodo_client-0.1.0-py3-none-any.whl (12 kB)
+Collecting obonet
+  Using cached obonet-0.3.0-py3-none-any.whl (7.9 kB)
+Collecting pyyaml
+  Using cached PyYAML-5.4.1-cp36-cp36m-manylinux1_x86_64.whl (640 kB)
+Collecting requests-ftp
+  Using cached requests_ftp-0.3.1-py3-none-any.whl
+Collecting beautifulsoup4
+  Using cached beautifulsoup4-4.9.3-py3-none-any.whl (115 kB)
+Collecting dataclasses-json
+  Using cached dataclasses_json-0.5.3-py3-none-any.whl (23 kB)
+Collecting lxml
+  Using cached lxml-4.6.3-cp36-cp36m-manylinux1_x86_64.whl (5.5 MB)
+Collecting click-default-group
+  Using cached click_default_group-1.2.2-py3-none-any.whl
+Collecting soupsieve>1.2
+  Using cached soupsieve-2.2.1-py3-none-any.whl (33 kB)
+Collecting watchdog
+  Using cached watchdog-2.0.3-py3-none-manylinux2014_x86_64.whl (74 kB)
+Collecting pathtools
+  Using cached pathtools-0.1.2-py3-none-any.whl
+Collecting portalocker
+  Using cached portalocker-2.3.0-py2.py3-none-any.whl (15 kB)
+Collecting marshmallow-enum<2.0.0,>=1.5.1
+  Using cached marshmallow_enum-1.5.1-py2.py3-none-any.whl (4.2 kB)
+Collecting marshmallow<4.0.0,>=3.3.0
+  Using cached marshmallow-3.11.1-py2.py3-none-any.whl (46 kB)
+Collecting stringcase<2.0.0,==1.2.0
+  Using cached stringcase-1.2.0-py3-none-any.whl
+Collecting typing-inspect>=0.4.0
+  Using cached typing_inspect-0.6.0-py3-none-any.whl (8.1 kB)
+Collecting mypy-extensions>=0.3.0
+  Using cached mypy_extensions-0.4.3-py2.py3-none-any.whl (4.5 kB)
+Requirement already satisfied: typing-extensions>=3.7.4 in ./.conda/envs/DeepDockingRemote/lib/python3.6/site-packages (from typing-inspect>=0.4.0->dataclasses-json->bioversions>=0.1.2->pyobo>=0.4.0->pybel) (3.7.4.3)
+Requirement already satisfied: setuptools in ./.conda/envs/DeepDockingRemote/lib/python3.6/site-packages (from humanize->pybel) (52.0.0.post20210125)
+Requirement already satisfied: six>=1.11.0 in ./.conda/envs/DeepDockingRemote/lib/python3.6/site-packages (from jsonschema->pybel) (1.15.0)
+Collecting pyrsistent>=0.14.0
+  Using cached pyrsistent-0.17.3-cp36-cp36m-linux_x86_64.whl
+Requirement already satisfied: importlib-metadata in ./.conda/envs/DeepDockingRemote/lib/python3.6/site-packages (from jsonschema->pybel) (4.0.1)
+Collecting attrs>=17.4.0
+  Using cached attrs-20.3.0-py2.py3-none-any.whl (49 kB)
+Requirement already satisfied: zipp>=0.5 in ./.conda/envs/DeepDockingRemote/lib/python3.6/site-packages (from importlib-metadata->jsonschema->pybel) (3.4.1)
+Requirement already satisfied: numpy>=1.15.4 in ./.conda/envs/DeepDockingRemote/lib/python3.6/site-packages (from pandas->pybel) (1.19.5)
+Collecting pytz>=2017.2
+  Using cached pytz-2021.1-py2.py3-none-any.whl (510 kB)
+Collecting python-dateutil>=2.7.3
+  Using cached python_dateutil-2.8.1-py2.py3-none-any.whl (227 kB)
+Collecting boto3
+  Using cached boto3-1.17.58-py2.py3-none-any.whl (131 kB)
+Collecting rdflib
+  Using cached rdflib-5.0.0-py3-none-any.whl (231 kB)
+Collecting botocore<1.21.0,>=1.20.58
+  Using cached botocore-1.20.58-py2.py3-none-any.whl (7.4 MB)
+Collecting jmespath<1.0.0,>=0.7.1
+  Using cached jmespath-0.10.0-py2.py3-none-any.whl (24 kB)
+Collecting s3transfer<0.5.0,>=0.4.0
+  Using cached s3transfer-0.4.2-py2.py3-none-any.whl (79 kB)
+Requirement already satisfied: urllib3<1.27,>=1.25.4 in ./.conda/envs/DeepDockingRemote/lib/python3.6/site-packages (from botocore<1.21.0,>=1.20.58->boto3->protmapper->pyobo>=0.4.0->pybel) (1.26.4)
+Collecting isodate
+  Using cached isodate-0.6.0-py2.py3-none-any.whl (45 kB)
+Requirement already satisfied: idna<3,>=2.5 in ./.conda/envs/DeepDockingRemote/lib/python3.6/site-packages (from requests->pybel) (2.10)
+Requirement already satisfied: certifi>=2017.4.17 in ./.conda/envs/DeepDockingRemote/lib/python3.6/site-packages (from requests->pybel) (2020.12.5)
+Requirement already satisfied: chardet<5,>=3.0.2 in ./.conda/envs/DeepDockingRemote/lib/python3.6/site-packages (from requests->pybel) (4.0.0)
+Collecting greenlet!=0.4.17
+  Using cached greenlet-1.0.0-cp36-cp36m-manylinux2010_x86_64.whl (156 kB)
+Installing collected packages: python-dateutil, jmespath, soupsieve, pytz, mypy-extensions, marshmallow, click, botocore, watchdog, typing-inspect, tqdm, tabulate, stringcase, s3transfer, requests-ftp, pyyaml, pystow, portalocker, pathtools, pandas, more-itertools, more-click, marshmallow-enum, isodate, decorator, dataclasses, beautifulsoup4, rdflib, networkx, lxml, dataclasses-json, click-default-group, cachier, boto3, bioregistry, zenodo-client, requests-file, pyrsistent, protmapper, obonet, multisplitby, humanize, greenlet, drugbank-downloader, bioversions, attrs, sqlalchemy, ratelimit, pyobo, pickle5, jsonschema, click-plugins, bel-resources, pybel
+Successfully installed attrs-20.3.0 beautifulsoup4-4.9.3 bel-resources-0.0.3 bioregistry-0.1.3 bioversions-0.1.2 boto3-1.17.58 botocore-1.20.58 cachier-1.5.0 click-7.1.2 click-default-group-1.2.2 click-plugins-1.1.1 dataclasses-0.8 dataclasses-json-0.5.3 decorator-4.4.2 drugbank-downloader-0.1.0 greenlet-1.0.0 humanize-3.4.1 isodate-0.6.0 jmespath-0.10.0 jsonschema-3.2.0 lxml-4.6.3 marshmallow-3.11.1 marshmallow-enum-1.5.1 more-click-0.0.3 more-itertools-8.7.0 multisplitby-0.0.1 mypy-extensions-0.4.3 networkx-2.5.1 obonet-0.3.0 pandas-1.1.5 pathtools-0.1.2 pickle5-0.0.11 portalocker-2.3.0 protmapper-0.0.21 pybel-0.15.3 pyobo-0.4.0 pyrsistent-0.17.3 pystow-0.1.4 python-dateutil-2.8.1 pytz-2021.1 pyyaml-5.4.1 ratelimit-2.2.1 rdflib-5.0.0 requests-file-1.5.1 requests-ftp-0.3.1 s3transfer-0.4.2 soupsieve-2.2.1 sqlalchemy-1.4.11 stringcase-1.2.0 tabulate-0.8.9 tqdm-4.60.0 typing-inspect-0.6.0 watchdog-2.0.3 zenodo-client-0.1.0
+Requirement already satisfied: numpy in ./.conda/envs/DeepDockingRemote/lib/python3.6/site-packages (1.19.5)
+Requirement already satisfied: pydot in ./.local/lib/python3.6/site-packages (1.4.1)
+Requirement already satisfied: pyparsing>=2.1.4 in ./.local/lib/python3.6/site-packages (from pydot) (2.4.7)
+Collecting package metadata: ...working... done
+Solving environment: ...working... done
+
+## Package Plan ##
+
+  environment location: /home/jyaacoub/.conda/envs/DeepDockingRemote
+
+  added / updated specs:
+    - openbabel
+
+
+The following NEW packages will be INSTALLED:
+
+  _openmp_mutex      conda-forge/linux-64::_openmp_mutex-4.5-1_gnu
+  cairo              conda-forge/linux-64::cairo-1.16.0-h9f066cc_1006
+  fontconfig         conda-forge/linux-64::fontconfig-2.13.1-hba837de_1005
+  freetype           conda-forge/linux-64::freetype-2.10.4-h0708190_1
+  gettext            conda-forge/linux-64::gettext-0.19.8.1-hf34092f_1004
+  icu                conda-forge/linux-64::icu-67.1-he1b5a44_0
+  libglib            conda-forge/linux-64::libglib-2.66.3-hbe7bbb4_0
+  libgomp            conda-forge/linux-64::libgomp-9.3.0-h2828fa1_19
+  libiconv           conda-forge/linux-64::libiconv-1.16-h516909a_0
+  libpng             conda-forge/linux-64::libpng-1.6.37-h21135ba_2
+  libuuid            conda-forge/linux-64::libuuid-2.32.1-h7f98852_1000
+  libxcb             conda-forge/linux-64::libxcb-1.13-h7f98852_1003
+  libxml2            conda-forge/linux-64::libxml2-2.9.10-h68273f3_2
+  openbabel          conda-forge/linux-64::openbabel-3.1.1-py36h5ad5bf2_1
+  pcre               conda-forge/linux-64::pcre-8.44-he1b5a44_0
+  pixman             conda-forge/linux-64::pixman-0.40.0-h36c2ea0_0
+  pthread-stubs      conda-forge/linux-64::pthread-stubs-0.4-h36c2ea0_1001
+  python_abi         conda-forge/linux-64::python_abi-3.6-1_cp36m
+  xorg-kbproto       conda-forge/linux-64::xorg-kbproto-1.0.7-h7f98852_1002
+  xorg-libice        conda-forge/linux-64::xorg-libice-1.0.10-h7f98852_0
+  xorg-libsm         conda-forge/linux-64::xorg-libsm-1.2.3-hd9c2040_1000
+  xorg-libx11        conda-forge/linux-64::xorg-libx11-1.7.0-h7f98852_0
+  xorg-libxau        conda-forge/linux-64::xorg-libxau-1.0.9-h7f98852_0
+  xorg-libxdmcp      conda-forge/linux-64::xorg-libxdmcp-1.1.3-h7f98852_0
+  xorg-libxext       conda-forge/linux-64::xorg-libxext-1.3.4-h7f98852_1
+  xorg-libxrender    conda-forge/linux-64::xorg-libxrender-0.9.10-h7f98852_1003
+  xorg-renderproto   conda-forge/linux-64::xorg-renderproto-0.11.1-h7f98852_1002
+  xorg-xextproto     conda-forge/linux-64::xorg-xextproto-7.3.0-h7f98852_1002
+  xorg-xproto        conda-forge/linux-64::xorg-xproto-7.0.31-h7f98852_1007
+
+The following packages will be UPDATED:
+
+  certifi            pkgs/main::certifi-2020.12.5-py36h06a~ --> conda-forge::certifi-2020.12.5-py36h5fab9bb_1
+  libgcc-ng           pkgs/main::libgcc-ng-9.1.0-hdf63c60_0 --> conda-forge::libgcc-ng-9.3.0-h2828fa1_19
+
+The following packages will be SUPERSEDED by a higher-priority channel:
+
+  _libgcc_mutex           pkgs/main::_libgcc_mutex-0.1-main --> conda-forge::_libgcc_mutex-0.1-conda_forge
+  ca-certificates    pkgs/main::ca-certificates-2021.4.13-~ --> conda-forge::ca-certificates-2020.12.5-ha878542_0
+  openssl              pkgs/main::openssl-1.1.1k-h27cfd23_0 --> conda-forge::openssl-1.1.1k-h7f98852_0
+
+
+Proceed ([y]/n)? 
+Preparing transaction: ...working... done
+Verifying transaction: ...working... done
+Executing transaction: ...working... done
+Requirement already satisfied: pandas in ./.conda/envs/DeepDockingRemote/lib/python3.6/site-packages (1.1.5)
+Requirement already satisfied: numpy>=1.15.4 in ./.conda/envs/DeepDockingRemote/lib/python3.6/site-packages (from pandas) (1.19.5)
+Requirement already satisfied: python-dateutil>=2.7.3 in ./.conda/envs/DeepDockingRemote/lib/python3.6/site-packages (from pandas) (2.8.1)
+Requirement already satisfied: pytz>=2017.2 in ./.conda/envs/DeepDockingRemote/lib/python3.6/site-packages (from pandas) (2021.1)
+Requirement already satisfied: six>=1.5 in ./.conda/envs/DeepDockingRemote/lib/python3.6/site-packages (from python-dateutil>=2.7.3->pandas) (1.15.0)
+Collecting package metadata: ...working... done
+Solving environment: ...working... done
+
+## Package Plan ##
+
+  environment location: /home/jyaacoub/.conda/envs/DeepDockingRemote
+
+  added / updated specs:
+    - rdkit
+
+
+The following NEW packages will be INSTALLED:
+
+  boost              conda-forge/linux-64::boost-1.74.0-py36h355b2fd_3
+  boost-cpp          conda-forge/linux-64::boost-cpp-1.74.0-h9359b55_0
+  bzip2              conda-forge/linux-64::bzip2-1.0.8-h7f98852_4
+  cycler             conda-forge/noarch::cycler-0.10.0-py_2
+  greenlet           conda-forge/linux-64::greenlet-1.0.0-py36hc4f0c31_0
+  importlib-metadata conda-forge/linux-64::importlib-metadata-4.0.1-py36h5fab9bb_0
+  jpeg               conda-forge/linux-64::jpeg-9d-h36c2ea0_0
+  kiwisolver         conda-forge/linux-64::kiwisolver-1.3.1-py36h605e78d_1
+  lcms2              conda-forge/linux-64::lcms2-2.12-hddcbb42_0
+  libblas            conda-forge/linux-64::libblas-3.9.0-8_openblas
+  libcblas           conda-forge/linux-64::libcblas-3.9.0-8_openblas
+  libgfortran-ng     conda-forge/linux-64::libgfortran-ng-9.3.0-hff62375_19
+  libgfortran5       conda-forge/linux-64::libgfortran5-9.3.0-hff62375_19
+  liblapack          conda-forge/linux-64::liblapack-3.9.0-8_openblas
+  libopenblas        conda-forge/linux-64::libopenblas-0.3.12-pthreads_h4812303_1
+  libtiff            conda-forge/linux-64::libtiff-4.2.0-hdc55705_1
+  libwebp-base       conda-forge/linux-64::libwebp-base-1.2.0-h7f98852_2
+  lz4-c              conda-forge/linux-64::lz4-c-1.9.3-h9c3ff4c_0
+  matplotlib-base    conda-forge/linux-64::matplotlib-base-3.3.4-py36hd391965_0
+  numpy              conda-forge/linux-64::numpy-1.19.5-py36h2aa4a07_1
+  olefile            conda-forge/noarch::olefile-0.46-pyh9f0ad1d_1
+  openjpeg           conda-forge/linux-64::openjpeg-2.4.0-hf7af979_0
+  pandas             conda-forge/linux-64::pandas-1.1.5-py36h284efc9_0
+  pillow             conda-forge/linux-64::pillow-8.1.2-py36ha6010c0_1
+  pycairo            conda-forge/linux-64::pycairo-1.20.0-py36h726f1de_1
+  pyparsing          conda-forge/noarch::pyparsing-2.4.7-pyh9f0ad1d_0
+  python-dateutil    conda-forge/noarch::python-dateutil-2.8.1-py_0
+  pytz               conda-forge/noarch::pytz-2021.1-pyhd8ed1ab_0
+  rdkit              conda-forge/linux-64::rdkit-2021.03.1-py36h59cdaa9_0
+  reportlab          conda-forge/linux-64::reportlab-3.5.67-py36h3e18861_0
+  six                conda-forge/noarch::six-1.15.0-pyh9f0ad1d_0
+  sqlalchemy         conda-forge/linux-64::sqlalchemy-1.4.11-py36h8f6f2f9_0
+  tornado            conda-forge/linux-64::tornado-6.1-py36h8f6f2f9_1
+  typing_extensions  conda-forge/noarch::typing_extensions-3.7.4.3-py_0
+  zipp               conda-forge/noarch::zipp-3.4.1-pyhd8ed1ab_0
+  zstd               conda-forge/linux-64::zstd-1.4.9-ha95c52a_0
+
+The following packages will be UPDATED:
+
+  libstdcxx-ng       pkgs/main::libstdcxx-ng-9.1.0-hdf63c6~ --> conda-forge::libstdcxx-ng-9.3.0-h6de172a_19
+
+
+Proceed ([y]/n)? 
+Preparing transaction: ...working... done
+Verifying transaction: ...working... done
+Executing transaction: ...working... done
+Collecting scikit-learn
+  Using cached scikit_learn-0.24.1-cp36-cp36m-manylinux2010_x86_64.whl (22.2 MB)
+Collecting scipy>=0.19.1
+  Using cached scipy-1.5.4-cp36-cp36m-manylinux1_x86_64.whl (25.9 MB)
+Collecting joblib>=0.11
+  Using cached joblib-1.0.1-py3-none-any.whl (303 kB)
+Requirement already satisfied: numpy>=1.13.3 in ./.conda/envs/DeepDockingRemote/lib/python3.6/site-packages (from scikit-learn) (1.19.5)
+Collecting threadpoolctl>=2.0.0
+  Using cached threadpoolctl-2.1.0-py3-none-any.whl (12 kB)
+Installing collected packages: threadpoolctl, scipy, joblib, scikit-learn
+Successfully installed joblib-1.0.1 scikit-learn-0.24.1 scipy-1.5.4 threadpoolctl-2.1.0
+Collecting IPython
+  Using cached ipython-7.16.1-py3-none-any.whl (785 kB)
+Collecting backcall
+  Using cached backcall-0.2.0-py2.py3-none-any.whl (11 kB)
+Collecting pygments
+  Using cached Pygments-2.8.1-py3-none-any.whl (983 kB)
+Collecting jedi>=0.10
+  Using cached jedi-0.18.0-py2.py3-none-any.whl (1.4 MB)
+Collecting pickleshare
+  Using cached pickleshare-0.7.5-py2.py3-none-any.whl (6.9 kB)
+Collecting traitlets>=4.2
+  Using cached traitlets-4.3.3-py2.py3-none-any.whl (75 kB)
+Requirement already satisfied: decorator in ./.conda/envs/DeepDockingRemote/lib/python3.6/site-packages (from IPython) (4.4.2)
+Requirement already satisfied: setuptools>=18.5 in ./.conda/envs/DeepDockingRemote/lib/python3.6/site-packages (from IPython) (52.0.0.post20210125)
+Collecting pexpect
+  Using cached pexpect-4.8.0-py2.py3-none-any.whl (59 kB)
+Collecting prompt-toolkit!=3.0.0,!=3.0.1,<3.1.0,>=2.0.0
+  Using cached prompt_toolkit-3.0.18-py3-none-any.whl (367 kB)
+Collecting parso<0.9.0,>=0.8.0
+  Using cached parso-0.8.2-py2.py3-none-any.whl (94 kB)
+Collecting wcwidth
+  Using cached wcwidth-0.2.5-py2.py3-none-any.whl (30 kB)
+Collecting ipython-genutils
+  Using cached ipython_genutils-0.2.0-py2.py3-none-any.whl (26 kB)
+Requirement already satisfied: six in ./.conda/envs/DeepDockingRemote/lib/python3.6/site-packages (from traitlets>=4.2->IPython) (1.15.0)
+Collecting ptyprocess>=0.5
+  Using cached ptyprocess-0.7.0-py2.py3-none-any.whl (13 kB)
+Installing collected packages: wcwidth, ptyprocess, parso, ipython-genutils, traitlets, pygments, prompt-toolkit, pickleshare, pexpect, jedi, backcall, IPython
+Successfully installed IPython-7.16.1 backcall-0.2.0 ipython-genutils-0.2.0 jedi-0.18.0 parso-0.8.2 pexpect-4.8.0 pickleshare-0.7.5 prompt-toolkit-3.0.18 ptyprocess-0.7.0 pygments-2.8.1 traitlets-4.3.3 wcwidth-0.2.5
+Collecting package metadata: ...working... done
+Solving environment: ...working... failed
