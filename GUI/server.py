@@ -337,15 +337,11 @@ def newProject():
                                             "n_hyperparameters": arguments['n_hyperparameters'], 
                                             "n_molecules": arguments['n_molecules'], 
                                             "glide_input": "NA"})
-    
-    # Waiting for it to be created:
-    while BACKEND.status() == "fetching":
-        time.sleep(1)
-        
+    BACKEND.start()
+
     # Loading that project:
     project_name = arguments['project_name']
     BACKEND.load_project(project_name)
-    BACKEND.start()
     
     # Waiting for it to load
     while BACKEND.status() == "fetching":
