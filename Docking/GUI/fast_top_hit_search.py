@@ -27,7 +27,7 @@ def find_top_n_predicted_molecules(file_path):
     return os.path.basename(file_path), top_n
 
 
-def find_matching_smiles(smile_database_path, file_path, search_dict):
+def find_matching_smiles(smile_database_path, file_path, search_dict, itr):
     # Grab the targets we are looking for
     targets = search_dict[file_path]['id'].tolist()
     print("Debug: This process is searching for", targets, "in file", file_path)
@@ -37,7 +37,7 @@ def find_matching_smiles(smile_database_path, file_path, search_dict):
     df = pd.read_csv(smile_file, delimiter=" ", index_col=1)
 
     # Loop through the targets and check if it is found in the file
-    with open("top_hits.csv", "a") as top_hits:
+    with open(itr + "/top_hits.csv", "a") as top_hits:
         for target in targets:
             if target in df.index:
                 print("Found target:", target)
@@ -49,21 +49,24 @@ def find_matching_smiles(smile_database_path, file_path, search_dict):
 if __name__ == '__main__':
     import argparse
     args = argparse.ArgumentParser()
-    args.add_argument("-sdb", "--smile_database", required=True)
-    args.add_argument("-pdb", "--predicted_database", required=True)
+    args.add_argument("-sdb", "--smile_database", required=True, type=str)
+    args.add_argument("-pdb", "--predicted_database", required=True, type=str)
     args.add_argument("-tp", "--total_processors", required=True, type=int)
     args.add_argument("-n", required=True, type=int)
     info = args.parse_args()
-
+    
     # Get the search size for each process
     prediction_files = [os.path.join(info.predicted_database, f) for f in os.listdir(info.predicted_database) if 'smile' in f]
     num_prediction_files = len(prediction_files)
     search_size = round(info.n/num_prediction_files)
     num_processes = min([info.total_processors, num_prediction_files])
+    
+    # Get the file path
+    itr_path = str(info.predicted_database).replace("/morgan_1024_predictions", "")
 
     # Make sure we have the prediction files
     assert os.path.exists(info.predicted_database), print("Phase 5 Incomplete...")
-    with open("top_hits.csv", "w") as init_top_hits:
+    with open(itr_path + "/top_hits.csv", "w") as init_top_hits:
         init_top_hits.write("smile,id\n")
 
     print("Starting search...")
@@ -92,7 +95,7 @@ if __name__ == '__main__':
     # Generate the args for the multiprocessing
     mp_args = []
     for key in search.keys():
-        mp_args.append((info.smile_database, key, search))
+        mp_args.append((info.smile_database, key, search, itr_path))
 
     # Start searching for the top hits from the smile database
     with closing(Pool(num_processes)) as pool:

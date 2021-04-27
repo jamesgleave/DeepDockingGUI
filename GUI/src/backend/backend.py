@@ -358,8 +358,12 @@ class Backend:
         return self.ssh.get_image(file_name), hyperparameters
 
     def get_top_hits(self):
+        # Get the full path to the project:
+        itr = f"/{self.loaded_project}/iteration_{self.project_data['specifications']['iteration']}"
+        fp = self.user_data['project_path'] + itr
+
         # Reads the top_hits.csv file generated at the end of phase 5
-        lines = read_top_hits(self.ssh)
+        lines = read_top_hits(self.ssh, fp)
         smiles = []
 
         # Loop through the smiles
