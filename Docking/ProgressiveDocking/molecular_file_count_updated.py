@@ -71,13 +71,14 @@ if __name__=='__main__':
     write_mol_count_list(data_directory+'/Mol_ct_file.csv',rt)
     mol_ct = pd.read_csv(data_directory+'/Mol_ct_file.csv',header=None)
     mol_ct.columns = ['Number_of_Molecules','file_name']
+
     Total_sampling = tot_sampling
     Total_mols_available = np.sum(mol_ct.Number_of_Molecules)
+    
     mol_ct['Sample_for_million'] = [int(Total_sampling/Total_mols_available*elem) for elem in mol_ct.Number_of_Molecules]
     mol_ct.to_csv(data_directory+'/Mol_ct_file_updated.csv',sep=',',index=False)
-    
+
+    # Adjusting permisions so that it is accessible by all
     import os, stat
     os.chmod(data_directory+'/Mol_ct_file_updated.csv', stat.S_IRWXO)
-
     print("Done - Time Taken", time.time()-t)
-
