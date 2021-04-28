@@ -78,7 +78,8 @@ if __name__=='__main__':
     mol_ct['Sample_for_million'] = [int(Total_sampling/Total_mols_available*elem) for elem in mol_ct.Number_of_Molecules]
     mol_ct.to_csv(data_directory+'/Mol_ct_file_updated.csv',sep=',',index=False)
 
-    # Adjusting permisions so that it is accessible by all
+    # Adjusting permisions so that it is accessible by all users on the cluster 
+    # Importat for if there are multiple users running a DD project
     import os, stat
-    os.chmod(data_directory+'/Mol_ct_file_updated.csv', stat.S_IRWXO)
+    os.chmod(data_directory+'/Mol_ct_file_updated.csv', stat.S_IRWXO + stat.S_IRWXG + stat.S_IRWXU)
     print("Done - Time Taken", time.time()-t)
