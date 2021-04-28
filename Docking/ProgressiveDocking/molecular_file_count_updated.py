@@ -80,6 +80,7 @@ if __name__=='__main__':
 
     # Adjusting permisions so that it is accessible by all users on the cluster 
     # Importat for if there are multiple users running a DD project
+    # TODO: might have to give each project its own unique updated.csv file to avoid conflicts
     import os, stat
     os.chmod(data_directory+'/Mol_ct_file_updated.csv', stat.S_IRWXO + stat.S_IRWXG + stat.S_IRWXU)
     print("Done - Time Taken", time.time()-t)
