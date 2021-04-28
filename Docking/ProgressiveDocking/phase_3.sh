@@ -29,7 +29,7 @@ echo Scripts: $scripts
 
 # This should activate the conda environment
 source ~/.bashrc
-source $local_path/activation_script.sh
+source $scripts/activation_script.sh
 
 #path_to_auto_dock_gpu=/groups/cherkasvgrp/autodock/scottlegrand/AutoDock-GPU.relicensing/bin
 python jobid_writer.py -file_path $project_path -n_it $iteration -jid $SLURM_JOB_NAME -jn $SLURM_JOB_NAME.sh --save_path $project_path
