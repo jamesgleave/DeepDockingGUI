@@ -1,5 +1,4 @@
 #!/bin/bash
-#SBATCH --partition=normal
 #SBATCH -n 1
 #SBATCH --job-name=smile_searching
 #SBATCH --cpus-per-task=25

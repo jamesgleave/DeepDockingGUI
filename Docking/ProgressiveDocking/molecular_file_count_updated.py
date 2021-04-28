@@ -55,7 +55,7 @@ def molecule_count(file_name):
     return temp, file_name
 
 
-if __name__=='__main__':
+if __name__=='__main__': #TODO: Check if file is created so we dont have to go through the trouble of counting 
     files = []
     for f in glob.glob(data_directory+'/*.txt'):
         files.append(f)
@@ -84,7 +84,7 @@ if __name__=='__main__':
     mol_ct.to_csv(data_directory+'/Mol_ct_file_updated.csv',sep=',',index=False)
 
     # Adjusting permisions so that it is accessible by all users on the cluster 
-    # Importat for if there are multiple users running a DD project
+    # Important for if there are multiple users running a DD project
     # TODO: might have to give each project its own unique updated.csv file to avoid conflicts
     # TODO: Maybe have Mol_ct_file_update stored in the project directory!
     import os, stat

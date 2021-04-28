@@ -219,11 +219,10 @@ for i in range(len(all_hyperparas)):
         ref.write('#SBATCH --mem=0               # memory per node\n')
         ref.write('#SBATCH --time='+time_model+'            # time (DD-HH:MM)\n')
 
-        # TODO Implement the extra headers/GPU partition!!!!
-        # Reads the blueprint file to add the custom headers and partition
+        # Reads the custom header file to add the custom headers and partition
         try:
-            with open("custom_slurm_blueprint.txt", "r") as custom_slurm_blueprint:
-                for line in custom_slurm_blueprint.readlines():
+            with open("custom_slurm_header.txt", "r") as custom_slurm_header:
+                for line in custom_slurm_header.readlines():
                     ref.write(line)
         except OSError:
             pass

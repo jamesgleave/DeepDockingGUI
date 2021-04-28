@@ -29,13 +29,12 @@ def change_slurm(path, n_cpu, partition, specify=None, custom_headers=None):
         using_custom_headers = False
 
     cpu_change_exclusion = ["phase_2.sh", "phase_3.sh", "phase_4.sh", "phase_5.sh", "split_chunks.sh"]
-    partition_include = ["phase_4.sh", "autodock_gpu_ad.sh"]
     # Loop through the bash scripts and change them
     for file in bash_scripts:
         lines = open(os.path.join(path, file), "r").readlines()
         contains_custom_headers = False
         for line_number, line in enumerate(lines):
-            # Check to see if the file we are looking at should be changed...
+            # Check to see if the file we are looking at should change its cpu per task
             if file not in cpu_change_exclusion:
                 # Change the number of cpus
                 if "#SBATCH --cpus-per-task=" in line and "*custom-header*" not in line:
@@ -43,12 +42,14 @@ def change_slurm(path, n_cpu, partition, specify=None, custom_headers=None):
                     new_line = line.split("=")[0] + "=" + str(n_cpu) + "\n"
                     lines[line_number] = new_line
 
-            # check to see if excluded
-            if file in partition_include:
-                if "#SBATCH --partition=" in line and "*custom-header*" not in line:
-                    print(file, "has had its partition changed to", partition)
+            # Changing partition as well
+            if "#SBATCH --partition=" in line and "*custom-header*" not in line:
+                print(file, "has had its partition changed to", partition)
+                if partition == "": # if set to default we dont want to include partition
+                    new_line = ""
+                else:
                     new_line = line.split("=")[0] + "=" + str(partition) + "\n"
-                    lines[line_number] = new_line
+                lines[line_number] = new_line
 
             # Check to see if our list contains custom headers
             if "*custom-header*" in line:
@@ -65,7 +66,6 @@ def change_slurm(path, n_cpu, partition, specify=None, custom_headers=None):
                 if header != "":
                     # Create the new line
                     new_line = header + " # *custom-header*\n"
-
                     # Insert the new line on the second line of the script since the first must be "#!/bin/bash"
                     lines.insert(1, new_line)
 
@@ -74,16 +74,21 @@ def change_slurm(path, n_cpu, partition, specify=None, custom_headers=None):
             for line in lines:
                 updated_file.write(line)
 
-    # TODO: At the end of this function, we should create a file that contains the custom headers/gpu partition for
-    #  simple_job_models.py and simple_job_predictions.py to read so their slurm files are well formatted.
-    with open("custom_slurm_blueprint.txt", "w") as custom_slurm_blueprint:
-        gpu_partition = "#SBATCH --partition=" + partition + "\n"
-        custom_slurm_blueprint.write(gpu_partition)
+    # At the end of this function, we create a file that contains the custom headers/gpu partition for
+    # simple_job_models.py and simple_job_predictions.py to read so their slurm files are well formatted.
+    with open("custom_slurm_header.txt", "w") as custom_slurm_header:
+        if partition != "": # if not default
+            custom_slurm_header.write("#SBATCH --partition=" + partition + "\n")
         if using_custom_headers:
             for header in custom_headers:
                 if header != "":
                     new_line = header + " # *custom-header*\n"
-                    custom_slurm_blueprint.write(new_line)
+                    custom_slurm_header.write(new_line)
+
+
+def rewrite_headers():
+# This function is designed to adjust header parameters in all .sh files
+    pass
 
 
 if __name__ == "__main__":
