@@ -65,10 +65,15 @@ if __name__=='__main__':
     print("Reading Files...")
     with closing(Pool(np.min([tot_process,len(files)]))) as pool:
         rt = pool.map(molecule_count,files)
-    print("Done Reading Finals - Time Taken", time.time()-t)
+    print("Done Reading Files - Time Taken", time.time()-t)
 
     print("Saving File Count...")
-    write_mol_count_list(data_directory+'/Mol_ct_file.csv',rt)
+    # TODO: Is Mol_ct_file.csv specific to a project? or just a description of the database
+    try:
+        write_mol_count_list(data_directory+'/Mol_ct_file.csv',rt)
+    except PermissionError:
+        print("Mol_ct_file.csv already created by other user")
+    
     mol_ct = pd.read_csv(data_directory+'/Mol_ct_file.csv',header=None)
     mol_ct.columns = ['Number_of_Molecules','file_name']
 
@@ -81,6 +86,7 @@ if __name__=='__main__':
     # Adjusting permisions so that it is accessible by all users on the cluster 
     # Importat for if there are multiple users running a DD project
     # TODO: might have to give each project its own unique updated.csv file to avoid conflicts
+    # TODO: Maybe have Mol_ct_file_update stored in the project directory!
     import os, stat
     os.chmod(data_directory+'/Mol_ct_file_updated.csv', stat.S_IRWXO + stat.S_IRWXG + stat.S_IRWXU)
     print("Done - Time Taken", time.time()-t)
