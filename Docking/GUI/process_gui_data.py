@@ -147,13 +147,14 @@ def get_phase_1_progress(path, iteration):
         path_to_morgan = logs.readlines()[3].strip("\n")
         sample = os.listdir(path_to_morgan)
 
-        # Remove non useful files
+        # Remove non useful files from the list 
+        # TODO: this will no longer be needed since they are now stored at the project path
         try:
             sample.remove("Mol_ct_file.csv")
         except ValueError:
             pass
 
-        # Remove non useful files
+        # Remove non useful files from the list
         try:
             sample.remove("Mol_ct_file_updated.csv")
         except ValueError:

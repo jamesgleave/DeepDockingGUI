@@ -17,7 +17,6 @@ def print(*args, **kwargs):
 START_TIME = time.time()
 parser = argparse.ArgumentParser()
 parser.add_argument('-n_it', '--iteration_no', required=True)
-parser.add_argument('-mdd', '--morgan_directory', required=True)
 parser.add_argument('-time', '--time', required=True)
 parser.add_argument('-file_path', '--file_path', required=True)
 parser.add_argument('-nhp', '--number_of_hyp', required=True)
@@ -41,10 +40,8 @@ funct_flags.add_argument('-polydec', '--polynomial_dec', required=False,
 
 io_args, extra_args = parser.parse_known_args()
 n_it = int(io_args.iteration_no)
-mdd = io_args.morgan_directory
 time_model = io_args.time
 file_path_project = io_args.file_path  # Now == file_path/protein
-file_path = '/groups/cherkasvgrp/share/progressive_docking/nCoV/mpro_40B/biggest_docking_job_ever'
 nhp = int(io_args.number_of_hyp)
 isl = io_args.is_last
 titr = int(io_args.total_iterations)
@@ -57,11 +54,8 @@ percent_last_mols = float(io_args.percent_last_mols)
 exponential_dec = int(io_args.exponential_dec)
 polynomial_dec = int(io_args.polynomial_dec)
 
-# sums the first column and divides it by 1 million
-# is this the average score for the molecules? Why divide by 1000000?
-# replace with => pd.to_numeric(df[0]).sum()  # returns a single number representing the sum
-t_mol = pd.read_csv(mdd + '/Mol_ct_file.csv', header=None)[[0]].sum()[
-            0] / 1000000  # num of compounds in each file is mol_ct_file
+# sums the first column and divides it by 1 million to get total molecules in database
+t_mol = pd.read_csv(file_path_project + '/Mol_ct_file.csv', header=None)[[0]].sum()[0] / 1000000 
 
 try:
     os.mkdir(file_path_project + '/iteration_' + str(n_it) + '/simple_job')
@@ -73,7 +67,7 @@ for f in glob.glob(file_path_project + '/iteration_' + str(n_it) + '/simple_job/
     os.remove(f)
 
 scores_val = []
-with open(file_path + '/iteration_' + str(1) + '/validation_labels.txt', 'r') as ref:
+with open(file_path_project + '/iteration_' + str(1) + '/validation_labels.txt', 'r') as ref:
     ref.readline()  # first line is ignored
     for line in ref:
         scores_val.append(float(line.rstrip().split(',')[0]))

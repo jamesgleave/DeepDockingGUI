@@ -38,9 +38,12 @@ tr_sz = int(io_args.train_size)
 vl_sz = int(io_args.val_size)
 rt_sz = tr_sz/vl_sz
 
+PROJECT_PATH = file_path + '/' + protein 
+
 print("Parsed Args:")
 print(" - Iteration:", n_it)
 print(" - Data Directory:", data_directory)
+print(" - Project Directory:", PROJECT_PATH)
 print(" - Training Size:", tr_sz)
 print(" - Validation Size:", vl_sz)
 
@@ -48,7 +51,7 @@ print(" - Validation Size:", vl_sz)
 def train_valid_test(file_name):
     sampling_start_time = time.time()
     f_name = file_name.split('/')[-1]
-    mol_ct = pd.read_csv(data_directory+"/Mol_ct_file_updated.csv", index_col=1)
+    mol_ct = pd.read_csv(PROJECT_PATH+"/Mol_ct_file_updated.csv", index_col=1)
     if n_it == 1:
         to_sample = int(mol_ct.loc[f_name].Sample_for_million/(int(rt_sz+2)))
     else:
@@ -73,9 +76,9 @@ def train_valid_test(file_name):
     valid_ind_dict = {}
     test_ind_dict = {}
 
-    train_set = open(file_path + '/' + protein + "/iteration_" + str(n_it) + "/train_set.txt", 'a')
-    test_set = open(file_path + '/' + protein + "/iteration_" + str(n_it) + "/test_set.txt", 'a')
-    valid_set = open(file_path + '/' + protein + "/iteration_" + str(n_it) + "/valid_set.txt", 'a')
+    train_set = open(PROJECT_PATH + "/iteration_" + str(n_it) + "/train_set.txt", 'a')
+    test_set = open(PROJECT_PATH + "/iteration_" + str(n_it) + "/test_set.txt", 'a')
+    valid_set = open(PROJECT_PATH + "/iteration_" + str(n_it) + "/valid_set.txt", 'a')
     # smiles = open(file_path + '/' + protein + "/iteration_" + str(n_it) + "/smile_locations.csv", 'a')
 
     for i in train_ind:
@@ -124,7 +127,7 @@ def train_valid_test(file_name):
 
 if __name__ == '__main__':
     try:
-        os.mkdir(file_path+'/'+protein+"/iteration_"+str(n_it))
+        os.mkdir(PROJECT_PATH+"/iteration_"+str(n_it))
     except OSError:
         pass
 

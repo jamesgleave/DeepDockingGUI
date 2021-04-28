@@ -36,7 +36,7 @@ fi
 
 
 echo "Creating simple jobs"
-python progressive_docking_model_selection_sjm.py -n_it $1 -mdd $morgan_directory -time 00-04:00 -file_path $file_path/$protein -nhp $nhp -titr $6 -n_mol $num_molec  -model_dir $7  #TODO: add -t_n_mol here
+python progressive_docking_model_selection_sjm.py -n_it $1 -time 00-04:00 -file_path $file_path/$protein -nhp $nhp -titr $6 -n_mol $num_molec  -model_dir $7  #TODO: add -t_n_mol here
 
 cd $file_path/$protein/iteration_$1/simple_job
 

@@ -8,7 +8,6 @@ v1.0.1
 
 import os
 
-
 def change_slurm(path, n_cpu, partition, specify=None, custom_headers=None):
     # Find all of the bash scripts
     if specify is None:
@@ -106,5 +105,3 @@ if __name__ == "__main__":
         args.custom_headers = None
 
     change_slurm(path=args.path, n_cpu=args.n_cpu, partition=args.partition, custom_headers=args.custom_headers)
-
-

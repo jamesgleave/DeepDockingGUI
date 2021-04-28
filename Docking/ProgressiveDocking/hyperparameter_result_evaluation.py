@@ -22,8 +22,7 @@ def print(*args, **kwargs):
 
 parser = argparse.ArgumentParser()
 parser.add_argument('-n_it','--n_iteration',required=True)
-parser.add_argument('-d_path','--data_path',required=True)
-parser.add_argument('-mdd','--morgan_directory',required=True)
+parser.add_argument('-d_path','--data_path',required=True) # path to project
 
 # adding parameter for where to save all the data to:
 parser.add_argument('-s_path', '--save_path', required=False, default=None)
@@ -35,25 +34,23 @@ parser.add_argument('-smile', '--smiles', required=False, action='store_true') #
 
 io_args = parser.parse_args()
 n_iteration = int(io_args.n_iteration)
-mdd = io_args.morgan_directory
 num_molec = int(io_args.number_mol)
 
-DATA_PATH = io_args.data_path   # Now == file_path/protein
+PROJECT_PATH = io_args.data_path   # Now == file_path/protein
 SAVE_PATH = io_args.save_path
 # if no save path is provided we just save it in the same location as the data
-if SAVE_PATH is None: SAVE_PATH = DATA_PATH
+if SAVE_PATH is None: SAVE_PATH = PROJECT_PATH
 
 
 print("Done importing.")
 
 # Gets the total number of molecules (SEE: simple_job_models.py, line 32)
-total_mols = pd.read_csv(mdd+'/Mol_ct_file.csv',header=None)[[0]].sum()[0]/1000000
+total_mols = pd.read_csv(PROJECT_PATH+'/Mol_ct_file.csv',header=None)[[0]].sum()[0]/1000000
 
 # reading in the file created in progressive_docking.py (line 456)
 hyperparameters = pd.read_csv(SAVE_PATH+'/iteration_'+str(n_iteration)+'/hyperparameter_morgan_with_freq_v3.csv',header=None)
  
-# theses are also declared in progressive_docking.py
-### TODO: add these columns in progressive_docking.py as a header instead of declaring them here (Line 456)
+# theses are also declared in progressive_docking.py (LINE 456)
 hyperparameters.columns = ['Model_no','Over_sampling','Batch_size','Learning_rate','N_layers','N_units','dropout',
                           'weight','cutoff','ROC_AUC','Pr_0_9','tot_left_0_9_mil','auc_te','pr_te','re_te','tot_left_0_9_mil_te','tot_positives']
 
@@ -149,7 +146,7 @@ def get_zinc_and_labels(zinc_path, labels_path):
     return combined_df.set_index('ZINC_ID')
 
 
-main_path = DATA_PATH+'/iteration_1'
+main_path = PROJECT_PATH+'/iteration_1'
 print('Geting zinc ids and labels')
 # Creating the test, and validation data from the first iteration:
 zinc_labels_valid = get_zinc_and_labels(main_path + '/morgan/valid_morgan_1024_updated.csv', main_path +'/validation_labels.txt')
