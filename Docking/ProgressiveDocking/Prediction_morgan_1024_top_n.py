@@ -27,9 +27,8 @@ except:
     pass
 
 all_files = []
-for f in glob.glob(file_path+'/'+protein+'/iteration_'+str(it)+'/morgan_1024_predictions/*.txt'):
+for f in glob.glob(file_path+'/'+protein+'/iteration_'+str(it)+'/morgan_1024_predictions/smile_all_*.txt'):
     all_files.append(f)
-all_files.remove(file_path+'/'+protein+'/iteration_'+str(it)+'/morgan_1024_predictions/passed_file_ct.txt')
 
 print(len(all_files))
 

@@ -59,8 +59,6 @@ def train_valid_test(file_name):
 
     total_len = int(mol_ct.loc[f_name].Number_of_Molecules)
     shuffle_array = np.linspace(0, total_len-1, total_len)
-    seed = np.random.randint(0, 2**32)
-    np.random.seed(seed=seed)
     np.random.shuffle(shuffle_array)
 
     if n_it == 1:
@@ -132,7 +130,8 @@ if __name__ == '__main__':
         pass
 
     f_names = []
-    for f in glob.glob(data_directory+'/*.txt'):
+    # Getting all the morgan_1024_predictions/smile_all_##.txt files
+    for f in glob.glob(data_directory+'/smile_all_*.txt'):
         f_names.append(f)
 
     # with open(file_path + '/' + protein + "/iteration_" + str(n_it) + "/smile_locations.csv", 'w') as smile_file:
