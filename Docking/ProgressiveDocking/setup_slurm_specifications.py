@@ -32,6 +32,7 @@ def change_slurm(path, n_cpu, partition, specify=None, custom_headers=None):
     for file in bash_scripts:
         lines = open(os.path.join(path, file), "r").readlines()
         contains_custom_headers = False
+        wrote_partition = False
         for line_number, line in enumerate(lines):
             # Check to see if the file we are looking at should change its cpu per task
             if file not in cpu_change_exclusion:
@@ -45,10 +46,10 @@ def change_slurm(path, n_cpu, partition, specify=None, custom_headers=None):
             if "#SBATCH --partition=" in line and "*custom-header*" not in line:
                 print(file, "has had its partition changed to", partition)
                 if partition == "": # if set to default we dont want to include partition
-                    new_line = ""
+                    lines.pop(line_number)
                 else:
-                    new_line = line.split("=")[0] + "=" + str(partition) + "\n"
-                lines[line_number] = new_line
+                    lines[line_number] = line.split("=")[0] + "=" + str(partition) + "\n"
+                wrote_partition = True
 
             # Check to see if our list contains custom headers
             if "*custom-header*" in line:
@@ -57,6 +58,10 @@ def change_slurm(path, n_cpu, partition, specify=None, custom_headers=None):
         # Remove all custom headers to avoid duplicates
         if contains_custom_headers:
             lines = [line for line in lines if "*custom-header*" not in line]
+
+        if not wrote_partition: # This will occur if it was previously set to default and now needs to be changed.
+            # Adding the partition to custom-headers so that it is added
+            custom_headers.append(line.split("=")[0] + "=" + str(partition) + "\n")
 
         # If we are using custom headers, include them in the bash script here...
         if using_custom_headers:

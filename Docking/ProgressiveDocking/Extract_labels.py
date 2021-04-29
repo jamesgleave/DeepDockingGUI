@@ -119,7 +119,7 @@ if __name__ == '__main__':
                 break
         if not found:
             foundAll = False
-            print('Not Found')
+            print('Labels not yet extracted -> Not Found')
             break
     if foundAll:
         print('Labels have already been extracted...')
