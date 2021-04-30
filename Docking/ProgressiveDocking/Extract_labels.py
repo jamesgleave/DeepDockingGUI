@@ -123,7 +123,7 @@ if __name__ == '__main__':
             break
     if foundAll:
         print('Labels have already been extracted...')
-        print('Remove "_labels.text" files in \"'+ iter_path +'\" to re-extract')
+        print('Remove "*_labels.text" files in \"'+ iter_path +'\" to re-extract')
         exit(0)
 
     # Checking to see if this is the final iteration to use the right folder
@@ -149,10 +149,11 @@ if __name__ == '__main__':
 
     if not is_final:
         # renaming from f1_f2_f3 to f3_labels.txt
-        try:
-            for f in glob.glob(path_labels):
-                print(f, iter_path+'/'+f.split('/')[-1].split('_')[2]+'_'+'labels.txt')
-                os.rename(f, iter_path+'/'+f.split('/')[-1].split('_')[2]+'_'+'labels.txt') ## why are we renaming this?
-        except IndexError:
-            print("Index error on renaming", f)
+        for f in glob.glob(path_labels):
+            try:
+                print(f, end=": ")
+                print(iter_path+'/'+f.split('/')[-1].split('_')[2]+'_'+'labels.txt')
+                os.rename(f, iter_path+'/'+f.split('/')[-1].split('_')[2]+'_'+'labels.txt')
+            except IndexError:
+                print("Index error on renaming", f) # Occurs if it is already correctly named. (deprecated use)
 
