@@ -1,4 +1,5 @@
 #!/bin/bash
+
 cd $1
 mkdir docked
 echo Transfering docked training
