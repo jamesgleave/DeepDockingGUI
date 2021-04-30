@@ -15,6 +15,8 @@ def change_slurm(path, n_cpu, partition, specify=None, custom_headers=None):
                         'phase_1.sh', 'phase_2.sh', 'phase_3.sh', 'phase_4.sh', 'phase_5.sh',  'autodock_gpu_ad.sh', 
                         'progressive_docking_sampling.sh', 'final_extraction.sh', 'split_chunks.sh', 
                         'phase_3_concluding_combination.sh', 'phase_a.sh']
+
+        bash_scripts = [path + f for f in bash_scripts] # appending path to DeepDocking dir.
         try:
             bash_scripts += ["GUI/" + f for f in os.listdir(path + "/GUI") if ".sh" in f]
         except FileNotFoundError:
@@ -63,7 +65,6 @@ def change_slurm(path, n_cpu, partition, specify=None, custom_headers=None):
             # This will occur if it was previously set to default and now needs to be changed.
             lines.insert(1, "#SBATCH --partition=" + str(partition) + "\n")
 
-        # If we are using custom headers, include them in the bash script here...
         # Add every custom header
         for header in custom_headers:
             if header != "":
