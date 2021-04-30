@@ -23,9 +23,8 @@ def change_slurm(path, n_cpu, partition, specify=None, custom_headers=None):
     if custom_headers is not None:
         # the custom headers should come in the format h1,h2,...,hn
         custom_headers = custom_headers.strip("/n").split(",")
-        using_custom_headers = True
     else:
-        using_custom_headers = False
+        custom_headers = []
 
     cpu_change_exclusion = ["phase_2.sh", "phase_3.sh", "phase_4.sh", "phase_5.sh", "split_chunks.sh"]
     # Loop through the bash scripts and change them
@@ -52,26 +51,23 @@ def change_slurm(path, n_cpu, partition, specify=None, custom_headers=None):
                 wrote_partition = True
 
             # Check to see if our list contains custom headers
+            # and remove to avoid duplicates
             if "*custom-header*" in line:
+                lines.pop(line_number)
                 contains_custom_headers = True
-
-        # Remove all custom headers to avoid duplicates
-        if contains_custom_headers:
-            lines = [line for line in lines if "*custom-header*" not in line]
 
         if not wrote_partition: # This will occur if it was previously set to default and now needs to be changed.
             # Adding the partition to custom-headers so that it is added
             custom_headers.append(line.split("=")[0] + "=" + str(partition) + "\n")
 
         # If we are using custom headers, include them in the bash script here...
-        if using_custom_headers:
-            # Add every custom header
-            for header in custom_headers:
-                if header != "":
-                    # Create the new line
-                    new_line = header + " # *custom-header*\n"
-                    # Insert the new line on the second line of the script since the first must be "#!/bin/bash"
-                    lines.insert(1, new_line)
+        # Add every custom header
+        for header in custom_headers:
+            if header != "":
+                # Create the new line
+                new_line = header + " # *custom-header*\n"
+                # Insert the new line on the second line of the script since the first must be "#!/bin/bash"
+                lines.insert(1, new_line)
 
         # Save the new file
         with open(os.path.join(path, file), "w") as updated_file:
@@ -83,11 +79,10 @@ def change_slurm(path, n_cpu, partition, specify=None, custom_headers=None):
     with open("custom_slurm_header.txt", "w") as custom_slurm_header:
         if partition != "": # if not default
             custom_slurm_header.write("#SBATCH --partition=" + partition + "\n")
-        if using_custom_headers:
-            for header in custom_headers:
-                if header != "":
-                    new_line = header + " # *custom-header*\n"
-                    custom_slurm_header.write(new_line)
+        for header in custom_headers:
+            if header != "":
+                new_line = header + " # *custom-header*\n"
+                custom_slurm_header.write(new_line)
 
 
 def rewrite_headers():
