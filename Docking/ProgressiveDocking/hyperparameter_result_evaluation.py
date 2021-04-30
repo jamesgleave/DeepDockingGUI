@@ -60,8 +60,6 @@ hyperparameters.tot_left_0_9_mil_te = hyperparameters.tot_left_0_9_mil_te/100000
 
 hyperparameters['re_vl/re_pr'] = 0.9/hyperparameters.re_te  # ratio of 90% recall and the recall of the test set
 
-print('hyp dataframe:', hyperparameters.head())
-
 df_grouped_cf = hyperparameters.groupby('cutoff')  # Groups them according to cutoff values for calculations
 
 cf_values = {}  # Cutoff values (thresholds for validation set virtual hits)
@@ -223,9 +221,7 @@ for i in range(len(model_to_use_with_cf)):
         # determining if the model prediction exceeds the threshold and adding the result (1 or 0)
         avg_pred += (prediction_test[i] >= tr[i]).reshape(-1,)
 
-    print('avg_pred:', avg_pred)
     avg_pred = avg_pred > (len(models)//2)  # if greater than 50% of the models agree there would be a hit then that is our consensus value
-    print('avg_pred:', avg_pred)
 
     fpr_te_avg, tpr_te_avg, thresh_te_avg = roc_curve(y_test_cf, avg_pred)
     pr_te_avg = precision_score(y_test_cf, avg_pred)
