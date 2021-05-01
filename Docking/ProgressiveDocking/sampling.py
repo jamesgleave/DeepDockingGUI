@@ -19,35 +19,6 @@ def print(*args, **kwargs):
     return __builtin__.print(*args, **kwargs)
 
 
-parser = argparse.ArgumentParser()
-parser.add_argument('-pt', '--protein_name',required=True)
-parser.add_argument('-fp', '--file_path',required=True)
-parser.add_argument('-it', '--n_iteration',required=True)
-parser.add_argument('-dd', '--data_directory',required=True)
-parser.add_argument('-t_pos', '--tot_process',required=True)
-parser.add_argument('-tr_sz', '--train_size',required=True)
-parser.add_argument('-vl_sz', '--val_size',required=True)
-io_args = parser.parse_args()
-
-protein = io_args.protein_name
-file_path = io_args.file_path
-n_it = int(io_args.n_iteration)
-data_directory = io_args.data_directory
-tot_process = int(io_args.tot_process)
-tr_sz = int(io_args.train_size)
-vl_sz = int(io_args.val_size)
-rt_sz = tr_sz/vl_sz
-
-PROJECT_PATH = file_path + '/' + protein 
-
-print("Parsed Args:")
-print(" - Iteration:", n_it)
-print(" - Data Directory:", data_directory)
-print(" - Project Directory:", PROJECT_PATH)
-print(" - Training Size:", tr_sz)
-print(" - Validation Size:", vl_sz)
-
-
 def train_valid_test(file_name):
     sampling_start_time = time.time()
     f_name = file_name.split('/')[-1]
@@ -124,6 +95,35 @@ def train_valid_test(file_name):
     print("Process finished sampling in " + str(time.time()-sampling_start_time))
 
 if __name__ == '__main__':
+    parser = argparse.ArgumentParser()
+    parser.add_argument('-pt', '--protein_name',required=True)
+    parser.add_argument('-fp', '--file_path',required=True)
+    parser.add_argument('-it', '--n_iteration',required=True)
+    parser.add_argument('-dd', '--data_directory',required=True)
+    parser.add_argument('-t_pos', '--tot_process',required=True)
+    parser.add_argument('-tr_sz', '--train_size',required=True)
+    parser.add_argument('-vl_sz', '--val_size',required=True)
+    io_args = parser.parse_args()
+
+    protein = io_args.protein_name
+    file_path = io_args.file_path
+    n_it = int(io_args.n_iteration)
+    data_directory = io_args.data_directory
+    tot_process = int(io_args.tot_process)
+    tr_sz = int(io_args.train_size)
+    vl_sz = int(io_args.val_size)
+    rt_sz = tr_sz/vl_sz
+
+    PROJECT_PATH = file_path + '/' + protein 
+
+    print("Parsed Args:")
+    print(" - Iteration:", n_it)
+    print(" - Data Directory:", data_directory)
+    print(" - Project Directory:", PROJECT_PATH)
+    print(" - Training Size:", tr_sz)
+    print(" - Validation Size:", vl_sz)
+    print(" - tot_process: ", tot_process)
+
     try:
         os.mkdir(PROJECT_PATH+"/iteration_"+str(n_it))
     except OSError:
@@ -134,8 +134,7 @@ if __name__ == '__main__':
     for f in glob.glob(data_directory+'/smile_all_*.txt'):
         f_names.append(f)
 
-    # with open(file_path + '/' + protein + "/iteration_" + str(n_it) + "/smile_locations.csv", 'w') as smile_file:
-    #     smile_file.write("set,file_number\n")
+    print("num_f_names: ", len(f_names))
 
     t = time.time()
     print("Starting Processes...")

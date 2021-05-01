@@ -155,5 +155,5 @@ if __name__ == '__main__':
                 print(iter_path+'/'+f.split('/')[-1].split('_')[2]+'_'+'labels.txt')
                 os.rename(f, iter_path+'/'+f.split('/')[-1].split('_')[2]+'_'+'labels.txt')
             except IndexError:
-                print("Index error on renaming", f) # Occurs if it is already correctly named. (deprecated use)
+                print("\nIndex error on renaming", f) # Occurs if it is already correctly named. (deprecated use)
 

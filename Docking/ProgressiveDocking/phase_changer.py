@@ -91,8 +91,10 @@ elif pf == 'phase_4.sh':
             jobids = []
             for f in glob.glob(itr_dir + '/simple_job/*.out'):
                 tmp = f.split(".")[-2]  # slurm-phase_4.786716.out -> ['slurm-phase_4', 786716, out] -> 786716
-                jobids.append(len(os.popen("squeue | grep " + tmp).read()) > 0) # empty -> job complete
+                jobids.append(len(os.popen("squeue | grep " + tmp).read()) == 0) # empty -> job complete
 
+            print("\t{}/{}".format(np.sum(np.array(jobids)), len(jobids)))
+            
             if np.sum(np.array(jobids)) == len(jobids): # if num jobs completed == num total jobs
                 with open(itr_dir + '/' + pf, 'w') as ref:
                     ref.write('finished\n')
@@ -110,7 +112,9 @@ elif pf == 'phase_5.sh':
             jobids = []
             for f in glob.glob(itr_dir + '/simple_job_predictions/*.out'):
                 tmp = f.split(".")[-2]  # slurm-phase_5.786716.out -> ['slurm-phase_4', 786716, out] -> 786716
-                jobids.append(len(os.popen("squeue | grep " + tmp).read()) > 0) # empty -> job complete
+                jobids.append(len(os.popen("squeue | grep " + tmp).read()) == 0) # empty -> job complete
+            
+            print("\t{}/{}".format(np.sum(np.array(jobids)), len(jobids)))
 
             if np.sum(np.array(jobids)) == len(jobids): # if num jobs completed == num total jobs
                 with open(itr_dir + '/' + pf, 'w') as ref:
