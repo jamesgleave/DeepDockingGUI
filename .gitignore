@@ -1,4 +1,4 @@
-/node_modules 
+GUI/node_modules
 /venv
 *.code-workspace
 *.pyc

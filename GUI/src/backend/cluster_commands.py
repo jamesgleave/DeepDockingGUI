@@ -156,14 +156,13 @@ def run_final_phase(project_name, specifications):
     return command
 
 
-def read_top_hits(ssh):
+def read_top_hits(ssh, itr_path=""):
     # open an ftp client to do work on the cluster
     ftp_client = ssh.ssh.open_sftp()
 
     # load up the data we have from installation
-    info = read_info()
     try:
-        return ftp_client.open(info['docking_path'] + "/GUI/top_hits.csv").readlines()
+        return ftp_client.open(itr_path + "/top_hits.csv").readlines()
     except FileNotFoundError:
         return []
 
@@ -196,7 +195,7 @@ def create_project(ssh,
         database = json.loads(db)
 
     # Fill in the partition as blank if it is just a default value
-    specifications['partition'] = "" if specifications["partition"] == "Default" else specifications["partition"]
+    specifications['partition'] = '""' if specifications["partition"] == "Default" else specifications["partition"]
     specifications['current_phase'] = 1
     project_location = database['project_path'] + "/" + project_name
     new_project = {"location": project_location, "specifications": specifications, "log_file": logfile_contents}

@@ -20,7 +20,10 @@ echo Project Path: $project_path
 echo Project Name: $(basename "$project_path")
 echo Iteration: $iteration
 
-#
+# This should activate the conda environment
+source ~/.bashrc
+source $script_path/activation_script.sh
+
 python $script_path/jobid_writer.py -file_path $project_path -n_it $iteration -jid $SLURM_JOB_NAME -jn $SLURM_JOB_NAME.sh
 
 # Move into the project

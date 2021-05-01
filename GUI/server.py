@@ -177,8 +177,13 @@ def getProgressData():
     x_values = [x for x in range(1, int(iterNum)+1)]
     for x in x_values:
         item = molec_remaining['iteration_'+str(x)]
-        modelPred.append(item['estimate'])
-        actual.append(item['true'])
+        # Making sure that we are not adding placeholder numbers(-1)
+        if item['estimate'] != -1 and item['true'] != -1:
+            modelPred.append(item['estimate'])
+            actual.append(item['true'])
+        else: # removing from list
+            x_values.remove(x)
+
         
     # print("molec remaining: ", DATA_HISTORY.molecules_remaining)
     data['molecRemainingData'] = {'modelPred': {'x': x_values, 'y': modelPred},
@@ -288,7 +293,6 @@ def getModelArch():
 @app.route('/loadProject', methods=['POST'])
 def loadProject():
     project_name = request.args['projectName']
-
     BACKEND.load_project(project_name)
     BACKEND.start()
 
@@ -297,11 +301,10 @@ def loadProject():
             BACKEND.reset()
             return {}, 404
         time.sleep(1)
-    
-    DATA_HISTORY = BACKEND.pull() # forces it to finish 
+    DATA_HISTORY = BACKEND.pull() # forces it to finish
     return {}, 200
 
-@app.route('/newProject', methods=['GET', 'POST'])
+@app.route('/newProject', methods=['POST'])
 def newProject():
     arguments = request.get_json()
 
@@ -333,26 +336,21 @@ def newProject():
                                             "docking_software": arguments['docking_software'], # this will always be autodock 
                                             "n_hyperparameters": arguments['n_hyperparameters'], 
                                             "n_molecules": arguments['n_molecules'], 
-                                            "glide_input": "NA"}) 
-    
-    # Waiting for it to be created:
-    while BACKEND.status() == "fetching":
-        time.sleep(1)
+                                            "glide_input": "NA"})
+    BACKEND.start()
 
     # Loading that project:
     project_name = arguments['project_name']
     BACKEND.load_project(project_name)
-    BACKEND.start()
-
+    
     # Waiting for it to load
     while BACKEND.status() == "fetching":
         if BACKEND.core.num_updates > 1 and BACKEND.core.model_data == {}:
             BACKEND.reset()
             return {}, 404
         time.sleep(1)
-    
-    DATA_HISTORY = BACKEND.pull() # forces it to finish 
-    BACKEND.start()
+
+    DATA_HISTORY = BACKEND.pull() # forces it to finish
     return {'project_name': project_name}, 200
 
 @app.route('/getProjectInfo', methods=['GET'])

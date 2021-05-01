@@ -29,5 +29,4 @@ cd ..
 return=$PWD
 echo Preparing Ligands
 for i in $(ls -d chunks_smi/$output*); do cd $i; sbatch $script_path/prepare_ligands_ad.sh $script_path; cd $return; done
-
 echo "Done!"

@@ -23,7 +23,6 @@ START_TIME = time.time()
 
 parser = argparse.ArgumentParser()
 parser.add_argument('-n_it','--iteration_no',required=True)
-parser.add_argument('-mdd','--morgan_directory',required=True)
 parser.add_argument('-time','--time',required=True)
 parser.add_argument('-file_path','--file_path',required=True)
 parser.add_argument('-nhp','--number_of_hyp',required=True)
@@ -55,7 +54,6 @@ parser.add_argument('-chp', '--continuous_hyperparameters', required=False, defa
 
 io_args, extra_args = parser.parse_known_args()
 n_it = int(io_args.iteration_no)
-mdd = io_args.morgan_directory
 time_model = io_args.time
 nhp = int(io_args.number_of_hyp)
 isl = io_args.is_last
@@ -72,16 +70,13 @@ polynomial_dec = int(io_args.polynomial_dec)
 
 dynamic_hyperparameters = io_args.continuous_hyperparameters
 
-DATA_PATH = io_args.file_path   # Now == file_path/protein
+PROJECT_PATH = io_args.file_path   # Now == file_path/protein
 SAVE_PATH = io_args.save_path
 # if no save path is provided we just save it in the same location as the data
-if SAVE_PATH is None: SAVE_PATH = DATA_PATH
+if SAVE_PATH is None: SAVE_PATH = PROJECT_PATH
 
-# sums the first column and divides it by 1 million 
-## is this the average score for the molecules? Why divide by 1000000?
-### [[0]] would return a dataframe and .sum() is buggy on dataframes (see: https://stackoverflow.com/questions/52912693/pandas-sum-return-the-infinite-value)
-### replace with => pd.to_numeric(df[0]).sum()  # returns a single number representing the sum
-t_mol = pd.read_csv(mdd+'/Mol_ct_file.csv',header=None)[[0]].sum()[0]/1000000 # num of compounds in each file is mol_ct_file
+# sums the first column and divides it by 1 million (the size of our dataset)
+t_mol = pd.read_csv(PROJECT_PATH+'/Mol_ct_file.csv',header=None)[[0]].sum()[0]/1000000 # num of compounds in each file is mol_ct_file
 
 
 """
@@ -155,7 +150,7 @@ for f in glob.glob(SAVE_PATH+'/iteration_'+str(n_it)+'/simple_job/*'):
     os.remove(f)
 
 scores_val = []
-with open(DATA_PATH+'/iteration_'+str(1)+'/validation_labels.txt','r') as ref:
+with open(PROJECT_PATH+'/iteration_'+str(1)+'/validation_labels.txt','r') as ref:
     ref.readline()  # first line is ignored
     for line in ref:
         scores_val.append(float(line.rstrip().split(',')[0]))
@@ -206,7 +201,7 @@ for o in oss:   # Over Sample Size
 print('Total Hyperparameters:', len(all_hyperparas))
 # Creating all the jobs for each hyperparameter combination:
 
-other_args = ' '.join(extra_args) + ' -n_it {} -t_mol {} --data_path {} --save_path {} -n_mol {}'.format(n_it, t_mol, DATA_PATH, SAVE_PATH, num_molec)
+other_args = ' '.join(extra_args) + ' -n_it {} -t_mol {} --data_path {} --save_path {} -n_mol {}'.format(n_it, t_mol, PROJECT_PATH, SAVE_PATH, num_molec)
 print("Args:", other_args)
 for i in range(len(all_hyperparas)):
     model_number = i + 1
@@ -219,11 +214,10 @@ for i in range(len(all_hyperparas)):
         ref.write('#SBATCH --mem=0               # memory per node\n')
         ref.write('#SBATCH --time='+time_model+'            # time (DD-HH:MM)\n')
 
-        # TODO Implement the extra headers/GPU partition!!!!
-        # Reads the blueprint file to add the custom headers and partition
+        # Reads the custom header file to add the custom headers and partition
         try:
-            with open("custom_slurm_blueprint.txt", "r") as custom_slurm_blueprint:
-                for line in custom_slurm_blueprint.readlines():
+            with open("custom_slurm_header.txt", "r") as custom_slurm_header:
+                for line in custom_slurm_header.readlines():
                     ref.write(line)
         except OSError:
             pass

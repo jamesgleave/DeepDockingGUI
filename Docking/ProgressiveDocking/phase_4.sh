@@ -19,7 +19,7 @@ echo "Passed Parameters:"
 echo "Current Iteration: $1"
 echo "Number of CPUs: $2"
 echo "Project Path: $3"
-echo Project Name: $(basename "$project_path")
+echo Project Name: $(basename "$3")
 echo "Final Iteration: $4"
 echo "Total Iterations: $5"
 echo "Path To Deep Docking Source Scripts: $6"
@@ -57,7 +57,7 @@ if [ $? != 0 ]; then
 fi
 
 echo "Creating simple jobs"
-python simple_job_models.py -n_it $1 -mdd $morgan_directory -time 00-04:00 -file_path $file_path/$project_name -nhp $num_hyperparameters -titr $5 -n_mol $num_molec --save_path $save_path --percent_first_mols $7 -ct $8 --percent_last_mols $9
+python simple_job_models.py -n_it $1 -time 00-04:00 -file_path $file_path/$project_name -nhp $num_hyperparameters -titr $5 -n_mol $num_molec --save_path $save_path --percent_first_mols $7 -ct $8 --percent_last_mols $9
 
 # Executes all the files that were created in the simple_jobs directory
 echo "Running simple jobs"

@@ -41,7 +41,7 @@ source $progressive_docking_path/activation_script.sh
 python jobid_writer.py -file_path $file_path/$protein -n_it $1 -jid $SLURM_JOB_NAME -jn $SLURM_JOB_NAME.sh --save_path $save_path
 
 echo "Starting Evaluation"
-python -u hyperparameter_result_evaluation.py -n_it $1 --data_path $file_path/$protein -mdd $morgan_directory -n_mol $num_molec --save_path $save_path
+python -u hyperparameter_result_evaluation.py -n_it $1 --data_path $file_path/$protein -n_mol $num_molec --save_path $save_path
 echo "Creating simple_job_predictions"
 python simple_job_predictions.py -protein $protein -file_path $file_path -n_it $1 -mdd $morgan_directory --save_path $save_path
 

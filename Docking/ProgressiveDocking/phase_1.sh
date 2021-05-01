@@ -27,6 +27,7 @@ echo Scripts: $local_path
 source ~/.bashrc
 source $local_path/activation_script.sh
 
+
 # Set constants
 file_path=`sed -n '1p' $project_path/$project_name/logs.txt`
 protein=`sed -n '2p' $project_path/$project_name/logs.txt`
@@ -37,9 +38,10 @@ sdf_directory=`sed -n '6p' $project_path/$project_name/logs.txt`
 
 # Set the to be docked
 pr_it=$(($1-1))
-if [ $1 == 1 ]
+# On the first iteration we want to triple the amount we dock so that we can create testing and validation sets
+if [ $1 == 1 ] 
 then 
-	to_d=$((n_mol+n_mol+mol_to_dock))
+	to_d=$((n_mol+n_mol+mol_to_dock)) #n_mol is our test/valid size
 else
 	to_d=$mol_to_dock
 fi
@@ -52,7 +54,7 @@ echo Total CPU: $t_cpu
 python jobid_writer.py -file_path $file_path/$protein -n_it $1 -jid $SLURM_JOB_NAME -jn $SLURM_JOB_NAME.sh
 if [ $1 == 1 ];then pred_directory=$morgan_directory;else pred_directory=$file_path/$protein/iteration_$pr_it/morgan_1024_predictions;fi
 
-python molecular_file_count_updated.py -pt $protein -it $1 -cdd $pred_directory -t_pos $t_cpu -t_samp $to_d
+python molecular_file_count_updated.py -pt $protein -it $1 -cdd $pred_directory -cpd $file_path/$protein -t_pos $t_cpu -t_samp $to_d
 python sampling.py -pt $protein -fp $file_path -it $1 -dd $pred_directory -t_pos $t_cpu -tr_sz $mol_to_dock -vl_sz $n_mol
 python sanity_check.py -pt $protein -fp $file_path -it $1
 python Extracting_morgan.py -pt $protein -fp $file_path -it $1 -md $morgan_directory -t_pos $t_cpu

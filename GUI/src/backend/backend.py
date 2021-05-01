@@ -358,8 +358,12 @@ class Backend:
         return self.ssh.get_image(file_name), hyperparameters
 
     def get_top_hits(self):
+        # Get the full path to the project:
+        itr = f"/{self.loaded_project}/iteration_{self.project_data['specifications']['iteration']}"
+        fp = self.user_data['project_path'] + itr
+
         # Reads the top_hits.csv file generated at the end of phase 5
-        lines = read_top_hits(self.ssh)
+        lines = read_top_hits(self.ssh, fp)
         smiles = []
 
         # Loop through the smiles
@@ -425,13 +429,15 @@ class Backend:
             new_db.write(json.dumps(self.project_data))
 
         # Add the custom headers (if any)
-        headers = '"'
+        headers = ""
         # We loop through the headers and concatenate them into comma separated values to be parsed on the cluster
         if len(self.project_data["specifications"]['slurm_headers']) > 0:
             for header in self.project_data["specifications"]['slurm_headers']:
                 headers += header + ","
             # Remove the trailing comma
-            headers = headers[:-1] + '"'
+            headers = headers[:-1]
+        else:
+            headers = '""'
 
         # update the files on the cluster
         command = "python3 {}/setup_slurm_specifications.py --path {} --n_cpu {} --partition {} --custom_headers {}"
@@ -441,7 +447,6 @@ class Backend:
                                  '"' + self.project_data["specifications"]["partition"] + '"',
                                  headers)
         stdout = self.send_command(command, debug=False)
-        print(command)
 
     def create_new_project(self, project_name, log_file_contents, specifications):
         """Creates a new project in the deep docking project directory"""
@@ -473,18 +478,20 @@ class Backend:
         # Add the custom headers (if any)
         headers = ""
         # We loop through the headers and concatenate them into comma separated values to be parsed on the cluster
-        if len(self.project_data["specifications"]['slurm_headers']) > 0:
-            for header in self.project_data["specifications"]['slurm_headers']:
+        if len(specifications['slurm_headers']) > 0:
+            for header in specifications['slurm_headers']:
                 headers += header + ","
             # Remove the trailing comma
             headers = headers[:-1]
+        else:
+            headers = '""'
 
         # update the files on the cluster
         command = "python3 {}/setup_slurm_specifications.py --path {} --n_cpu {} --partition {} --custom_headers {}"
         command = command.format(self.user_data["remote_path"],
                                  self.user_data["remote_path"],
-                                 self.project_data["specifications"]["num_cpu"],
-                                 self.project_data["specifications"]["partition"],
+                                 specifications["num_cpu"],
+                                 specifications["partition"],
                                  headers)
         stdout = self.send_command(command, debug=False)
         return out
@@ -520,13 +527,15 @@ class Backend:
                 headers += header + ","
             # Remove the trailing comma
             headers = headers[:-1]
+        else:
+            headers = '""'
 
         # update the files on the cluster
         command = "python3 {}/setup_slurm_specifications.py --path {} --n_cpu {} --partition {} --custom_headers {}"
         command = command.format(self.user_data["remote_path"],
                                  self.user_data["remote_path"],
                                  self.project_data["specifications"]["num_cpu"],
-                                 self.project_data["specifications"]["partition"],
+                                 '"' + self.project_data["specifications"]["partition"] + '"',
                                  headers)
         stdout = self.send_command(command, debug=False)
 

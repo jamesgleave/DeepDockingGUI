@@ -227,6 +227,8 @@ if n_iteration != 1:
     train_data = pd.concat([train_data, test_data, valid_data], axis=0) # These datasets are from the current iteration.
     train_data = pd.concat([train_data, data_from_prev])   # combining all the datasets into a single training set for iterations after the first
 
+print("First test shape: ", y_test_first.shape)
+print("First valid shape: ", y_valid_first.shape)
 print("Training labels shape: ", train_data.shape)
 
 # Exiting if there are not enough hits

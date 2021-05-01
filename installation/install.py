@@ -98,7 +98,6 @@ def install_deep_docking(simulate):
         connection.install(local_dir, installation_path, env_activation, env_deactivation)
 
     print("Finished Installing...")
-    print("All done! You are good to go!")
 
     # Save installation information
     installation_information = {'remote_path': docking_path,
@@ -148,7 +147,8 @@ def install_deep_docking(simulate):
         os.mkdir(local_dir + "/GUI/src/backend/projects")
     except FileExistsError:
         pass
-
+    
+    input("All done! You are good to go!")
 
 def print_txt_message(text_file):
     txt_contents = open(text_file).readlines()
