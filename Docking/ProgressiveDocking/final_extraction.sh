@@ -28,18 +28,17 @@ smile_directory=`sed -n '5p' $project_path/logs.txt`
 source ~/.bashrc
 source activation_script.sh
 
-# cd into the final iteration and create a file and run the search
+# cd into the final iteration and run the search
 cd $project_path/iteration_$iteration
-touch final_phase.info
-echo Running > final_phase.info
+echo Running >| final_phase.info # created in phase_a
 echo Smile Dir: $smile_directory
 python -u $scripts/final_extraction.py -smile_dir $smile_directory -morgan_dir $project_path/iteration_$iteration/morgan_1024_predictions/ -processors $n_cpus -mols_to_dock $mol_to_dock
 
 # If the above final extraction failed, we try another slower version
 if grep -Fxq "Failed" final_phase.info
 then
-  echo Running > final_phase.info
-  python -u $scripts/overloaded_final_extraction.py -smile_dir $smile_directory -morgan_dir $project_path/iteration_$iteration/morgan_1024_predictions/ -processors $n_cpus -mols_to_dock $mol_to_dock
+  echo Running |> final_phase.info
+  python -u $scripts/GUI/overloaded_final_extraction.py -smile_dir $smile_directory -morgan_dir $project_path/iteration_$iteration/morgan_1024_predictions/ -processors $n_cpus -mols_to_dock $mol_to_dock
 fi
 
 # Clean up the slurm files

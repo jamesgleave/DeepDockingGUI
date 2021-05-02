@@ -197,7 +197,7 @@ echo ""
 # Run the final phase
 final_phase=$project_path/$project_name/iteration_$final_iteration/final_phase.info
 touch $final_phase
-echo Pending >$final_phase
+echo Pending >| $final_phase
 sbatch final_extraction.sh $project_path/$project_name $t_cpu $final_iteration $local_path $top_n >>$final_phase
 
 # Print the end time
