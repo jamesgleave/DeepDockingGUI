@@ -37,7 +37,7 @@ python -u $scripts/final_extraction.py -smile_dir $smile_directory -morgan_dir $
 # If the above final extraction failed, we try another slower version
 if grep -Fxq "Failed" final_phase.info
 then
-  echo Running |> final_phase.info
+  echo Running >| final_phase.info
   python -u $scripts/GUI/overloaded_final_extraction.py -smile_dir $smile_directory -morgan_dir $project_path/iteration_$iteration/morgan_1024_predictions/ -processors $n_cpus -mols_to_dock $mol_to_dock
 fi
 
