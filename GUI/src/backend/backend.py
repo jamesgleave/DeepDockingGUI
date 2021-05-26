@@ -286,7 +286,7 @@ class Backend:
         self.current_phase = 1
 
         # the connection to the cluster
-        self.short_cache = {"hyperparameters": None, "previous_command": None}
+        self.short_cache = {"hyperparameters": None, "previous_command": None, "top_hits": []}
         try:
             self.user_data = json.loads(open('src/backend/db.json').read())
             self.loaded_project = ""
@@ -370,6 +370,14 @@ class Backend:
         for line in lines[1:]:
             smile, _ = line.split(",")
             smiles.append(smile)
+
+        # If we have top hits, we save them to the short cache
+        if len(smiles) > 0:
+            self.short_cache["top_hits"] = smiles
+        elif len(smiles) == 0 and len(self.short_cache["top_hits"]) > 0:
+            # If there are no smiles found, and we have smiles in the short cache, return the previously found smiles
+            smiles = self.short_cache["top_hits"]
+
         return smiles
 
     def get_final_phase_results(self):
