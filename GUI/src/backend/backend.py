@@ -358,8 +358,15 @@ class Backend:
         return self.ssh.get_image(file_name), hyperparameters
 
     def get_top_hits(self):
+
+        # Store current iteration
+        current_iteration = self.project_data['specifications']['iteration']
+
+        # Since the search happens at the very end of an iteration, we gotta look in the previous iteration directory
+        current_iteration -= 1 if current_iteration > 1 else 0
+
         # Get the full path to the project:
-        itr = f"/{self.loaded_project}/iteration_{self.project_data['specifications']['iteration']}"
+        itr = f"/{self.loaded_project}/iteration_{current_iteration}"
         fp = self.user_data['project_path'] + itr
 
         # Reads the top_hits.csv file generated at the end of phase 5
