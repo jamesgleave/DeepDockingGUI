@@ -224,6 +224,8 @@ class Core:
                 # If we are fully finished every iteration, we can show the progress of the final extraction
                 if int(full_percent) == 1:
                     status = self.model_data["iteration_" + str(current_iteration)]['itr']['final_phase']
+                    # If the full run is finished the iteration percentage should be set to 1
+                    self.model_data["iteration_" + str(current_iteration)]['itr']['itr_percent'] = 1
                     debug_message += Colours.OK_GREEN + "- Final Extraction -> " + status + "\n"
             except KeyError:
                 pass
