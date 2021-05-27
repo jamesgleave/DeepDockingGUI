@@ -93,19 +93,20 @@ def is_idle(script_path, username):
         return True
 
 
-def get_molecules_remaining(path) -> dict:
+def get_molecules_remaining(project_path, iteration_root) -> dict:
     """Returns the molecules remaining after predictions"""
-    if 'best_model_stats.txt' not in os.listdir(path):
+    path = project_path
+    if 'best_model_stats.txt' not in os.listdir(iteration_root):
         return {'true': -1, 'estimate': -1, 'error': -1}
 
     try:
-        with open(path + '/best_model_stats.txt') as bms:
+        with open(iteration_root + '/best_model_stats.txt') as bms:
             est_num_left = float(bms.readlines()[-1].split(": ")[1].strip("\n"))
     except IndexError:
         est_num_left = -1
 
     try:
-        pred = pd.read_csv(path + '/morgan_1024_predictions/Mol_ct_file_updated.csv')
+        pred = pd.read_csv(path + '/Mol_ct_file_updated.csv')
     except FileNotFoundError:
         return {'true': -1, 'estimate': est_num_left, 'error': -1}
 
@@ -378,7 +379,7 @@ def read_iterations(project_path, pickle_path, username):
                                                                                project_name)
 
         # Add values to our data to be sent back to the client
-        iteration_info["molecules_remaining"] = get_molecules_remaining(iteration_root)
+        iteration_info["molecules_remaining"] = get_molecules_remaining(project_path, iteration_root)
         iteration_info["current_phase"] = current_phase
         iteration_info["in_progress"] = iteration == max_itr
         iteration_info["is_idle"] = is_idle(script_path=pickle_path, username=username)
