@@ -1,4 +1,4 @@
-var selected_smile = null; //keeps track of which li is selected to highlight it.
+var selected_smile = null; //keeps track of which smile is selected to highlight it.
 
 // Displays the selected smile
 function displaySelectedSmile(e){
@@ -20,16 +20,17 @@ function displayScaffold(smile) {
   var new_text = "Most Common Murcko Scaffold";
 
   if (smile) new_text = smile;
-  else if (selected_smile) selected_smile.className = ''; // Clearing the previous selected element
+  else if (selected_smile) selected_smile.className = ''; // Clearing the previous selected smile
   
   // Changing the title to match
   document.querySelector('#murckov-scaffold > div > h2').innerHTML = new_text;
 
   $.ajax({ 
     type: "POST",
-    url: "/topScoring?image=true&smile="+smile,
+    url: "/topScoring",
     dataType: 'text',
-    contentType: 'image/jpeg',
+    contentType: 'application/json',
+    data: JSON.stringify({"smile": String(smile), "image":"true"}),
     beforeSend: function (xhr) {
       xhr.overrideMimeType('text/plain; charset=x-user-defined');
     },
@@ -111,15 +112,16 @@ document.getElementById("topScoringBtn").onclick = function() {
   toggleLoadingScreen(true);
   // request to get list of all molecules:
   $.ajax({
-    type: "GET",
-    url: "/topScoring?image=false&smile=undefined",
-    dataType: 'json',
+    type: "POST",
+    url: "/topScoring",
+    contentType: 'application/json',
+    data: JSON.stringify({"smile":"undefined", "image":"false"}),
     success: function (data, status, settings) {
         addToTopScoringList(data.top_hits);
         switchTab(event, 'topScoring');
     },
     error: function (res, opt, err) {
-        alert("Error: Not connected to DD cluster!");
+        alert("Error: top scoring tab failure");
         console.log(res, opt, err);
     }
   }).done(function (response) {

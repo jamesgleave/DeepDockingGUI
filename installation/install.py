@@ -361,9 +361,10 @@ class InstallationAssistant:
         except OSError:
             print("The directory DeepDocking already exists at", remote)
             if input("Overwrite? If no, exit installation: y/n ").lower() in {'yes', 'y'}:
-                # TODO: need to recursively remove the files!
-                # remove the dir and make a new one
-                ftp_client.rmdir(remote)
+                # remove the dir (recursively) and make a new one
+                stdin, stdout, stderr = self.ssh.exec_command("rm -rf "  + remote)
+                while not stdout.channel.exit_status_ready():
+                    time.sleep(5)
                 ftp_client.mkdir(remote)  # scripts dir
                 ftp_client.mkdir(remote + "/ML")
                 ftp_client.mkdir(remote + "/GUI")

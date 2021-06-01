@@ -130,9 +130,13 @@ function updateInfoCenter(projectInfo){
         else
             info_center.innerText = "Please create a project...";
     }else
-        info_center.innerText = "You are not connected to the cluster!\n\nPlease go back to the login page and login.";
-
-    
+        info_center.innerText = "You are not connected to the cluster!\n\nPlease go back to the login page.";
+        /*
+        link = document.createElement("a")
+        link.innerText = "login"
+        link.href = "/"
+        info_center.append(link)
+        */
 }
 
 function displayProjectInfo(projectInfo){
