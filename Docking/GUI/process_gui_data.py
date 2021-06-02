@@ -4,6 +4,7 @@ v2.0.0
 import os
 import time
 import glob
+import subprocess
 import pandas as pd
 import slurm_job_manager
 
@@ -277,8 +278,70 @@ def get_phase_4_progress(models):
     return {"best": best, "worst": worst, "average": average}
 
 
-def get_phase_5_progress(path):
-    simple_job_predictions = path + "/simple_job_predictions"
+def get_phase_5_progress(iteration_path):
+
+    def readfile(slurm_path):
+        # Read the lines of the file
+        with open(slurm_path, 'r') as file:
+            lines = file.readlines()
+
+        # Look at each line
+        times = []
+        # The path path of the file that we are predicting on
+        reading = ""
+        for line in lines:
+
+            # Store the filepath line
+            if ".txt" in line:
+                reading = line
+
+            # Check the time elapsed
+            if "Time elapsed:" in line:
+                # Store the time
+                time_elapsed = float(line.split(": ")[2].split()[0])
+                # Add the time elapsed to the list
+                times.append(time_elapsed)
+
+        # Get the full path
+        reading = reading.split()
+        reading = reading[-1] + "/" + reading[7]
+        total_lines = subprocess.check_output(['sed', '-n', "'$=", reading])
+
+        # If we have found no times, just return
+        if len(times) < 2:
+            return -1
+
+        # Sum up all available elapsed values
+        average_time_elapsed = 0
+        for i in range(1, len(times) - 1):
+            average_time_elapsed += times[i + 1] - times[i]
+        average_time_elapsed /= len(times) - 1
+
+        # Each time we get an update for time elapsed, it has run 'per_time = 1000000' molecules through each model
+        per_time = 1000000
+        iterations = total_lines / per_time
+        time_estimate = iterations * average_time_elapsed
+
+        # Return the time estimate
+        return time_estimate
+
+    # Get each slurm out file
+    simple_job_predictions = iteration_path + "/simple_job_predictions"
+    all_files = glob.glob(simple_job_predictions + "/*.out")
+
+    # If there are no files, return
+    if len(all_files) == 0:
+        return {"best": -1, "worst": -1, "average": -1}
+
+    # Look at each file,
+    all_times = []
+    for slurm_out_file in all_files:
+        # Read the times and save them to the list
+        all_times.append(readfile(slurm_out_file))
+
+    # Save each of the times and return
+    best, worst, average = min(all_times), max(all_times), sum(all_times)/len(all_times)
+    return {"best": best, "worst": worst, "average": average}
 
 
 def get_phase_percentage(gui_path, username):
@@ -393,6 +456,8 @@ def read_iterations(project_path, pickle_path, username):
                 phase_eta = get_phase_2_progress(iteration_root)
             elif iteration_info["current_phase"] == 3:
                 phase_eta = get_phase_3_progress(iteration_root)
+            elif iteration_info["current_phase"] == 5:
+                phase_eta = get_phase_5_progress(iteration_root)
             else:
                 phase_eta = -1
         else:
