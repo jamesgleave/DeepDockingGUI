@@ -279,7 +279,6 @@ def get_phase_4_progress(models):
 
 
 def get_phase_5_progress(iteration_path):
-
     def readfile(slurm_path):
         # Read the lines of the file
         with open(slurm_path, 'r') as file:
@@ -302,10 +301,14 @@ def get_phase_5_progress(iteration_path):
                 # Add the time elapsed to the list
                 times.append(time_elapsed)
 
-        # Get the full path
-        reading = reading.split()
-        reading = reading[-1] + "/" + reading[7]
-        total_lines = subprocess.check_output(['sed', '-n', "'$=", reading])
+        # Count how many lines are in the file we are looking at
+        total_lines = 0
+        reading = reading.split()[-1]
+        # Match the file name to a molecular count in the Mol_ct_file_updated file
+        for line in open(iteration_path.split("/")[-2] + "/Mol_ct_file_updated.csv", 'r'):
+            if reading in line:
+                total_lines = int(line.split(",")[0])
+                break
 
         # If we have found no times, just return
         if len(times) < 2:
