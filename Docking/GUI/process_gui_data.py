@@ -346,7 +346,8 @@ def get_phase_5_progress(iteration_path):
 
     # Save each of the times and return
     best, worst, average = min(all_times), max(all_times), sum(all_times)/len(all_times)
-    return {"best": max(best, 0), "worst": max(worst, 0), "average": max(average, 0)}
+    best, worst, average = calculate_date_time(best, worst, average)
+    return {"best": best, "worst": worst, "average": average}
 
 
 def get_phase_percentage(gui_path, username):
