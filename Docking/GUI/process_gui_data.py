@@ -327,7 +327,8 @@ def get_phase_5_progress(iteration_path):
         time_estimate = iterations * average_time_elapsed
 
         # Return the time estimate
-        return time_estimate
+        total_time_elapsed = max(times)
+        return time_estimate - total_time_elapsed
 
     # Get each slurm out file
     simple_job_predictions = iteration_path + "/simple_job_predictions"
@@ -345,7 +346,7 @@ def get_phase_5_progress(iteration_path):
 
     # Save each of the times and return
     best, worst, average = min(all_times), max(all_times), sum(all_times)/len(all_times)
-    return {"best": best, "worst": worst, "average": average}
+    return {"best": max(best, 0), "worst": max(worst, 0), "average": max(average, 0)}
 
 
 def get_phase_percentage(gui_path, username):
