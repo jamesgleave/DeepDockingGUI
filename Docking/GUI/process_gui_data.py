@@ -303,7 +303,7 @@ def get_phase_5_progress(iteration_path):
 
         # Count how many lines are in the file we are looking at
         total_lines = 0
-        reading = reading.split()[-1]
+        reading = reading.split()[7]
         mol_ct_filepath = os.path.dirname(iteration_path) + "/Mol_ct_file_updated.csv"
         # Match the file name to a molecular count in the Mol_ct_file_updated file
         for line in open(mol_ct_filepath, 'r'):
