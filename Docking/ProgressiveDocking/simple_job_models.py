@@ -158,6 +158,7 @@ with open(PROJECT_PATH+'/iteration_'+str(1)+'/validation_labels.txt','r') as ref
 scores_val = np.array(scores_val)
 
 first_mols = int(100*t_mol/13) if percent_first_mols == -1.0 else int(percent_first_mols * len(scores_val))
+last_mols = 100 if percent_last_mols == -1.0 else int(percent_last_mols * len(scores_val))
 
 if n_it==1:
     # 'good_mol' is the number of top scoring molecules to save at the end of the iteration
@@ -168,12 +169,12 @@ else:
     elif polynomial_dec != -1:
         good_mol = int()
     else:
-        good_mol = int(((100-first_mols)*n_it + titr*first_mols-100)/(titr-1))     # linear decrease as interations increase
+        good_mol = int(((last_mols-first_mols)*n_it + titr*first_mols-last_mols)/(titr-1))     # linear decrease as iterations increase
 
 # If this is the last iteration
 if isl:
-    # 100 mols is 0.0001% of an initial of 1 million input molecules
-    good_mol = 100 if percent_last_mols == -1.0 else int(percent_last_mols * len(scores_val))
+    # 100 mols is 0.0001% of an initial of 1 million input molecules (default)
+    good_mol = last_mols
 
 cf_start = np.mean(scores_val)  # the mean of all the docking scores (labels) of the validation set:
 t_good = len(scores_val)
