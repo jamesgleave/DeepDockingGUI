@@ -187,29 +187,6 @@ function updateProjectInfo(project_name){
     });
 }
 
-function boot(){
-    $.ajax({
-        type: "GET",
-        url: "/getProjectInfo?projectName=undefined",
-        dataType: 'json',
-        success: function (data, status, settings) {
-            displayProjectInfo(data); //if null it displays 'nodata...'
-        },
-        error: function (res, opt, err) {
-            if (res.status == 400) {
-                alert('BAD REQUEST: Missing/invalid project specifications. Please try again.');
-
-            } else{
-                alert('Error\n' + res.status + ': ' + err);
-            }
-            
-            console.log(res.status);
-        }
-    }).done(function (response) {
-        toggleLoadingScreen(false);
-    });
-}
-
 function loadProject(project_name){
     var args = 'projectName='+ project_name;
     toggleLoadingScreen(true);
@@ -472,10 +449,38 @@ document.getElementById('updateSpecsBtn').onclick = function(){
     // console.log(args);
     callScriptRunner(args);
 };
+
+function bootStartARunTab(){
+    $.ajax({
+        type: "GET",
+        url: "/getProjectInfo?projectName=undefined",
+        dataType: 'json',
+        success: function (data, status, settings) {
+            displayProjectInfo(data); //if null it displays 'nodata...'
+        },
+        error: function (res, opt, err) {
+            if (res.status == 400) {
+                alert('BAD REQUEST: Missing/invalid project specifications. Please try again.');
+
+            } else{
+                alert('Error\n' + res.status + ': ' + err);
+            }
+            
+            console.log(res.status);
+        }
+    }).done(function (response) {
+        toggleLoadingScreen(false);
+    });
+}
+
 // "Start a Run" tab button
 document.getElementById("startRBtn").onclick = function() {
-    switchTab(event, 'startR');
+    toggleLoadingScreen(true);
+    bootStartARunTab();
+    switchTab(event, 'startR'); // I kinda like seeing the tab load up behind the loading screen
+    resetUpdateLoop();
 }
 
 // This must be run at boot:
-boot();
+bootStartARunTab();
+UPDATE_CALLBACKS["startR"] = bootStartARunTab;

@@ -60,7 +60,7 @@ function displayScaffold(smile) {
 }
 
 // adds SMILES to the list
-function addToTopScoringList(compounds){
+function fillTopScoringList(compounds){
   var list = document.querySelector('#top-scoring-list > ul');
 
   // clearing data first:
@@ -106,10 +106,7 @@ document.querySelector('#reload-Murcko > img').onclick = function () {
   displayScaffold();
 }
 
-// Tab button
-document.getElementById("topScoringBtn").onclick = function() {
-  addPanAndZoom('scaffoldImage');
-  toggleLoadingScreen(true);
+function bootTopScoringTab(){
   // request to get list of all molecules:
   $.ajax({
     type: "POST",
@@ -117,8 +114,7 @@ document.getElementById("topScoringBtn").onclick = function() {
     contentType: 'application/json',
     data: JSON.stringify({"smile":"undefined", "image":"false"}),
     success: function (data, status, settings) {
-        addToTopScoringList(data.top_hits);
-        switchTab(event, 'topScoring');
+        fillTopScoringList(data.top_hits);
     },
     error: function (res, opt, err) {
         alert("Error: top scoring tab failure");
@@ -128,5 +124,14 @@ document.getElementById("topScoringBtn").onclick = function() {
     // request to get the Most common Murcko scaffold
     displayScaffold();
   });
+}
 
+// Tab button
+document.getElementById("topScoringBtn").onclick = function() {
+  addPanAndZoom('scaffoldImage');
+  toggleLoadingScreen(true);
+  bootTopScoringTab();
+  switchTab(event, 'topScoring');
+  UPDATE_CALLBACKS["topScoring"] = bootTopScoringTab;
+  resetUpdateLoop();
 };

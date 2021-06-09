@@ -99,9 +99,12 @@ def connect():
 @app.route('/getBasics', methods=['GET'])
 def getBasics():
     global BACKEND
-    DATA_HISTORY = BACKEND.pull() # getting data from cluster    
-    update_rate_ms = BACKEND.core.update_rate * 60
-    data = {'update_rate': update_rate_ms}
+    data = {}
+    try:
+        update_rate_ms = BACKEND.core.update_rate * 1000
+        data['update_rate_ms'] = update_rate_ms
+    except AttributeError:
+        print("USER IS NOT YET LOGGED IN")
 
     return jsonify(data), 200
 

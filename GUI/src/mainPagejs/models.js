@@ -564,10 +564,17 @@ document.querySelector('#modelArch .closePopupBtn').onclick = function(){
   togglePopup('modelArch', false);
 }
 
+function bootModelsTab(){
+  // TODO: CHECK TO SEE IF THERE IS AN ACTIVE REQUEST TO VIEW ARCH.
+  // if aactive it will cause an issue with the arch not being viewed.
+  updateCharts();
+}
+
 document.getElementById("modelsBtn").onclick = function () {
   toggleLoadingScreen(true);
+  bootModelsTab();
   switchTab(event, 'models');
-  updateCharts();
-  // setInterval(function, );
+  UPDATE_CALLBACKS["models"] = bootModelsTab;
+  resetUpdateLoop();
 }
 

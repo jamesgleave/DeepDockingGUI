@@ -131,33 +131,6 @@ function resetImagePos(img_id){
   element.style.height = 'auto';
 }
 
-var UPDATE_RATE = null;
-const DEBUG_MODE = true;
-
-function startup(){
-  if (!DEBUG_MODE){
-    $.ajax({
-      type: "GET",
-      url: "/getBasics",
-      dataType: 'json',
-      success: function (data, status, settings) {
-        
-        UPDATE_RATE = data.update_rate;
-        // console.log(UPDATE_RATE);
-      },
-      error: function (res, opt, err) {
-        alert("Error!")
-        console.log(res, opt, err);
-      }
-    });
-  }
-
-  // Changing the background color:
-  document.getElementsByTagName("html")[0].style.background = "#5A6E59";
-}
-
-startup();
-
 function deleteProject(name){
   var name = (name) ? name : document.querySelector('#curr_project_name').textContent.split(':')[1].trim();
   console.log('deleting project: ', name);  
@@ -177,4 +150,64 @@ function deleteProject(name){
   }).done(function (response) {
       toggleLoadingScreen(false);
   });
+}
+
+var UPDATE_RATE = null;
+var UPDATE_CALLBACKS = {}; // Saves the callbacks for all the tabs opened
+var UPDATE_ID; // the ID for the async update loop
+const DEBUG_MODE = false;
+
+function clientUpdateLoop(){
+  // This function is a loop that runs in the background that retrives updates from the server as it comes in
+  // and displays that data to the client depending on which tab they are on.
+
+  // Checking which tab is active:
+  var active = document.querySelector("body > div.tabs.disable-select > Button.active").id;
+  var activeTab = active.substring(0, active.length-3);
+
+  console.log("active tab:", activeTab);
+  // Not running for top Scoring tab because that would just be annoying when viewing molec:
+  if (activeTab !== "topScoring"){
+    // Running the appropriate callback
+    var callbackfn = UPDATE_CALLBACKS[activeTab];
+    if (callbackfn) callbackfn();
   }
+}
+
+function resetUpdateLoop(){
+  // Used for when we already have the update rate and 
+  // want to restart the loop to prevent "double loading" of a tab.
+  if (UPDATE_ID){ // Clearing any previous update loop
+    clearInterval(UPDATE_ID);
+    UPDATE_ID = null;
+  }
+  UPDATE_ID = setInterval(clientUpdateLoop, UPDATE_RATE);
+  console.log("update loop reset!");
+}
+
+function startUpdateLoop(){
+  $.ajax({
+    type: "GET",
+    url: "/getBasics",
+    dataType: 'json',
+    success: function (data, status, settings) {
+      UPDATE_RATE = data.update_rate_ms;
+      console.log("update rate (ms):", UPDATE_RATE);
+      if (UPDATE_RATE){ // IF NOT UNDEF
+        UPDATE_ID = setInterval(clientUpdateLoop, UPDATE_RATE);
+      }
+    },
+    error: function (res, opt, err) {
+      alert("Error!")
+      console.log(res, opt, err);
+    }
+  });
+}
+
+function startup(){
+  startUpdateLoop();
+  // Changing the background color:
+  document.getElementsByTagName("html")[0].style.background = "#5A6E59";
+}
+
+startup();
