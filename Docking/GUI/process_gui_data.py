@@ -481,6 +481,13 @@ def read_iterations(project_path, pickle_path, username):
             # enter the phase eta
             data[iteration] = {"models": "No Model Data Present", "itr": iteration_info}
 
+        try:
+            # TODO Fix the placement of this statement
+            if iteration_info["current_phase"] == 4 and data[iteration]["models"] != "No Model Data Present":
+                iteration_info['phase_eta'] = get_phase_4_progress(data[iteration])
+        except Exception as e:
+            print("We had an issue with iteration 4 phase ETA: ", e)
+
         # Add the % complete of the iteration
         if current_phase < 6:
             itr_percent = (current_phase - 1) + (get_phase_percentage(pickle_path, username) / 100)
