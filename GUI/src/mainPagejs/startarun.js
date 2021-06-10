@@ -483,4 +483,4 @@ document.getElementById("startRBtn").onclick = function() {
 
 // This must be run at boot:
 bootStartARunTab();
-UPDATE_CALLBACKS["startR"] = bootStartARunTab;
+UPDATE_CALLBACKS["startR"] = bootStartARunTab; // not used but left here for future possible use (replace with another function)

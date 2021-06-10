@@ -132,6 +132,6 @@ document.getElementById("topScoringBtn").onclick = function() {
   toggleLoadingScreen(true);
   bootTopScoringTab();
   switchTab(event, 'topScoring');
-  UPDATE_CALLBACKS["topScoring"] = bootTopScoringTab;
+  UPDATE_CALLBACKS["topScoring"] = bootTopScoringTab; // not used but left here for future possible use (replace with another function)
   resetUpdateLoop();
 };

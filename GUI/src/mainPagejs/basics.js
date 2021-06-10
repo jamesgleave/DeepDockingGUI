@@ -167,7 +167,8 @@ function clientUpdateLoop(){
 
   console.log("active tab:", activeTab);
   // Not running for top Scoring tab because that would just be annoying when viewing molec:
-  if (activeTab !== "topScoring"){
+  // Also not really needed for the start a run page...
+  if (activeTab !== "topScoring" && activeTab !== "startR"){
     // Running the appropriate callback
     var callbackfn = UPDATE_CALLBACKS[activeTab];
     if (callbackfn) callbackfn();
