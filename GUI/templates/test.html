@@ -1,14 +1,92 @@
 <!DOCTYPE html>
 <html lang="en">
     <head>
-       
     </head>
     <body>
-        
-        <ul style="list-style-type:disc">
-            <li>US</li>
-            <li>Australia</li>
-            <li>New Zealand</li>
-         </ul> 
+        <div style="
+            overflow: hidden;
+            border: 1px red solid;
+            width: 95vw;
+            height: 95vh;"
+        >
+            <img id="image" style="position: relative;" src="../public/img/model_sample.png">
+        </div>
     </body>
+    <script>
+        // Pan and zoom functionality for images:
+        var img_ele = null,
+        x_img_start = 0,
+        y_img_start = 0,
+        starting_L = 0,
+        starting_T = 0;
+
+        function zoom(zoomincrement, img_id) {
+            img_ele = document.getElementById(img_id);
+            var pre_width = img_ele.getBoundingClientRect().width, pre_height = img_ele.getBoundingClientRect().height;
+            img_ele.style.width = (pre_width * zoomincrement) + 'px';
+            img_ele.style.height = (pre_height * zoomincrement) + 'px';
+            img_ele = null;
+        }
+
+        function start_drag(e) {
+            // console.log("starting drag");
+            img_ele = this;
+            
+            starting_L = parseInt(img_ele.style.left.split('px')[0]);
+            starting_T = parseInt(img_ele.style.top.split('px')[0]);
+            starting_L = (starting_L) ? starting_L : 0; // if the value is auto the conditional will be false (NaN)
+            starting_T = (starting_T) ? starting_T : 0; // sets it to zero if auto.
+            
+            x_img_start = e.clientX;
+            y_img_start = e.clientY;
+        }
+
+        function while_drag(e) {
+            e.preventDefault();
+            var delta_x = e.clientX - x_img_start;
+            var delta_y = e.clientY - y_img_start;
+            
+            if (img_ele !== null) {
+                // calculating amount to move image by
+                img_ele.style.left = delta_x + starting_L + 'px';
+                img_ele.style.top = delta_y + starting_T + 'px';
+            }
+        }
+
+        function stop_drag() {
+            img_ele = null;
+            // console.log("stop drag");
+        }
+
+        function resetPanandZoomVals(){
+            img_ele = null,
+            x_img_ele = 0,
+            y_img_ele = 0;
+        }
+
+        function addPanAndZoom(img_id){
+            var element = document.getElementById(img_id);
+
+                // Adds pan and zoom functionality to the element
+            element.addEventListener("wheel", function(e){
+                e.preventDefault();
+                zoom(1 - (e.deltaY/300)* 0.1, img_id);
+            });
+
+            element.addEventListener('mousedown', start_drag);
+            element.parentElement.addEventListener('mousemove', while_drag);
+            element.parentElement.addEventListener('mouseup', stop_drag);
+        }
+
+        function resetImagePos(img_id){
+            var element = document.getElementById(img_id);
+            element.style.left = 'auto';
+            element.style.top = 'auto';
+
+            element.style.width = 'auto';
+            element.style.height = 'auto';
+        }
+
+        addPanAndZoom("image");
+    </script>
 </html>
