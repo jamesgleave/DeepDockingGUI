@@ -17,13 +17,13 @@ from src.backend import *
 
 
 # Ask user if they want to open the DD website automatically
-# import webbrowser
-# prompt = "\nOpen Website On Default Browser? \nEnter y to launch or any other key to open manually: "
-# open_site = True if input(prompt).rstrip() == "y" else False
-# if open_site:
-#     webbrowser.open("http://127.0.0.1:5000/")
-# else:
-#     print("Enter the proved link into your browser.")
+prompt = "\nOpen Website On Default Browser? \nEnter y to launch or any other key to open manually: "
+open_site = True if input(prompt).rstrip() == "y" else False
+if open_site:
+    import webbrowser
+    webbrowser.open("http://127.0.0.1:5000/")
+else:
+    print("Enter the proved link into your browser.")
 
 
 app = Flask(__name__, static_url_path='/', static_folder='/')

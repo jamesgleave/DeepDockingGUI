@@ -1,3 +1,4 @@
+from util_functions import lerp, seconds_to_datetime, datetime_string_to_seconds
 import builtins as __builtin__
 import pandas as pd
 import numpy as np
@@ -54,14 +55,32 @@ parser.add_argument('-chp', '--continuous_hyperparameters', required=False, defa
 
 io_args, extra_args = parser.parse_known_args()
 n_it = int(io_args.iteration_no)
-time_model = io_args.time
 nhp = int(io_args.number_of_hyp)
 isl = io_args.is_last
 titr = int(io_args.total_iterations)
 ct = float(io_args.ct)
 
-num_molec = int(io_args.number_mol)
 
+# Handle the time
+# We pass the min training time (4 hours usually) and lerp between the min and max times using the ratio
+# current_iteration/max_iterations
+time_model = io_args.time
+# Initial date time
+date_time = time_model
+# Convert max time (20 hours) to seconds
+max_seconds = 20*60*60  # 20 hours in seconds
+# Convert min time to seconds
+converted_seconds = datetime_string_to_seconds(date_time)
+# Lerp between the the min and max seconds
+lerp_seconds = int(lerp(converted_seconds, max_seconds, n_it/titr))
+# Convert back to datetime
+h, m, s = seconds_to_datetime(lerp_seconds)
+# Format our date time
+new_time = f"00-{h}:{m}"
+print("Generated Time: ", new_time)
+
+
+num_molec = int(io_args.number_mol)
 percent_first_mols = float(io_args.percent_first_mols)
 percent_last_mols = float(io_args.percent_last_mols)
 
@@ -213,7 +232,7 @@ for i in range(len(all_hyperparas)):
         ref.write('#SBATCH --cpus-per-task=1\n')
         ref.write('#SBATCH --job-name=phase_4\n')
         ref.write('#SBATCH --mem=0               # memory per node\n')
-        ref.write('#SBATCH --time='+time_model+'            # time (DD-HH:MM)\n')
+        ref.write('#SBATCH --time='+new_time+'            # time (DD-HH:MM)\n')
 
         # Reads the custom header file to add the custom headers and partition
         try:
