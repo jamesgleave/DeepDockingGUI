@@ -15,23 +15,9 @@ import os
 
 from src.backend import *
 
-DEBUG_MODE = True
-
-if not DEBUG_MODE:
-    # Ask user if they want to open the DD website automatically
-    prompt = "\nOpen Website On Default Browser? \nEnter y to launch or any other key to open manually: "
-    open_site = True if input(prompt).rstrip() == "y" else False
-    if open_site:
-        import webbrowser
-        webbrowser.open("http://127.0.0.1:5000/")
-    else:
-        print("Enter the proved link into your browser.")
-
-
 app = Flask(__name__, static_url_path='/', static_folder='/')
 cors = CORS(app)
 app.config['CORS_HEADERS'] = 'Content-Type'
-
 
 # Initalizing the ssh class for connections:
 ssh = SSH() # Automatically gets ip address from db.json 
@@ -39,6 +25,17 @@ BACKEND = None
 
 MODE_SCAFFOLD = None
 PROJECTS_PATH = './src/backend/projects/'
+
+# Launching the app automatically if prompted
+if not app.debug:
+    # Ask user if they want to open the DD website automatically
+    prompt = "\nOpen Website On Default Browser? \nEnter y to launch or any other key to open manually: "
+    open_site = True if input(prompt).rstrip() == "y" else False
+    if open_site:
+        import webbrowser
+        webbrowser.open("http://127.0.0.1:5000/")
+    else:
+        print("Enter the provided link into your browser.")
 
 def serve_pil_image(pil_img):
     img_io = BytesIO()
