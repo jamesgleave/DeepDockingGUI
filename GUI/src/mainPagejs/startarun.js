@@ -151,10 +151,13 @@ function displayProjectInfo(projectInfo){
             // Changing name:
             document.getElementById('curr_project_name').innerText = "Current Project: " + specs.log_file.project_name
 
-            // Changing placeholders for inputs:
+            // Changing value for inputs:
             for (input of inputs)
                 // The name of the element is the same as its dictionary key:
                 input.value = specs.specifications[input.id];
+
+            // Making sure GPU partition shows Default and not No data... for placeholder
+            document.getElementById("partition").placeholder = "Default";
         }else
             inputs.forEach(i => i.placeholder = 'No data...');
 
@@ -354,6 +357,7 @@ function callScriptRunner(args, callback, ...c_args){
 }
 
 function confirmChoice(promptText, paragraphText, buttonText, callback, arg){
+    // This toggles a popup that confirms the choice made
     togglePopup('popupPrompt', true);
     // Changing prompt text
     document.getElementById('promptText').innerHTML = promptText;
@@ -445,9 +449,10 @@ document.getElementById('updateSpecsBtn').onclick = function(){
         const input = inputs[i];
         // The ids are named after their dictionary keys
         args += '&' + input.id + '=';
-        args += (input.value) ? input.value.replace('&', '') : input.placeholder;
+        var param = (input.value) ? input.value.replace('&', '') : input.placeholder;
+        args += (param === "No data...") ? '""' : param; // redundant check to ensure that it has the appropriate placeholder.
     }
-    // console.log(args);
+    console.log(args);
     callScriptRunner(args);
 };
 

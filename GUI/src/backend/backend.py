@@ -429,6 +429,8 @@ class Backend:
         "sample_size": ...,
         "optimize_models": ...}
         """
+        # preprocessing the data:
+        specifications['partition'] = '""' if specifications["partition"] == "Default"  else specifications["partition"]
 
         # Update the user info
         self.update_user_info()
