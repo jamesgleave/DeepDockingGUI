@@ -436,13 +436,6 @@ def runScripts():
                 specs[k] = v
         BACKEND.update_specifications(specs)
 
-    # # Waiting for the next update loop so that the GUI is loaded correctly:
-    # start = BACKEND.core.num_updates
-    
-    # #TODO: is this needed? -> just disable the buttons temporarily.
-    # while BACKEND.core.num_updates <= start:
-    #     time.sleep(1)
-
     return {'script': script}, 200
 
 @app.route('/test', methods=['GET'])

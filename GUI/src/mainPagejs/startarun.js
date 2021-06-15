@@ -85,31 +85,24 @@ function enableValidBtns(projectInfo){
                 success: function (data, status, settings) {
                     document.getElementById('deleteProjBtn').disabled = false;
                     document.getElementById('updateSpecsBtn').disabled = false;
-                    document.getElementById('runAllPhases').disabled = false;
                     document.getElementById('resetPhase').disabled = false;
 
-
-                    // // Switching on the currently running phase button
-                    // // TODO: fix this
-                    // const curr_phase = data.currentInfo.phase;
-                    // const completed = data.is_idle; // if false -> stil running
-                    // if (curr_phase == 0){
-                    //     document.getElementById('startPhase1').disabled = false;
-                    //     if (data.currentInfo.iter > 1)
-                    //         document.getElementById('startPhaseFinal').disabled = false;
-                    // }else {
-                    //     document.getElementById('startPhase'+ (curr_phase)).disabled = false;
-                    // }
-                    
-                    // // If it is done then we also show the next phase:
-                    // if  (completed){
-                    //     if (curr_phase < 5)
-                    //         document.getElementById('startPhase'+ (curr_phase+1)).disabled = false;
-                    //     else
-                    //         document.getElementById('startPhase1').disabled = false;
-                    //         if (data.currentInfo.iter > 1)
-                    //             document.getElementById('startPhaseFinal').disabled = false;
-                    // }
+                    // Switching on the currently running phase button
+                    const is_running = !data.is_idle; // if false -> stil running
+                    if (!is_running){ //only will display buttons if nothing is running.
+                        document.getElementById('runAllPhases').disabled = false;
+                        // TODO: this works as expected but need to check backend functionality before enabling for users
+                        // const curr_phase = data.currentInfo.phase;
+                        // Displaying next phase button:
+                        // if (curr_phase < 5 && curr_phase !== 0) // could be 0 at the very start
+                        //     document.getElementById('startPhase'+ (curr_phase+1)).disabled = false;
+                        // else{
+                        //     document.getElementById('startPhase1').disabled = false;
+                        //     // Only allowing final phase to be pressed after at least one iteration
+                        //     if (data.currentInfo.iter > 1)
+                        //         document.getElementById('startPhaseFinal').disabled = false;
+                        // }
+                    }
                 }
             });
         }
