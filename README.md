@@ -1,4 +1,5 @@
-# DeepDockingGUI - Beta v2.2.5
+# DeepDockingGUI - v2.2.5
+
 
 ## Deep Docking - Democratize Drug Development
 Deep docking (DD) is a deep learning-based tool developed to accelerate docking-based virtual screening. Using NVIDIA's own Autodock-GPU,  one can screen extensive chemical libraries like ZINC15 (containing > 1.3 billion molecules) 50 times faster than typical docking. For further details into the processes behind DD, please refer to our paper (https://doi.org/10.1021/acscentsci.0c00229). 
