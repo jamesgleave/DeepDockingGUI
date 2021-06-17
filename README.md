@@ -1,4 +1,4 @@
-# DeepDockingGUI - v2.2.5
+# DeepDockingGUI - v2.3.0
 
 
 ## Deep Docking - Democratize Drug Development
