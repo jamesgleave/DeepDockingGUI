@@ -29,8 +29,6 @@ parser.add_argument('-file_path','--file_path',required=True)
 parser.add_argument('-nhp','--number_of_hyp',required=True)
 parser.add_argument('-titr','--total_iterations',required=True)
 
-parser.add_argument('-isl','--is_last',required=False, action='store_true')
-
 # adding parameter for where to save all the data to:
 parser.add_argument('-save', '--save_path', required=False, default=None)
 
@@ -56,9 +54,8 @@ parser.add_argument('-chp', '--continuous_hyperparameters', required=False, defa
 io_args, extra_args = parser.parse_known_args()
 n_it = int(io_args.iteration_no)
 nhp = int(io_args.number_of_hyp)
-isl = io_args.is_last
 titr = int(io_args.total_iterations)
-ct = float(io_args.ct)
+ct = float(io_args.ct) #TODO THIS IS NOT USED -> INVESTIGATE
 
 
 # Handle the time
@@ -94,7 +91,7 @@ SAVE_PATH = io_args.save_path
 # if no save path is provided we just save it in the same location as the data
 if SAVE_PATH is None: SAVE_PATH = PROJECT_PATH
 
-# sums the first column and divides it by 1 million (the size of our dataset)
+# sums the first column and divides it by 1 million (the size of our dataset per mil)
 t_mol = pd.read_csv(PROJECT_PATH+'/Mol_ct_file.csv',header=None)[[0]].sum()[0]/1000000 # num of compounds in each file is mol_ct_file
 
 
@@ -168,13 +165,8 @@ except OSError: # catching file exists error
 for f in glob.glob(SAVE_PATH+'/iteration_'+str(n_it)+'/simple_job/*'):
     os.remove(f)
 
-scores_val = []
-with open(PROJECT_PATH+'/iteration_'+str(1)+'/validation_labels.txt','r') as ref:
-    ref.readline()  # first line is ignored
-    for line in ref:
-        scores_val.append(float(line.rstrip().split(',')[0]))
-
-scores_val = np.array(scores_val)
+# getting the list of scores from the validation labels
+scores_val = pd.read_csv(PROJECT_PATH+"/iteration_1/validation_labels.txt", header=[0]).iloc[:,0].to_numpy()
 
 first_mols = int(100*t_mol/13) if percent_first_mols == -1.0 else int(percent_first_mols * len(scores_val))
 last_mols = 100 if percent_last_mols == -1.0 else int(percent_last_mols * len(scores_val))
@@ -190,21 +182,15 @@ else:
     else:
         good_mol = int(((last_mols-first_mols)*n_it + titr*first_mols-last_mols)/(titr-1))     # linear decrease as iterations increase
 
-# If this is the last iteration
-if isl:
-    # 100 mols is 0.0001% of an initial of 1 million input molecules (default)
-    good_mol = last_mols
+# needs at least 10 hits for this to even work so we set it higher
+good_mol = good_mol if good_mol > 50 else 50
 
-cf_start = np.mean(scores_val)  # the mean of all the docking scores (labels) of the validation set:
-t_good = len(scores_val)
-
-# we decrease the threshold value until we have our desired num of mol left.
-while t_good > good_mol: 
-    cf_start -= 0.005
-    t_good = len(scores_val[scores_val<cf_start])
-
-print('Threshold (cutoff):',cf_start)
-print('Molec under threshold:', t_good)
+# calculating using percentile instead:
+percent_good_mol = 100 * good_mol/len(scores_val)
+cf_start = np.percentile(scores_val, percent_good_mol)
+print("Calculating using percentile ({:.3}%):".format(percent_good_mol))
+print('Threshold (cutoff):', cf_start)
+print('Molec under thresh:', len(scores_val[scores_val<cf_start]))
 print('Goal molec:', good_mol)
 print('Total molec:', len(scores_val))
 

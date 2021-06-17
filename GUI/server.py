@@ -426,7 +426,10 @@ def runScripts():
     elif script == 'phase_f':
         BACKEND.run_phase(-1)
     elif script == 'reset_phase':
-        BACKEND.reset_phase()
+        try: # manually reset a specific phase if given
+            BACKEND.reset_phase(request.args["phase"])
+        except KeyError:
+            BACKEND.reset_phase()
     elif script == 'delete_project':
         BACKEND.delete_project()
     elif script == 'update_specs':

@@ -398,6 +398,7 @@ function updateCharts(carouselOnly) {
       }
     },
     error: function (res, opt, err) {
+      updateButtons();
       alert("Error!")
       console.log(res, opt, err);
     }
