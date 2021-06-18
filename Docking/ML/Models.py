@@ -167,11 +167,11 @@ class TunerModel:
         # Create the hyperparameters
         num_hidden_layers = hp.Int('hidden_layers', min_value=1, max_value=4, step=1)
         num_units = hp.Int("num_units", min_value=128, max_value=1024)
-        dropout_rate = hp.Float("dropout_rate", min_value=0.0, max_value=0.8)
+        dropout_rate = hp.Float("dropout_rate", min_value=0.00001, max_value=0.8)
         learning_rate = hp.Float('learning_rate', min_value=0.00001, max_value=0.001)
         epsilon = hp.Float('epsilon', min_value=1e-07, max_value=1e-05)
         kernel_reg_func = [None, Lasso, l1, l2][hp.Choice("kernel_reg", values=[0, 1, 2, 3])]
-        reg_amount = hp.Float("reg_amount", min_value=0.0, max_value=0.001, step=0.0001)
+        reg_amount = hp.Float("reg_amount", min_value=0.00001, max_value=0.001, step=0.0001)
 
         # Determine how the layer(s) are shared
         share_layer = hp.Boolean("shared_layer")

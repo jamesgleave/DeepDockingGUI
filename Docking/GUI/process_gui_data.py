@@ -271,7 +271,7 @@ def get_phase_3_progress(path):
 
 def get_phase_4_progress(models):
     # Use the largest ETA from the models to guess a phase ETA
-    etas = [model["estimate_time"] for model in models]
+    etas = [model["epoch_" + str(len(model.keys()))]["estimate_time"] for model in models["models"]]
     best = min(etas)
     worst = max(etas)
     average = (best + worst) / 2
