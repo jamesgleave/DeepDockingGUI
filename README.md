@@ -1,4 +1,5 @@
-# DeepDockingGUI - Beta v2.1.3
+# DeepDockingGUI - v2.3.0
+
 
 ## Deep Docking - Democratize Drug Development
 Deep docking (DD) is a deep learning-based tool developed to accelerate docking-based virtual screening. Using NVIDIA's own Autodock-GPU,  one can screen extensive chemical libraries like ZINC15 (containing > 1.3 billion molecules) 50 times faster than typical docking. For further details into the processes behind DD, please refer to our paper (https://doi.org/10.1021/acscentsci.0c00229). 
@@ -56,7 +57,10 @@ After running the above, you should see something similar to the following:
 
 Go to the web address provided, log in to your cluster, and you are ready to start a DD run.
 
+## Where to get final top hits:
+This should be located on the cluster in the folder for the last iteration of the project under the name `top_hits.csv` (contains the smiles with their corresponding IDs).
 
+Note that the Top Scoring tab does not currently show the final top hits of DD but will be in future updates.
 
 ## Common Issues + Fixes:
 ```python

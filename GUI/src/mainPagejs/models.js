@@ -3,7 +3,8 @@ var CURRENT_CHART = 0; // the current carousel chart to display.
 var CURRENT_ITERATION = 1;
 var CURRENT_MODEL = 1;
 var AVERAGED = false;
-var UPDATE_RATE = null;
+
+var LOADING_ARCH = false; // Tracks if architecture is loading
 
 var NUM_CHARTS = 0; // number of charts for the carousel
 var NUM_ITERATIONS = 1;
@@ -397,6 +398,7 @@ function updateCharts(carouselOnly) {
       }
     },
     error: function (res, opt, err) {
+      updateButtons();
       alert("Error!")
       console.log(res, opt, err);
     }
@@ -473,6 +475,7 @@ document.getElementById('selected-average').onclick = function(event){
 }
 
 document.getElementById('view-achitecture-btn').onclick = function(){
+  LOADING_ARCH = true;
   toggleLoadingScreen(true);
   addPanAndZoom('modelArchImage');
   resetImagePos('modelArchImage');
@@ -548,6 +551,7 @@ document.getElementById('view-achitecture-btn').onclick = function(){
         }
       }).done(function (response) {
         toggleLoadingScreen(false);
+        LOADING_ARCH = false;
       });
 
     },
@@ -564,10 +568,17 @@ document.querySelector('#modelArch .closePopupBtn').onclick = function(){
   togglePopup('modelArch', false);
 }
 
+function bootModelsTab(){
+  // If loading this will cause an issue with the arch no longer seeming to be loading.
+  if (!LOADING_ARCH)
+    updateCharts();
+}
+
 document.getElementById("modelsBtn").onclick = function () {
   toggleLoadingScreen(true);
+  bootModelsTab();
   switchTab(event, 'models');
-  updateCharts();
-  // setInterval(function, );
+  UPDATE_CALLBACKS["models"] = bootModelsTab;
+  resetUpdateLoop();
 }
 

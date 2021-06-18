@@ -224,6 +224,8 @@ class Core:
                 # If we are fully finished every iteration, we can show the progress of the final extraction
                 if int(full_percent) == 1:
                     status = self.model_data["iteration_" + str(current_iteration)]['itr']['final_phase']
+                    # If the full run is finished the iteration percentage should be set to 1
+                    self.model_data["iteration_" + str(current_iteration)]['itr']['itr_percent'] = 1
                     debug_message += Colours.OK_GREEN + "- Final Extraction -> " + status + "\n"
             except KeyError:
                 pass
@@ -286,7 +288,7 @@ class Backend:
         self.current_phase = 1
 
         # the connection to the cluster
-        self.short_cache = {"hyperparameters": None, "previous_command": None}
+        self.short_cache = {"hyperparameters": None, "previous_command": None, "top_hits": []}
         try:
             self.user_data = json.loads(open('src/backend/db.json').read())
             self.loaded_project = ""
@@ -358,8 +360,15 @@ class Backend:
         return self.ssh.get_image(file_name), hyperparameters
 
     def get_top_hits(self):
+
+        # Store current iteration
+        current_iteration = self.project_data['specifications']['iteration']
+
+        # Since the search happens at the very end of an iteration, we gotta look in the previous iteration directory
+        current_iteration -= 1 if current_iteration > 1 else 0
+
         # Get the full path to the project:
-        itr = f"/{self.loaded_project}/iteration_{self.project_data['specifications']['iteration']}"
+        itr = f"/{self.loaded_project}/iteration_{current_iteration}"
         fp = self.user_data['project_path'] + itr
 
         # Reads the top_hits.csv file generated at the end of phase 5
@@ -370,6 +379,14 @@ class Backend:
         for line in lines[1:]:
             smile, _ = line.split(",")
             smiles.append(smile)
+
+        # If we have top hits, we save them to the short cache
+        if len(smiles) > 0:
+            self.short_cache["top_hits"] = smiles
+        elif len(smiles) == 0 and len(self.short_cache["top_hits"]) > 0:
+            # If there are no smiles found, and we have smiles in the short cache, return the previously found smiles
+            smiles = self.short_cache["top_hits"]
+
         return smiles
 
     def get_final_phase_results(self):
@@ -412,6 +429,8 @@ class Backend:
         "sample_size": ...,
         "optimize_models": ...}
         """
+        # preprocessing the data:
+        specifications['partition'] = '""' if specifications["partition"] == "Default"  else specifications["partition"]
 
         # Update the user info
         self.update_user_info()

@@ -35,16 +35,6 @@ if is_final == 'False' or is_final == 'false':
 elif is_final == 'True' or is_final == 'true':
     is_final = True
 
-
-def no_molecules_txt(f_name):
-    with open(f_name, 'r') as ref:
-        ct = 0
-        for line in ref:
-            if line.rstrip()[:4] == "ZINC":
-                ct += 1
-    return ct
-
-
 def get_mol_final(fname):
     # final_dict = {}
     try:
@@ -131,10 +121,6 @@ def extract_smile(file_name, train, valid, test):
 
 
 def extract_smile_final(all_mols, file_name):
-    # for file_name in file_names:
-    # all_total_mols = {}
-    # with open(file_path+'/'+protein+"/after_iteration/to_dock/to_dock_"+str(file_no)+".pickle",'rb') as ref:
-    #    all_mols  = pickle.load(ref)
     fn = file_name.split('/')[-1]
     ref1 = open(file_path + '/' + protein + '/after_iteration/to_dock/smile/' + fn, 'w')
     with open(file_name, 'r') as ref:

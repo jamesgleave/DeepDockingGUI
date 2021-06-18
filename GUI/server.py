@@ -15,30 +15,27 @@ import os
 
 from src.backend import *
 
-
-# Ask user if they want to open the DD website automatically
-# import webbrowser
-# prompt = "\nOpen Website On Default Browser? \nEnter y to launch or any other key to open manually: "
-# open_site = True if input(prompt).rstrip() == "y" else False
-# if open_site:
-#     webbrowser.open("http://127.0.0.1:5000/")
-# else:
-#     print("Enter the proved link into your browser.")
-
-
 app = Flask(__name__, static_url_path='/', static_folder='/')
 cors = CORS(app)
 app.config['CORS_HEADERS'] = 'Content-Type'
-
 
 # Initalizing the ssh class for connections:
 ssh = SSH() # Automatically gets ip address from db.json 
 BACKEND = None
 
 MODE_SCAFFOLD = None
-SCAFFOLDS = None # holds all the murcko scaffolds for all smiles
-
 PROJECTS_PATH = './src/backend/projects/'
+
+# Launching the app automatically if prompted
+if not app.debug:
+    # Ask user if they want to open the DD website automatically
+    prompt = "\nOpen Website On Default Browser? \nEnter y to launch or any other key to open manually: "
+    open_site = True if input(prompt).rstrip() == "y" else False
+    if open_site:
+        import webbrowser
+        webbrowser.open("http://127.0.0.1:5000/")
+    else:
+        print("Enter the provided link into your browser.")
 
 def serve_pil_image(pil_img):
     img_io = BytesIO()
@@ -46,25 +43,28 @@ def serve_pil_image(pil_img):
     img_io.seek(0)
     return img_io
 
+def smileToMurckoScaffoldImage(smile):
+    # Returns a PIL image of the given smile.
+    m1 = Chem.MolFromSmiles(smile)
+    core = MurckoScaffold.GetScaffoldForMol(m1)
+    return MolToImage(core, size=(700, 700)) # image
+
 def getModeMurckoScaffoldImage(SMILES_list):
     """
     returns the most common murcko scaffold given a list of smiles as an rdkit image.
     """
     murckoScaffolds = []
-    dict_scaffolds = {}
 
+    # Looping through and getting the scaffolds for each smile
     for smile in SMILES_list:
         m1 = Chem.MolFromSmiles(smile)
         core = MurckoScaffold.GetScaffoldForMol(m1)
         murckoScaffolds.append(core)
 
-        dict_scaffolds[smile] = core
-
-    # Finding the mode:
+    # Finding the mode Scaffold:
     mode = max(set(murckoScaffolds), key=murckoScaffolds.count)
-    count = murckoScaffolds.count(mode)
     PIL_img_mode = MolToImage(mode, size=(700, 700))
-    return PIL_img_mode, dict_scaffolds
+    return PIL_img_mode
 
 @app.route('/')
 @cross_origin()
@@ -98,23 +98,27 @@ def connect():
 @app.route('/getBasics', methods=['GET'])
 def getBasics():
     global BACKEND
-    DATA_HISTORY = BACKEND.pull() # getting data from cluster    
-    update_rate_ms = BACKEND.core.update_rate * 60
-    data = {'update_rate': update_rate_ms}
+    data = {}
+    try:
+        update_rate_ms = BACKEND.core.update_rate * 1000
+        data['update_rate_ms'] = update_rate_ms
+    except AttributeError:
+        print("USER IS NOT YET LOGGED IN")
 
     return jsonify(data), 200
 
-@app.route('/topScoring', methods=['GET', 'POST'])
+@app.route('/topScoring', methods=['POST'])
 def topScoring():
-    sendImage = request.args['image'] == 'true'
-    smile = request.args['smile']
+    param = request.get_json()
+    sendImage = param['image'] == 'true'
+    smile = param["smile"]
 
-    global BACKEND, MODE_SCAFFOLD, SCAFFOLDS
+    global BACKEND, MODE_SCAFFOLD
     data = {}
 
     if sendImage and smile != "undefined":
         # Get the selected smile when given:
-        img_io = serve_pil_image(MolToImage(SCAFFOLDS[smile], size=(700, 700)))
+        img_io = serve_pil_image(smileToMurckoScaffoldImage(smile))
         return send_file(img_io, mimetype='text/plain'), 200
     elif sendImage and MODE_SCAFFOLD is not None:
         # displaying mode when not given a smile
@@ -133,7 +137,7 @@ def topScoring():
 
         if sendImage:
             # Getting most common murckoscaffold when none provided
-            MODE_SCAFFOLD, SCAFFOLDS = getModeMurckoScaffoldImage(SMILES_list)
+            MODE_SCAFFOLD = getModeMurckoScaffoldImage(SMILES_list)
             img_io = serve_pil_image(MODE_SCAFFOLD)
             return send_file(img_io, mimetype='text/plain'), 200
         else:
@@ -389,6 +393,10 @@ def getProjectInfo():
             # getting the specified project (filenotfound if invalid name WONT HAPPEN b/c dropdown)
             with open(PROJECTS_PATH+project_name+'.json') as f:
                 data['specs'] = json.load(f)
+        
+        # Makes sure not to display ""
+        if data['specs']['specifications']['partition'] == '""':
+            data['specs']['specifications']['partition'] = ''
 
     except (FileNotFoundError, IndexError): 
         # returns None if there are no projects or invalid name
@@ -418,7 +426,10 @@ def runScripts():
     elif script == 'phase_f':
         BACKEND.run_phase(-1)
     elif script == 'reset_phase':
-        BACKEND.reset_phase()
+        try: # manually reset a specific phase if given
+            BACKEND.reset_phase(request.args["phase"])
+        except KeyError:
+            BACKEND.reset_phase()
     elif script == 'delete_project':
         BACKEND.delete_project()
     elif script == 'update_specs':
@@ -427,13 +438,6 @@ def runScripts():
             if k != 'script':
                 specs[k] = v
         BACKEND.update_specifications(specs)
-
-    # # Waiting for the next update loop so that the GUI is loaded correctly:
-    # start = BACKEND.core.num_updates
-    
-    # #TODO: is this needed? -> just disable the buttons temporarily.
-    # while BACKEND.core.num_updates <= start:
-    #     time.sleep(1)
 
     return {'script': script}, 200
 

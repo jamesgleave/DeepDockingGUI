@@ -3,7 +3,7 @@
     <head>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>Deep Docking 2.0</title>
+        <title>Deep Docking GUI</title>
         <link rel="icon" type="image/png" href="https://www.prostatecentre.com/sites/default/files/fav2.png">
         <!-- Covid link: https://upload.wikimedia.org/wikipedia/commons/thumb/8/82/SARS-CoV-2_without_background.png/220px-SARS-CoV-2_without_background.png -->
         <!-- Getting all dependencies: -->
@@ -58,7 +58,7 @@
                         <!-- Utility btns: -->
                         <div class='content-box centered' id='utilitybtns'>
                             <button class='mediumBtn badBtn' id='deleteProjBtn' disabled>Delete Project</button>
-                            <button class='mediumBtn badBtn' id='resetPhase' disabled>Reset Last Phase</button>
+                            <button class='mediumBtn badBtn' id='resetPhase' disabled>Reset Phase</button>
                         </div>
                     </div>
 
@@ -66,7 +66,7 @@
                     <div id='nameandBtn-container'>
                         <!-- Name of current project -->
                         <div class='content-box centered'>
-                            <h2 id='curr_project_name' >Current Project: no data...</h2>
+                            <h2 id='curr_project_name' >Current Project: No Data...</h2>
                         </div>
                         
                         <!-- Project info stuff -->
@@ -74,7 +74,7 @@
                              <!-- Specs -->
                             <div id='specs-container'>
                                 <div id='specs' class='content-box centered'>
-                                    <h3 class="disable-select">Specifications</h3>
+                                    <h3 class="disable-select">Mutable Parameters</h3>
 
                                     <div class='specField'>
                                         <h4 class="disable-select">Number of CPUs</h4>
@@ -105,7 +105,7 @@
                                         <input type="text" id="top_n" placeholder="All">
                                     </div>
                                     <div>
-                                        <button id='updateSpecsBtn' class='disable-select' disabled>Update Specifications</button>
+                                        <button id='updateSpecsBtn' class='disable-select' disabled>Update Parameters</button>
                                     </div>
                                 </div>
                             </div>

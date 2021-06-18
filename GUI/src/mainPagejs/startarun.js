@@ -85,31 +85,24 @@ function enableValidBtns(projectInfo){
                 success: function (data, status, settings) {
                     document.getElementById('deleteProjBtn').disabled = false;
                     document.getElementById('updateSpecsBtn').disabled = false;
-                    document.getElementById('runAllPhases').disabled = false;
                     document.getElementById('resetPhase').disabled = false;
 
-
-                    // // Switching on the currently running phase button
-                    // // TODO: fix this
-                    // const curr_phase = data.currentInfo.phase;
-                    // const completed = data.is_idle; // if false -> stil running
-                    // if (curr_phase == 0){
-                    //     document.getElementById('startPhase1').disabled = false;
-                    //     if (data.currentInfo.iter > 1)
-                    //         document.getElementById('startPhaseFinal').disabled = false;
-                    // }else {
-                    //     document.getElementById('startPhase'+ (curr_phase)).disabled = false;
-                    // }
-                    
-                    // // If it is done then we also show the next phase:
-                    // if  (completed){
-                    //     if (curr_phase < 5)
-                    //         document.getElementById('startPhase'+ (curr_phase+1)).disabled = false;
-                    //     else
-                    //         document.getElementById('startPhase1').disabled = false;
-                    //         if (data.currentInfo.iter > 1)
-                    //             document.getElementById('startPhaseFinal').disabled = false;
-                    // }
+                    // Switching on the currently running phase button
+                    const is_running = !data.is_idle; // if false -> stil running
+                    if (!is_running){ //only will display buttons if nothing is running.
+                        document.getElementById('runAllPhases').disabled = false;
+                        // TODO: this works as expected but need to check backend functionality before enabling for users
+                        // const curr_phase = data.currentInfo.phase;
+                        // Displaying next phase button:
+                        // if (curr_phase < 5 && curr_phase !== 0) // could be 0 at the very start
+                        //     document.getElementById('startPhase'+ (curr_phase+1)).disabled = false;
+                        // else{
+                        //     document.getElementById('startPhase1').disabled = false;
+                        //     // Only allowing final phase to be pressed after at least one iteration
+                        //     if (data.currentInfo.iter > 1)
+                        //         document.getElementById('startPhaseFinal').disabled = false;
+                        // }
+                    }
                 }
             });
         }
@@ -129,10 +122,15 @@ function updateInfoCenter(projectInfo){
         }
         else
             info_center.innerText = "Please create a project...";
-    }else
-        info_center.innerText = "You are not connected to the cluster!\n\nPlease go back to the login page and login.";
-
-    
+    }else{
+        info_center.innerText = "You are not connected to the cluster!\n\nPlease go back to the ";
+        link = document.createElement("a");
+        link.innerText = "login page.";
+        link.href = "/";
+        link.style = "font: inherit; color: #9eb8b8;";
+        info_center.append(link);
+    }
+        
 }
 
 function displayProjectInfo(projectInfo){
@@ -146,10 +144,13 @@ function displayProjectInfo(projectInfo){
             // Changing name:
             document.getElementById('curr_project_name').innerText = "Current Project: " + specs.log_file.project_name
 
-            // Changing placeholders for inputs:
+            // Changing value for inputs:
             for (input of inputs)
                 // The name of the element is the same as its dictionary key:
                 input.value = specs.specifications[input.id];
+
+            // Making sure GPU partition shows Default and not No data... for placeholder
+            document.getElementById("partition").placeholder = "Default";
         }else
             inputs.forEach(i => i.placeholder = 'No data...');
 
@@ -176,29 +177,6 @@ function updateProjectInfo(project_name){
             } else{
                 alert('Error\n' + res.status + ': ' + err);
             }
-            console.log(res.status);
-        }
-    }).done(function (response) {
-        toggleLoadingScreen(false);
-    });
-}
-
-function boot(){
-    $.ajax({
-        type: "GET",
-        url: "/getProjectInfo?projectName=undefined",
-        dataType: 'json',
-        success: function (data, status, settings) {
-            displayProjectInfo(data); //if null it displays 'nodata...'
-        },
-        error: function (res, opt, err) {
-            if (res.status == 400) {
-                alert('BAD REQUEST: Missing/invalid project specifications. Please try again.');
-
-            } else{
-                alert('Error\n' + res.status + ': ' + err);
-            }
-            
             console.log(res.status);
         }
     }).done(function (response) {
@@ -372,6 +350,7 @@ function callScriptRunner(args, callback, ...c_args){
 }
 
 function confirmChoice(promptText, paragraphText, buttonText, callback, arg){
+    // This toggles a popup that confirms the choice made
     togglePopup('popupPrompt', true);
     // Changing prompt text
     document.getElementById('promptText').innerHTML = promptText;
@@ -407,7 +386,7 @@ document.getElementById('deleteProjBtn').onclick = function(){
 // resets the current Phase
 document.getElementById('resetPhase').onclick = function(){
     // Launching confirmation before running 
-    confirmChoice("Are you sure?", "This will delete all data for the current or previous phase.", "Reset Last Phase", callScriptRunner, 'script=reset_phase');
+    confirmChoice("Are you sure?", "This will delete all data for the current phase.", "Reset Phase", callScriptRunner, 'script=reset_phase');
 };
 
 // run ALL phases btn
@@ -463,15 +442,44 @@ document.getElementById('updateSpecsBtn').onclick = function(){
         const input = inputs[i];
         // The ids are named after their dictionary keys
         args += '&' + input.id + '=';
-        args += (input.value) ? input.value.replace('&', '') : input.placeholder;
+        var param = (input.value) ? input.value.replace('&', '') : input.placeholder;
+        args += (param === "No data...") ? '""' : param; // redundant check to ensure that it has the appropriate placeholder.
     }
-    // console.log(args);
+    console.log(args);
     callScriptRunner(args);
 };
+
+function bootStartARunTab(){
+    $.ajax({
+        type: "GET",
+        url: "/getProjectInfo?projectName=undefined",
+        dataType: 'json',
+        success: function (data, status, settings) {
+            displayProjectInfo(data); //if null it displays 'nodata...'
+        },
+        error: function (res, opt, err) {
+            if (res.status == 400) {
+                alert('BAD REQUEST: Missing/invalid project specifications. Please try again.');
+
+            } else{
+                alert('Error\n' + res.status + ': ' + err);
+            }
+            
+            console.log(res.status);
+        }
+    }).done(function (response) {
+        toggleLoadingScreen(false);
+    });
+}
+
 // "Start a Run" tab button
 document.getElementById("startRBtn").onclick = function() {
-    switchTab(event, 'startR');
+    toggleLoadingScreen(true);
+    bootStartARunTab();
+    switchTab(event, 'startR'); // I kinda like seeing the tab load up behind the loading screen
+    resetUpdateLoop();
 }
 
 // This must be run at boot:
-boot();
+bootStartARunTab();
+UPDATE_CALLBACKS["startR"] = bootStartARunTab; // not used but left here for future possible use (replace with another function)

@@ -56,11 +56,11 @@ function destroyChart(id){
 };
 
 // Pan and zoom functionality for images:
-var img_ele = null, 
-  x_cursor = 0,
-  y_cursor = 0,
+var img_ele = null,
   x_img_start = 0,
-  y_img_start = 0;
+  y_img_start = 0,
+  starting_L = 0,
+  starting_T = 0;
 
 function zoom(zoomincrement, img_id) {
   img_ele = document.getElementById(img_id);
@@ -70,40 +70,37 @@ function zoom(zoomincrement, img_id) {
   img_ele = null;
 }
 
-//TODO: FIGURE OUT ISSUE WITH PAN MOUSE MISSMATCH
 function start_drag(e) {
   img_ele = this;
   
-  var starting_L = parseInt(img_ele.style.left.split('px')[0]);
-  var starting_T = parseInt(img_ele.style.top.split('px')[0]);
+  starting_L = parseInt(img_ele.style.left.split('px')[0]);
+  starting_T = parseInt(img_ele.style.top.split('px')[0]);
   starting_L = (starting_L) ? starting_L : 0; // if the value is auto the conditional will be false (NaN)
-  starting_T = (starting_T) ? starting_T : 0; // if the value is auto
+  starting_T = (starting_T) ? starting_T : 0; // sets it to zero if auto.
   
-  // Getting the difference between the mouse and the top left corner of the image
-  x_img_start = starting_L - e.clientX; // pixel position of left side.
-  y_img_start = starting_L - e.clientY;  
+  x_img_start = e.clientX;
+  y_img_start = e.clientY;
+}
+
+function while_drag(e) {
+  e.preventDefault();
+  var delta_x = e.clientX - x_img_start;
+  var delta_y = e.clientY - y_img_start;
+  
+  if (img_ele !== null) {
+      // calculating amount to move image by
+      img_ele.style.left = delta_x + starting_L + 'px';
+      img_ele.style.top = delta_y + starting_T + 'px';
+  }
 }
 
 function stop_drag() {
   img_ele = null;
 }
 
-function while_drag(e) {
-  e.preventDefault();
-  var delta_x = x_img_start + e.clientX;
-  var delta_y = y_img_start + e.clientY;
-  
-  if (img_ele !== null) {
-    // calculating amount to move image by
-    img_ele.style.left = delta_x + 'px';
-    img_ele.style.top = delta_y + 'px';
-  }
-}
 
 function resetPanandZoomVals(){
-  img_ele = null, 
-  x_cursor = 0,
-  y_cursor = 0,
+  img_ele = null,
   x_img_ele = 0,
   y_img_ele = 0;
 }
@@ -131,36 +128,9 @@ function resetImagePos(img_id){
   element.style.height = 'auto';
 }
 
-var UPDATE_RATE = null;
-const DEBUG_MODE = true;
-
-function startup(){
-  if (!DEBUG_MODE){
-    $.ajax({
-      type: "GET",
-      url: "/getBasics",
-      dataType: 'json',
-      success: function (data, status, settings) {
-        
-        UPDATE_RATE = data.update_rate;
-        // console.log(UPDATE_RATE);
-      },
-      error: function (res, opt, err) {
-        alert("Error!")
-        console.log(res, opt, err);
-      }
-    });
-  }
-
-  // Changing the background color:
-  document.getElementsByTagName("html")[0].style.background = "#5A6E59";
-}
-
-startup();
-
 function deleteProject(name){
   var name = (name) ? name : document.querySelector('#curr_project_name').textContent.split(':')[1].trim();
-  console.log('deleting project: ', name);  
+  // console.log('deleting project: ', name);  
   var args = 'project_name=' + name;
   toggleLoadingScreen(true);
 
@@ -177,4 +147,64 @@ function deleteProject(name){
   }).done(function (response) {
       toggleLoadingScreen(false);
   });
+}
+
+var UPDATE_RATE = null;
+var UPDATE_CALLBACKS = {}; // Saves the callbacks for all the tabs opened
+var UPDATE_ID; // the ID for the async update loop
+
+function clientUpdateLoop(){
+  // This function is a loop that runs in the background that retrives updates from the server as it comes in
+  // and displays that data to the client depending on which tab they are on.
+
+  // Checking which tab is active:
+  var active = document.querySelector("body > div.tabs.disable-select > Button.active").id;
+  var activeTab = active.substring(0, active.length-3);
+
+  // console.log("active tab:", activeTab);
+  // Not running for top Scoring tab because that would just be annoying when viewing molec:
+  // Also not really needed for the start a run page...
+  if (activeTab !== "topScoring" && activeTab !== "startR"){
+    // Running the appropriate callback
+    var callbackfn = UPDATE_CALLBACKS[activeTab];
+    if (callbackfn) callbackfn();
   }
+}
+
+function resetUpdateLoop(){
+  // Used for when we already have the update rate and 
+  // want to restart the loop to prevent "double loading" of a tab.
+  if (UPDATE_ID){ // Clearing any previous update loop
+    clearInterval(UPDATE_ID);
+    UPDATE_ID = null;
+  }
+  UPDATE_ID = setInterval(clientUpdateLoop, UPDATE_RATE);
+  // console.log("update loop reset!");
+}
+
+function startUpdateLoop(){
+  $.ajax({
+    type: "GET",
+    url: "/getBasics",
+    dataType: 'json',
+    success: function (data, status, settings) {
+      UPDATE_RATE = data.update_rate_ms;
+      // console.log("update rate (ms):", UPDATE_RATE);
+      if (UPDATE_RATE){ // IF NOT UNDEF
+        UPDATE_ID = setInterval(clientUpdateLoop, UPDATE_RATE);
+      }
+    },
+    error: function (res, opt, err) {
+      alert("Error!")
+      console.log(res, opt, err);
+    }
+  });
+}
+
+function startup(){
+  startUpdateLoop();
+  // Changing the background color:
+  document.getElementsByTagName("html")[0].style.background = "#5A6E59";
+}
+
+startup();

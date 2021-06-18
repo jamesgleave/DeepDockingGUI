@@ -160,9 +160,7 @@ function displayMolecRemainingChart(chartData) {
 
 var IDLE_ASNYC_ID; // Interval id for blinking indicator light
 
-document.getElementById("progBtn").onclick = function() {
-    toggleLoadingScreen(true);
-
+function bootProgressTab() {
     // Async GET request for the data needed for this tab.
     $.ajax({
         type: "GET",
@@ -205,8 +203,7 @@ document.getElementById("progBtn").onclick = function() {
                 indicator.src = indicator.src.substr(0, indicator.src.length - 5) + 'g.svg';
                 indicator.style.filter = 'brightness(50%)';
             }
-            // if pending then we apply a yellow filter before flashing
-            switchTab(event, 'prog');
+            // TODO: if pending then we apply a yellow filter before flashing
         },
         error: function (res, opt, err) {
             if (res.start == 404) {
@@ -220,4 +217,10 @@ document.getElementById("progBtn").onclick = function() {
     });
 }
 
-
+document.getElementById("progBtn").onclick = function(){
+    toggleLoadingScreen(true);
+    bootProgressTab();
+    switchTab(event, 'prog');
+    UPDATE_CALLBACKS["prog"] = bootProgressTab;
+    resetUpdateLoop();
+} 

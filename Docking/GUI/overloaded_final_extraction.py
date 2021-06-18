@@ -52,13 +52,13 @@ def kinda_merge_sort(f):
     os.remove(f2)
 
     # If it is the final merge then get the top_n and save to csv
-    if n is not None and n != "all":
+    if n is not None and n.lower() != "all":
         # If n != "all", then we should not take all of the top hits...
         combined = combined.head(int(n))
         # We will finalize our extraction by separating our combined dataframe into two new ones
         finalize(combined)
         return ""
-    elif n is not None and n == "all":
+    elif n is not None and n.lower() == "all":
         # We will finalize our extraction by separating our combined dataframe into two new ones
         finalize(combined)
         return ""
