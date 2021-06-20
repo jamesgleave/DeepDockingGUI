@@ -172,7 +172,10 @@ def read_final_top_hits(ssh, final_iteration_path):
     ftp_client = ssh.ssh.open_sftp()
     print("Looking at", final_iteration_path + "/smiles.csv")
     try:
-        return ftp_client.open(final_iteration_path + "/smiles.csv").readlines()
+        # getting just the first 1000 (the top of the top hits):
+        with ftp_client.open(final_iteration_path + "/smiles.csv") as f:
+            top_1000 = [f.readline() for i in range(1000)]
+            return top_1000                
     except FileNotFoundError:
         return []
 

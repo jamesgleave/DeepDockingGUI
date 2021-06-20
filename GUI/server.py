@@ -44,7 +44,7 @@ def serve_pil_image(pil_img):
     return img_io
 
 def smileToMurckoScaffoldImage(smile):
-    # Returns a PIL image of the given smile.
+    # Returns a PIL MURCKO scaffold image of the given smile.
     m1 = Chem.MolFromSmiles(smile)
     core = MurckoScaffold.GetScaffoldForMol(m1)
     return MolToImage(core, size=(700, 700)) # image
