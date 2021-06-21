@@ -386,7 +386,7 @@ document.getElementById('deleteProjBtn').onclick = function(){
 // resets the current Phase
 document.getElementById('resetPhase').onclick = function(){
     // Launching confirmation before running 
-    confirmChoice("Are you sure?", "This will delete all data for the current or previous phase.", "Reset Last Phase", callScriptRunner, 'script=reset_phase');
+    confirmChoice("Are you sure?", "This will delete all data for the current phase.", "Reset Phase", callScriptRunner, 'script=reset_phase');
 };
 
 // run ALL phases btn

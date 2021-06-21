@@ -57,7 +57,9 @@ After running the above, you should see something similar to the following:
 
 Go to the web address provided, log in to your cluster, and you are ready to start a DD run.
 
-
+## Where to get final top hits:
+This should be located on the cluster in the folder for the last iteration of the project under the name `smiles.csv` (contains the smiles with their corresponding IDs).
+The Top Scoring tab allows you to download the top 1000 hits of that smiles file from the GUI directly. 
 
 ## Common Issues + Fixes:
 ```python
