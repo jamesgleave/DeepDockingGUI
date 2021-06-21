@@ -3,9 +3,12 @@ from flask import Flask, request, render_template, send_from_directory, send_fil
 from flask_cors import CORS, cross_origin
 from flask import Flask
 
-from rdkit import Chem
-from rdkit.Chem.Draw import MolToImage
-from rdkit.Chem.Scaffolds import MurckoScaffold
+try:
+    from rdkit import Chem
+    from rdkit.Chem.Draw import MolToImage
+    from rdkit.Chem.Scaffolds import MurckoScaffold
+except:
+    pass
 
 from io import StringIO, BytesIO
 import paramiko

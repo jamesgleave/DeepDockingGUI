@@ -127,8 +127,10 @@ class Core:
             try:
                 # First, try to read the file from the cluster,
                 pickle_name = "{}_data.pickle".format(self.__ssh_connection.user)
+                # Get the path to the pickle (in the user's directory)
+                user_path = f"/Users/{self.__ssh_connection.user}/"
                 # Read the pickle off the remote cluster
-                pickled_data = self.__ssh_connection.read(self.user_data['remote_gui_path'] + pickle_name)
+                pickled_data = self.__ssh_connection.read(self.user_data['remote_gui_path'] + user_path + pickle_name)
                 # add to the debug message
                 debug_message += Colours.OK_CYAN + "- Reading data from the cluster...\n"
                 # load the data from the pickle and add to the debug message

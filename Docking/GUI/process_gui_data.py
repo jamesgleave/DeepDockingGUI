@@ -375,7 +375,7 @@ def get_phase_percentage(gui_path, username):
 
 def check_pending(gui_path, username):
     # Read the phase jobs file
-    phase_jobs = gui_path + username + "_phase_jobs.csv"
+    phase_jobs = gui_path + "/" + username + "_phase_jobs.csv"
     jobs = pd.read_csv(phase_jobs)
 
     # If there are no jobs it is not pending
@@ -405,6 +405,15 @@ def read_iterations(project_path, pickle_path, username):
     pickle_path = pickle_path.replace("\r", "")
     project_path = project_path.replace("\r", "")
     project_name = os.path.basename(project_path)
+
+    # Create a director for users (if it has not been yet)
+    if not os.path.exists(pickle_path + "/Users"):
+        os.mkdir(pickle_path + "/Users/")
+
+    # Create a directory for the user if one does not exist
+    user_path = pickle_path + "/Users/" + username
+    if not os.path.exists(pickle_path + "/Users/" + username):
+        os.mkdir(user_path)
 
     # Find all iterations
     all_models_paths = []
@@ -451,7 +460,7 @@ def read_iterations(project_path, pickle_path, username):
         iteration_info["molecules_remaining"] = get_molecules_remaining(project_path, iteration_root)
         iteration_info["current_phase"] = current_phase
         iteration_info["in_progress"] = iteration == max_itr
-        iteration_info["is_idle"] = is_idle(script_path=pickle_path, username=username)
+        iteration_info["is_idle"] = is_idle(script_path=user_path, username=username)
 
         # If the iteration is in progress then calculate the ETA
         if iteration_info["in_progress"]:
@@ -490,7 +499,7 @@ def read_iterations(project_path, pickle_path, username):
 
         # Add the % complete of the iteration
         if current_phase < 6:
-            itr_percent = (current_phase - 1) + (get_phase_percentage(pickle_path, username) / 100)
+            itr_percent = (current_phase - 1) + (get_phase_percentage(user_path, username) / 100)
             iteration_info["itr_percent"] = max(min(itr_percent / 5, 1.0), 0)  # Since we have 5 phases, we divide by 5
         else:
             # This means we are completely finished... thus we are 100% complete
@@ -513,7 +522,7 @@ def read_iterations(project_path, pickle_path, username):
                     final_phase_info = "running"
                     iteration_info["is_idle"] = False
         iteration_info["final_phase"] = final_phase_info
-        iteration_info["pending_info"] = check_pending(gui_path=pickle_path, username=username)
+        iteration_info["pending_info"] = check_pending(gui_path=user_path, username=username)
 
         # Delete Later
         print()
@@ -521,11 +530,11 @@ def read_iterations(project_path, pickle_path, username):
         print("Current phase:", iteration_info['current_phase'])
         print("In progress:", iteration_info['in_progress'])
         print("Is Idle:", iteration_info['is_idle'])
-        print("Is Pending:", check_pending(gui_path=pickle_path, username=username))
+        print("Is Pending:", check_pending(gui_path=user_path, username=username))
         print("Final Phase:", final_phase_info)
 
     # Save to a pickle
-    pickle_name = "/{}_data.pickle".format(username)
+    pickle_name = f"Users/{username}/{username}_data.pickle"
     pd.to_pickle(data, pickle_path + pickle_name)
 
 

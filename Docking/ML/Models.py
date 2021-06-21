@@ -15,7 +15,7 @@ from tensorflow.keras.layers import (Input, Dense, Activation, BatchNormalizatio
                           Conv2D, MaxPool2D, Flatten, Embedding, MaxPooling1D,
                           Conv1D)
 from tensorflow.keras.regularizers import *
-
+import tensorflow as tf
 import warnings
 warnings.filterwarnings('ignore')
 
@@ -165,13 +165,13 @@ class TunerModel:
         """
 
         # Create the hyperparameters
-        num_hidden_layers = hp.Int('hidden_layers', min_value=1, max_value=4, step=1)
+        num_hidden_layers = hp.Int('hidden_layers', min_value=1, max_value=4)
         num_units = hp.Int("num_units", min_value=128, max_value=1024)
         dropout_rate = hp.Float("dropout_rate", min_value=0.00001, max_value=0.8)
         learning_rate = hp.Float('learning_rate', min_value=0.00001, max_value=0.001)
         epsilon = hp.Float('epsilon', min_value=1e-07, max_value=1e-05)
         kernel_reg_func = [None, Lasso, l1, l2][hp.Choice("kernel_reg", values=[0, 1, 2, 3])]
-        reg_amount = hp.Float("reg_amount", min_value=0.00001, max_value=0.001, step=0.0001)
+        reg_amount = hp.Float("reg_amount", min_value=0.00001, max_value=0.001)
 
         # Determine how the layer(s) are shared
         share_layer = hp.Boolean("shared_layer")
@@ -181,7 +181,7 @@ class TunerModel:
             shared_layer = Dense(shared_layer_units, name="shared_hidden_layer")
             if not share_all:
                 where_to_share = set()
-                layer_connections = hp.Int("num_shared_layer_connections", min_value=1, max_value=num_hidden_layers)
+                layer_connections = hp.Int("num_shared_layer_connections", min_value=0, max_value=num_hidden_layers)
                 for layer in range(layer_connections):
                     where_to_share.add(hp.Int("where_to_share", min_value=0, max_value=num_hidden_layers, step=1))
 
@@ -211,11 +211,52 @@ class TunerModel:
 
         outputs = Dense(1, activation='sigmoid', name="output_layer")(x)
         model = Model(inputs=inputs, outputs=outputs)
-        model.compile(optimizer=keras.optimizers.Adam(learning_rate=learning_rate, epsilon=epsilon),
-                      loss=keras.losses.BinaryCrossentropy(),
+        model.compile(optimizer=tf.keras.optimizers.Adam(learning_rate=learning_rate, epsilon=epsilon),
+                      loss=tf.keras.losses.BinaryCrossentropy(),
                       metrics=['accuracy', "AUC", "Precision", "Recall", DDMetrics.scaled_performance])
 
         print(model.summary())
         return model
 
+    def build_original_tuner_model(self, hp):
+        # Setup hyperparameters
+        num_hidden_layers = hp.Int('hidden_layers', min_value=1, max_value=4)
+        num_units = hp.Int("num_units", min_value=128, max_value=2048)
+        dropout_rate = hp.Float("dropout_rate", min_value=0.00001, max_value=0.6)
+        learning_rate = hp.Float('learning_rate', min_value=0.00001, max_value=0.001)
+        epsilon = hp.Float('epsilon', min_value=1e-07, max_value=1e-06)
+        kernel_reg_func = [None, Lasso, l1, l2][hp.Choice("kernel_reg", values=[0, 1, 2, 3])]
+        reg_amount = hp.Float("reg_amount", min_value=0.00001, max_value=0.001)
+
+        x_input = Input(self.input_shape, name="TunerOriginal")
+        x = x_input
+        for j, i in enumerate([0, 1] * num_hidden_layers):
+            if i == 0:
+                # Add a dense layer
+                if kernel_reg_func is not None:
+                    x = Dense(units=num_units,
+                              kernel_regularizer=kernel_reg_func(reg_amount),
+                              name="Hidden_Layer_%i" % (j + 1))(x)
+                else:
+                    x = Dense(units=num_units,
+                              name="Hidden_Layer_%i" % (j + 1))(x)
+                # Normalize the values
+                x = BatchNormalization()(x)
+                # Activate the values
+                x = Activation('relu')(x)
+            else:
+                # Add a dropout layer
+                x = Dropout(dropout_rate)(x)
+
+        # Set the output layer
+        x = Dense(1, activation='sigmoid', name="Output_Layer")(x)
+
+        # Build and compile the model
+        model = Model(inputs=x_input, outputs=x, name='Progressive_Docking')
+        model.compile(optimizer=tf.keras.optimizers.Adam(learning_rate=learning_rate, epsilon=epsilon),
+                      loss=tf.keras.losses.BinaryCrossentropy(),
+                      metrics=['accuracy', "AUC", "Precision", "Recall", DDMetrics.scaled_performance])
+
+        # Return the model
+        return model
 
