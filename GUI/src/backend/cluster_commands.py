@@ -189,9 +189,6 @@ def create_project(ssh,
                    specifications: dict,
                    logfile_contents: dict):
 
-    # open an ftp client to do work on the cluster
-    ftp_client = ssh.ssh.open_sftp()
-
     # load up the data we have from installation
     with open('src/backend/db.json') as user_db:
         db = user_db.read()
@@ -202,6 +199,9 @@ def create_project(ssh,
     specifications['current_phase'] = 1
     project_location = database['project_path'] + "/" + project_name
     new_project = {"location": project_location, "specifications": specifications, "log_file": logfile_contents}
+
+    # open an ftp client to do work on the cluster
+    ftp_client = ssh.ssh.open_sftp()
 
     # create the project
     itr1_dir = project_location + "/iteration_1/"

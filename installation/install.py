@@ -125,13 +125,6 @@ def install_deep_docking(simulate):
         # Windows...
         local_activation_command = 'conda activate DeepDockingLocal'
 
-    # This is legacy TODO Delete
-    # default_specifications = {"iteration": 1, "total_iterations": 12, "num_cpu": 24, "is_final_iteration": False,
-    #                           "licences": 280, "top_n": 10e6, "sample_size": 10e6, "optimize_models": False,
-    #                           "partition": "normal", "path_to_autodock": "", "path_to_fld": ""}
-    # installation_information['specifications'] = default_specifications
-    # installation_information['log_file_contents'] = "None"
-
     installation_information['project_path'] = docking_path.replace("/DeepDocking/", "/DeepDockingProjects/")
     installation_information['env_deactivation_command'] = env_deactivation
     installation_information['local_env_activation_command'] = local_activation_command
