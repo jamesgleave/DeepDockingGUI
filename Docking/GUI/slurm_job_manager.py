@@ -93,7 +93,7 @@ def running_job_monitor(project_path, scripts_path, current_iteration, current_p
     crashes = []
 
     # Open a new file to hold which processes are currently running or have finished under the current phase
-    phase_jobs = open(scripts_path + f"/GUI/{username}_phase_jobs.csv", "w")
+    phase_jobs = open(scripts_path + f"/GUI/Users/{username}/{username}_phase_jobs.csv", "w")
     phase_jobs.write("job_name,job_id,is_running,is_pending,contains_errors\n")
 
     # Read every error file and look for crashes!
