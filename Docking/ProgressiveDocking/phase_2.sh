@@ -26,6 +26,11 @@ source $script_path/activation_script.sh
 
 python $script_path/jobid_writer.py -file_path $project_path -n_it $iteration -jid $SLURM_JOB_NAME -jn $SLURM_JOB_NAME.sh
 
+# For some reason, running this with the conda environment activated causes an error.
+# We must deactivate it before running!
+source ~/.bashrc
+source $local_path/deactivation_script.sh
+
 # Move into the project
 cd $project_path/iteration_$iteration
 
@@ -35,6 +40,10 @@ echo Chunking Train, Test, and Valid Sets...
 sbatch $script_path/split_chunks.sh smile/train_smiles_final_updated.smi $extension train $chunk_n_lines $script_path
 sbatch $script_path/split_chunks.sh smile/test_smiles_final_updated.smi $extension test $chunk_n_lines $script_path
 sbatch $script_path/split_chunks.sh smile/valid_smiles_final_updated.smi $extension valid $chunk_n_lines $script_path
+
+# This should activate the conda environment
+source ~/.bashrc
+source $script_path/activation_script.sh
 
 # wait for completion
 echo Finished Chunking
