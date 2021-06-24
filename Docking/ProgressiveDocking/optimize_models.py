@@ -66,7 +66,7 @@ def run_bayesian(tr_x, tr_y, tx, ty, config: Config, class_weights):
                                     objective=kt.Objective(config.objective, config.direction),
                                     project_name=config.project_name,
                                     directory=config.directory,
-                                    max_trials=config.max_trials)
+                                    max_trials=config.max_trials, overwrite=True)
 
     tuner.search_space_summary()
     tuner.search(tr_x, tr_y,
@@ -79,10 +79,12 @@ def run_bayesian(tr_x, tr_y, tx, ty, config: Config, class_weights):
     # Show a summary of the search
     tuner.results_summary()
 
-    # Retrieve the best 3 models.
+    # Retrieve the best model.
     print("Saving the top model...")
     best_hyperparameters = tuner.get_best_hyperparameters(1)[0]
-    best_model = tuner.get_best_models(num_models=1)[0]
+    print("Top hyperparameters:", best_hyperparameters)
+
+    best_model = tuner.hypermodel.build(best_hyperparameters)
     model = DDModel.load(best_model, kt_hyperparameters=best_hyperparameters)
     return model
 
@@ -95,7 +97,7 @@ def run_sklearn(tr_x, tr_y, config: Config, build_model_func):
 
     # Create the tuner
     tuner = kt.tuners.Sklearn(
-        oracle=kt.oracles.BayesianOptimization(objective=kt.Objective(config.objective, config.direction),
+        oracle=kt.oracles.BayesianOptimization(objective=kt.Objective('score', 'max'),
                                                max_trials=config.max_trials),
         hypermodel=build_model_func,
         scoring=metrics.make_scorer(metrics.precision_score),
@@ -107,4 +109,4 @@ def run_sklearn(tr_x, tr_y, config: Config, build_model_func):
     tuner.search(tr_x, tr_y)
 
     # Return the best model
-    return tuner.get_best_models(num_models=1)[0]
+    return build_model_func(tuner.get_best_hyperparameters(num_trials=1)[0], return_light_model=True)

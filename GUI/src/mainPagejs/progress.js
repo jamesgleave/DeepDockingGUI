@@ -203,7 +203,6 @@ function bootProgressTab() {
                 indicator.src = indicator.src.substr(0, indicator.src.length - 5) + 'g.svg';
                 indicator.style.filter = 'brightness(50%)';
             }
-            // TODO: if pending then we apply a yellow filter before flashing
         },
         error: function (res, opt, err) {
             if (res.start == 404) {

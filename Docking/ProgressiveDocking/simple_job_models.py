@@ -35,8 +35,8 @@ parser.add_argument('-save', '--save_path', required=False, default=None)
 # allowing for variable number of molecules to test and validate from:
 parser.add_argument('-n_mol', '--number_mol', required=False, default=1000000)
 
-parser.add_argument('-pfm', '--percent_first_mols', required=False, default=-1)  # these two inputs must be percentages
-parser.add_argument('-plm', '--percent_last_mols', required=False, default=-1)
+parser.add_argument('-pfm', '--percent_first_mols', required=False, default=1)  # these two inputs must be percentages (e.g. 100 for 100%)
+parser.add_argument('-plm', '--percent_last_mols', required=False, default=0.01)
 
 
 # Pass the threshold
@@ -91,8 +91,11 @@ SAVE_PATH = io_args.save_path
 # if no save path is provided we just save it in the same location as the data
 if SAVE_PATH is None: SAVE_PATH = PROJECT_PATH
 
-# sums the first column and divides it by 1 million (the size of our dataset per mil)
-t_mol = pd.read_csv(PROJECT_PATH+'/Mol_ct_file.csv',header=None)[[0]].sum()[0]/1000000 # num of compounds in each file is mol_ct_file
+assert percent_first_mols < 100, "Percent_first_mols must be less than 100% for progress on the first iteration."
+assert percent_last_mols < percent_first_mols, "Percent_last molecs must be less than percent_first_molecs."
+
+# sums the first column (the size of our dataset)
+t_mol = pd.read_csv(PROJECT_PATH+'/Mol_ct_file.csv',header=None)[[0]].sum()[0] # num of compounds in each file is mol_ct_file
 
 
 """
@@ -168,8 +171,9 @@ for f in glob.glob(SAVE_PATH+'/iteration_'+str(n_it)+'/simple_job/*'):
 # getting the list of scores from the validation labels
 scores_val = pd.read_csv(PROJECT_PATH+"/iteration_1/validation_labels.txt", header=[0]).iloc[:,0].to_numpy()
 
-first_mols = int(100*t_mol/13) if percent_first_mols == -1.0 else int(percent_first_mols * len(scores_val))
-last_mols = 100 if percent_last_mols == -1.0 else int(percent_last_mols * len(scores_val))
+# Default is 1% and 0.01% for pfm and plm respectfully.
+first_mols = int((percent_first_mols/100) * len(scores_val))
+last_mols =  int((percent_last_mols/100) * len(scores_val))
 
 if n_it==1:
     # 'good_mol' is the number of top scoring molecules to save at the end of the iteration
@@ -184,11 +188,12 @@ else:
 
 # needs at least 10 hits for this to even work so we set it higher
 good_mol = good_mol if good_mol > 50 else 50
+assert good_mol < len(scores_val), "good mol must be less than total mols"
 
-# calculating using percentile instead:
+# calculating threshold using percentile:
 percent_good_mol = 100 * good_mol/len(scores_val)
 cf_start = np.percentile(scores_val, percent_good_mol)
-print("Calculating using percentile ({:.3}%):".format(percent_good_mol))
+print("Calculating using percentile ({:.4}%):".format(percent_good_mol))
 print('Threshold (cutoff):', cf_start)
 print('Molec under thresh:', len(scores_val[scores_val<cf_start]))
 print('Goal molec:', good_mol)

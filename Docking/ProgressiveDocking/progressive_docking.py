@@ -494,7 +494,7 @@ fpr_vl, tpr_vl, thresh_vl = roc_curve(y_valid, prediction_valid)
 auc_vl = auc(fpr_vl,tpr_vl)
 pr_vl = precision_vl[np.where(recall_vl>0.9)[0][-1]]
 pos_ct_orig = np.sum(y_valid)
-Total_left = 0.9*pos_ct_orig/pr_vl*total_mols*1000000/len(y_valid)
+Total_left = 0.9*pos_ct_orig/pr_vl*total_mols/len(y_valid)
 tr = thresholds_vl[np.where(recall_vl>0.90)[0][-1]]
 
 # Getting stats for testing
@@ -504,7 +504,7 @@ auc_te = auc(fpr_te,tpr_te)
 pr_te = precision_te[np.where(thresholds_te>tr)[0][0]]
 re_te = recall_te[np.where(thresholds_te>tr)[0][0]]
 pos_ct_orig = np.sum(y_test)
-Total_left_te = re_te*pos_ct_orig/pr_te*total_mols*1000000/len(y_test)
+Total_left_te = re_te*pos_ct_orig/pr_te*total_mols/len(y_test)
 
 
 with open(SAVE_PATH + '/iteration_'+str(n_iteration)+'/hyperparameter_morgan_with_freq_v3.csv','a') as ref:
