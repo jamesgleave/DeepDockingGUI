@@ -35,7 +35,6 @@ def change_slurm(path, n_cpu, partition, specify=None, custom_headers=None):
     # Loop through the bash scripts and change them
     for file in bash_scripts:
         lines = open(os.path.join(path, file), "r").readlines()
-        contains_custom_headers = False
         wrote_partition = False
         for line_number, line in enumerate(lines):
             # Check to see if the file we are looking at should change its cpu per task
@@ -59,7 +58,6 @@ def change_slurm(path, n_cpu, partition, specify=None, custom_headers=None):
             # and remove to avoid duplicates
             if "*custom-header*" in line:
                 lines.pop(line_number)
-                contains_custom_headers = True
 
         if not wrote_partition and partition != "": 
             # This will occur if it was previously set to default and now needs to be changed.
@@ -87,11 +85,6 @@ def change_slurm(path, n_cpu, partition, specify=None, custom_headers=None):
             if header != "":
                 new_line = header + " # *custom-header*\n"
                 custom_slurm_header.write(new_line)
-
-
-def rewrite_headers():
-# This function is designed to adjust header parameters in all .sh files
-    pass
 
 
 if __name__ == "__main__":
