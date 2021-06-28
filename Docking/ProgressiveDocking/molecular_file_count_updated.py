@@ -34,7 +34,7 @@ def molecule_count(file_name):
     return temp, file_name
 
 
-if __name__=='__main__': #TODO: Check if file is created so we dont have to go through the trouble of counting 
+if __name__=='__main__': 
     parser = argparse.ArgumentParser()
     parser.add_argument('-pt','--protein_name',required=True)
     parser.add_argument('-it','--n_iteration',required=True)

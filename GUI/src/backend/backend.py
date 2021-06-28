@@ -650,7 +650,7 @@ class Backend:
 
         iteration = self.core.loaded_project_information['specifications']['iteration']
 
-        # Used to reset a phase if it fails
+        # Used to reset a phase if it fails TODO: USE SBATCH INSTEAD? TO KEEP TRACK?
         command = f"bash reset{phase}.sh " \
                   f"{self.user_data['project_path']}/{self.loaded_project}/iteration_{iteration} " \
                   f"{self.loaded_project} " \
