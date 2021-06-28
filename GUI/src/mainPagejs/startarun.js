@@ -291,10 +291,9 @@ document.querySelector('#submitNewProjBtn').onclick = function(){
             form_info[i_key] = (input.value) ? input.value : input.placeholder;
         }
         // Extra slurm headers:
+        // TODO: CHECK TO MAKE SURE SBATCH IS ON EACH LINE OF SLURM_HEADERS (i.e. IN THE RIGHT FORMAT)
         var headers = document.querySelector('#slurm_headers');
-        var h_key = headers.id.split('-popup')[0];
-
-        form_info[h_key] = (headers.value) ? headers.value.split('\n') : [];
+        form_info["slurm_headers"] = (headers.value) ? headers.value.split('\n') : [];
 
         console.log(form_info);
 

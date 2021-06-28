@@ -84,6 +84,21 @@ def change_slurm(path, n_cpu, partition, specify=None, custom_headers=None):
                 new_line = header + " # *custom-header*\n"
                 custom_slurm_header.write(new_line)
 
+def save_slurm_arg(project_name, path, n_cpu, partition, custom_headers=None):
+    # this saves all the slurm arguments as a single line so that it can 
+    # be called on as arguments to sbatch submissions
+    try:
+        os.mkdir("slurm_args")
+    except: # folder already exists.
+        pass
+
+    with open(f"./slurm_args/{project_name}_slurm_args.txt", "w") as f:
+        # "#SBATCH h1#SBATCH h2...#SBATCH hn" --> "h1 h2 ... hn"
+        slurm_args = " ".join(custom_headers.split("#SBATCH")).strip() if custom_headers is not None else ""
+        slurm_args += " --partition="+partition if partition is not None and "partition" not in slurm_args else ""
+        f.write(slurm_args + "\n") # write without cpu arg
+        slurm_args += " --cpus-per-task="+str(n_cpu) if n_cpu is not None and "cpus-per-task" not in slurm_args else ""
+        f.write(slurm_args) # write with cpu arg.
 
 if __name__ == "__main__":
     import argparse
@@ -92,11 +107,16 @@ if __name__ == "__main__":
     parser.add_argument("--n_cpu", type=int, required=True)
     parser.add_argument("--partition", type=str, required=True)
     parser.add_argument("--custom_headers", type=str, required=True)
+    parser.add_argument("--project_name", type=str, required=True)
 
     args = parser.parse_args()
 
     # Set the custom headers to None if none were passed
+    if args.partition == "":
+        args.partition = None
+
     if args.custom_headers == "":
         args.custom_headers = None
 
-    change_slurm(path=args.path, n_cpu=args.n_cpu, partition=args.partition, custom_headers=args.custom_headers)
+    save_slurm_arg(project_name=args.project_name, path=args.path, n_cpu=args.n_cpu,
+                    partition=args.partition, custom_headers=args.custom_headers)

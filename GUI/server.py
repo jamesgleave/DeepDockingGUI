@@ -314,7 +314,7 @@ def loadProject():
 @app.route('/newProject', methods=['POST'])
 def newProject():
     arguments = request.get_json()
-
+    
     global BACKEND
 
     BACKEND.create_new_project(project_name=arguments['project_name'],
