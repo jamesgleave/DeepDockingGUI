@@ -15,6 +15,7 @@ path_to_auto_dock_gpu=$4
 project_path=$5
 iteration=$6
 scripts=$7
+project_name=$(basename "$project_path")
 
 
 echo Args:
@@ -23,9 +24,11 @@ echo Energy Evaluations: $num_energy_evaluations
 echo Num Runs: $num_runs
 echo Path To Autodock: $path_to_auto_dock_gpu
 echo Project Path: $project_path
-echo Project Name: $(basename "$project_path")
+echo Project Name: $project_name
 echo Iteration: $iteration
 echo Scripts: $scripts
+
+slurm_args=$(sed -n '2p' ${scripts}/slurm_args/${project_name}_slurm_args.txt)
 
 # This should activate the conda environment
 source ~/.bashrc
@@ -38,7 +41,7 @@ python jobid_writer.py -file_path $project_path -n_it $iteration -jid $SLURM_JOB
 cd $project_path/iteration_$iteration
 echo Running Phase 3
 mkdir res
-for i in $(ls -d chunks_smi/*); do fld=$(echo $i | rev | cut -d'/' -f 1 | rev); mkdir res/$fld; cd res/$fld; sbatch $scripts/autodock_gpu_ad.sh 64 sw $PATH_FLD ../../$i'/'$fld'_'pdbqt list.txt $num_energy_evaluations $num_runs $path_to_auto_dock_gpu $scripts; cd ../../;done
+for i in $(ls -d chunks_smi/*); do fld=$(echo $i | rev | cut -d'/' -f 1 | rev); mkdir res/$fld; cd res/$fld; sbatch $slurm_args $scripts/autodock_gpu_ad.sh 64 sw $PATH_FLD ../../$i'/'$fld'_'pdbqt list.txt $num_energy_evaluations $num_runs $path_to_auto_dock_gpu $scripts; cd ../../;done
 
 cd $scripts
 python phase_changer.py -pf phase_3.sh -itr $project_path/iteration_$iteration

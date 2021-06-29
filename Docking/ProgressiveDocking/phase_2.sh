@@ -12,13 +12,16 @@ chunk_n_lines=$2  # 1000
 script_path=$3  # path to scripts
 project_path=$4  # path to project
 iteration=$5
+project_name=$(basename "$project_path")
 
 echo Args:
 echo Extension: $extension
 echo Chunk Size: $chunk_n_lines
 echo Project Path: $project_path
-echo Project Name: $(basename "$project_path")
+echo Project Name: $project_name
 echo Iteration: $iteration
+
+slurm_args_no_cpu=$(sed -n '1p' ${script_path}/slurm_args/${project_name}_slurm_args.txt)
 
 # This should activate the conda environment
 source ~/.bashrc
@@ -32,9 +35,9 @@ cd $project_path/iteration_$iteration
 # Start running the chunking
 echo Starting Phase 2
 echo Chunking Train, Test, and Valid Sets...
-sbatch $script_path/split_chunks.sh smile/train_smiles_final_updated.smi $extension train $chunk_n_lines $script_path
-sbatch $script_path/split_chunks.sh smile/test_smiles_final_updated.smi $extension test $chunk_n_lines $script_path
-sbatch $script_path/split_chunks.sh smile/valid_smiles_final_updated.smi $extension valid $chunk_n_lines $script_path
+sbatch $slurm_args_no_cpu $script_path/split_chunks.sh smile/train_smiles_final_updated.smi $extension train $chunk_n_lines $script_path
+sbatch $slurm_args_no_cpu $script_path/split_chunks.sh smile/test_smiles_final_updated.smi $extension test $chunk_n_lines $script_path
+sbatch $slurm_args_no_cpu $script_path/split_chunks.sh smile/valid_smiles_final_updated.smi $extension valid $chunk_n_lines $script_path
 
 # wait for completion
 echo Finished Chunking
