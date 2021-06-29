@@ -5,4 +5,4 @@ python3 reset.py --project_name "$2" --username "$3" --scripts "$4"
 
 # Move into the project
 cd $1
-rm -r chunks_smi
+rm -r chunks_smi slurm-*

@@ -134,6 +134,11 @@ class DDModel(Models):
         if self.output_activation == 'linear':
             class_weight = None
 
+        print(type(train_x), train_x.dtype)
+        print(type(train_y), train_y.dtype)
+        print(type(validation_data[0]), validation_data[0].dtype)
+        print(type(validation_data[1]), validation_data[1].dtype)
+
         # Train the model and store the history
         self.history = self.model.fit(train_x, train_y, epochs=epochs, batch_size=batch_size, shuffle=shuffle,
                                       class_weight=class_weight, verbose=verbose, validation_data=validation_data,

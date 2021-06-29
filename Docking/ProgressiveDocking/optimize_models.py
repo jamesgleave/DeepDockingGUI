@@ -86,6 +86,10 @@ def run_bayesian(tr_x, tr_y, tx, ty, config: Config, class_weights):
 
     best_model = tuner.hypermodel.build(best_hyperparameters)
     model = DDModel.load(best_model, kt_hyperparameters=best_hyperparameters)
+
+    for key in best_hyperparameters.values:
+        print(key, "->", best_hyperparameters[key])
+
     return model
 
 
@@ -93,7 +97,7 @@ def run_sklearn(tr_x, tr_y, config: Config, build_model_func):
     """
     Runs the bayesian optimization algorithm on an sklearn model.
     """
-    from sklearn import metrics, model_selection
+    from sklearn import metrics, model_selection, ensemble
 
     # Create the tuner
     tuner = kt.tuners.Sklearn(

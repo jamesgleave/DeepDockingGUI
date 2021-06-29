@@ -69,7 +69,7 @@ if __name__ == "__main__":
     # Grab all of the slurm files
     files = glob.glob("slurm-*.out") + glob.glob("GUI/slurm-*.out")
     files = [args.scripts + "/" + f for f in files]
-    pj = args.scripts + "/GUI/" + args.username + "_phase_jobs.csv"
+    pj = args.scripts + f"/GUI/Users/{args.username}/" + args.username + "_phase_jobs.csv"
     judge(files, project_name=args.project_name, phase_job=pj, remove_slurms=args.remove_slurms, test=args.test)
 
 

@@ -136,26 +136,27 @@ if dynamic_hyperparameters:
     oss_range = [5, 20]
 
 else:
-    # Use predefined sizes
-    num_units = [100, 1500, 2000]
-    dropout = [0.2, 0.5]
-    learn_rate = [0.0001]
+    # Use predefined ranges/values
+    num_units = [(900, 1150), (1150, 1400)]
+    dropout = [(0.6, 0.75), (0.75, 0.9)]
+    learn_rate = [(0.00014, 0.00020)]
     bin_array = [2, 3]
-    wt = [2, 3]
+    wt = [(2.20, 5.0)]
 
     if nhp < 144:
-       bs = [256]
+        bs = [256]
     else:
         bs = [128, 256]
 
     if nhp < 48:
-        oss = [10]
+        oss = [(10, 20), (20, 30), (30, 40)]
     elif nhp < 72:
         oss = [5, 10]
     else:
         oss = [5, 10, 20]
 
 # Precalculate the number of models
+import random
 number_of_models = len(num_units) * len(dropout) * len(learn_rate) * len(bin_array) * len(wt) * len(bs) * len(oss)
 print("Number of models:", number_of_models)
 
@@ -207,7 +208,25 @@ for o in oss:   # Over Sample Size
                 for lr in learn_rate:
                     for ba in bin_array:
                         for w in wt:    # Weight
-                            all_hyperparas.append([o,batch,nu,do,lr,ba,w,cf_start])
+                            # We now create a random search between two values and add them to a list of hps
+                            hypers = []
+                            # Look at each hp
+                            for hp in [o,batch,nu,do,lr,ba,w,cf_start]:
+                                # If it is a tuple, then we have a range of values
+                                if type(hp) is tuple:
+                                    min_val = hp[0]
+                                    max_val = hp[1]
+                                    # Check if it is floats and use uniform
+                                    if type(min_val) is float and type(max_val) is float:
+                                        hypers.append(random.uniform(min_val, max_val))
+                                    elif type(min_val) is int and type(max_val) is int:
+                                        hypers.append(random.randint(min_val, max_val))
+                                else:
+                                    hypers.append(hp)
+
+                            # print the params for debugging
+                            print("HP:", hypers)
+                            all_hyperparas.append(hypers)
 
 print('Total Hyperparameters:', len(all_hyperparas))
 # Creating all the jobs for each hyperparameter combination:
