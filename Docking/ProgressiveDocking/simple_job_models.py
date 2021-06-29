@@ -225,14 +225,6 @@ for i in range(len(all_hyperparas)):
         ref.write('#SBATCH --mem=0               # memory per node\n')
         ref.write('#SBATCH --time='+new_time+'            # time (DD-HH:MM)\n')
 
-        # Reads the custom header file to add the custom headers and partition
-        try:
-            with open("custom_slurm_header.txt", "r") as custom_slurm_header:
-                for line in custom_slurm_header.readlines():
-                    ref.write(line)
-        except OSError:
-            pass
-
         ref.write("#SBATCH --output=slurm-phase_4-%x.%j.out\n")
         ref.write("#SBATCH --error=slurm-phase_4-%x.%j.err\n")
         ref.write('\n')

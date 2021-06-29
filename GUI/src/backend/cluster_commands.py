@@ -1,6 +1,15 @@
 import json
 import os
 
+# For the slurm arguments they are located in: /DeepDocking/slurm_args/{project_name}_slurm_args.txt
+# First line is for cpu excluded scripts: 
+#       ["phase_2.sh", "phase_3.sh", "phase_4.sh", "phase_5.sh", "split_chunks.sh"]
+# Second line is for everything else (includes all args)
+
+# the way this command should receive its arguments is as follows:
+# sbatch `sed -n 2p slurm_args.txt` ptest.sh
+
+# and for phase_a we must also pass it as an argument "`sed -n 2p slurm_args.txt`"
 
 def read_info():
     info = open('src/backend/db.json',
@@ -23,7 +32,9 @@ def run_phase_5(project_name, specifications, logs):
     current_it = specifications['iteration']  # current iteration when running phase_a
     local_path = user_info['remote_path']  # the path to the scripts
 
-    command = f"bash deactivation_script.sh; sbatch {local_path}/phase_5.sh {current_it} {project_path}/{project_name} {local_path} {t_cpu}"
+    command = f"bash deactivation_script.sh; " \
+                f"sbatch `sed -n 1p ./slurm_args/{project_name}_slurm_args.txt` {local_path}/phase_5.sh " \
+                f"{current_it} {project_path}/{project_name} {local_path} {t_cpu}"
     return command
 
 
@@ -45,11 +56,11 @@ def run_phase_4(project_name, specifications, logs):
 
     percent_last_mol = specifications['percent_last_mol']
 
-    command = "bash deactivation_script.sh; " + \
-              f"sbatch {local_path}/phase_4.sh " \
-              f"{current_it} {t_cpu} {project_path}/{project_name} " \
-              f"{final_iteration==current_it} {final_iteration} {local_path} " \
-              f"{percent_first_mol} {threshold} {percent_last_mol}"
+    command = f"bash deactivation_script.sh; " \
+                f"sbatch `sed -n 1p ./slurm_args/{project_name}_slurm_args.txt` {local_path}/phase_4.sh " \
+                f"{current_it} {t_cpu} {project_path}/{project_name} " \
+                f"{final_iteration==current_it} {final_iteration} {local_path} " \
+                f"{percent_first_mol} {threshold} {percent_last_mol}"
     return command
 
 
@@ -68,7 +79,9 @@ def run_phase_3(project_name, specifications, logs):
     num_runs = specifications['num_runs']
 
     command = f"bash deactivation_script.sh; " \
-              f"sbatch {local_path}/phase_3.sh {path_to_fld_file} {num_energy_evaluations} {num_runs} {path_to_auto_dock} {project_path}/{project_name} {n_it} {local_path}"
+                f"sbatch `sed -n 1p ./slurm_args/{project_name}_slurm_args.txt` {local_path}/phase_3.sh "\
+                f"{path_to_fld_file} {num_energy_evaluations} {num_runs} {path_to_auto_dock} "\
+                f"{project_path}/{project_name} {n_it} {local_path}"
 
     return command
 
@@ -83,13 +96,15 @@ def run_phase_2(project_name, specifications, logs):
     chunk_size = round(mols_to_dock/int(specifications['num_chunks']))
     extension=".smi"
 
-    command = "bash deactivation_script.sh; " \
-              f"sbatch {local_path}/phase_2.sh {extension} {chunk_size} {local_path} {project_path}/{project_name} {current_it}"
+    command = f"bash deactivation_script.sh; " \
+                f"sbatch `sed -n 1p ./slurm_args/{project_name}_slurm_args.txt` {local_path}/phase_2.sh "\
+                f"{extension} {chunk_size} {local_path} {project_path}/{project_name} {current_it}"
     return command
 
 
 def run_phase_1(project_name, specifications, logs):
     # TODO Update this to work with current version
+
     info = read_info()
     logs = specifications['log_file']
     local_path = info["remote_path"]
@@ -98,7 +113,8 @@ def run_phase_1(project_name, specifications, logs):
     project_path = info['project_path']  # the path to the project dir
     mols_to_dock = logs["n_molecules"]
     command = "bash deactivation_script.sh; " \
-              f"sbatch {local_path}/phase_1.sh {n_it} {t_cpu} {project_path} {project_name} {mols_to_dock} {local_path}"
+              f"sbatch `sed -n 2p ./slurm_args/{project_name}_slurm_args.txt` phase_1.sh "\
+              f"{n_it} {t_cpu} {project_path} {project_name} {mols_to_dock} {local_path}"
     return command
 
 
@@ -133,7 +149,7 @@ def run_all_phases(project_name, specifications, logs):
 
     # Clamp the current phase before submitting job
     current_phase = current_phase if current_phase > 0 else 1
-    command = f"sbatch {local_path}/phase_a.sh " \
+    command = f"sbatch `sed -n 2p ./slurm_args/{project_name}_slurm_args.txt` {local_path}/phase_a.sh " \
               f"{t_cpu} {project_path} {project_name} {top_n} {current_it} {current_phase} " \
               f"{mols_to_dock} {final_iteration} {local_path} {path_to_auto_dock} " \
               f"{path_to_fld_file} {num_energy_evaluations} {num_runs} {chunk_size} " \
@@ -151,7 +167,7 @@ def run_final_phase(project_name, specifications):
     project_path = user_info['project_path']  # the path to the project dir
     project_name = project_name  # the project name
     local_path = user_info['remote_path']  # the path to the scripts
-    command = f"sbatch {local_path}/final_phase.sh " \
+    command = f"sbatch `sed -n 2p ./slurm_args/{project_name}_slurm_args.txt` {local_path}/final_phase.sh " \
               f"{num_iterations} {num_cpu} {project_path} {project_name} {local_path}"
     return command
 
@@ -181,7 +197,7 @@ def read_final_top_hits(ssh, final_iteration_path):
 
 
 def slurm_clean():
-    return "rm slurm*.out; rm GUI/slurm*.out"
+    return "rm -f slurm*.out GUI/slurm*.out"
 
 
 def create_project(ssh,
@@ -227,9 +243,8 @@ def create_project(ssh,
     log_txt.close()
 
     # Save the new data to our database
-    # TODO: Sibling files not recognizing each other when called from another file path.
     json_info = json.dumps(new_project)
-    with open('src/backend/projects/{}.json'.format(project_name), 'w') as db:
+    with open(f'src/backend/projects/{project_name}.json', 'w') as db:
         db.write(json_info)
 
     return 1

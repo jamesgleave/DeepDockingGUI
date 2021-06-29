@@ -11,8 +11,9 @@ import os
 def change_slurm(path, n_cpu, partition, specify=None, custom_headers=None):
     # Find all of the bash scripts
     if specify is None:
-        bash_scripts = ['prepare_ligands_ad.sh', 'phase_1.sh', 'phase_2.sh', 'phase_3.sh', 'phase_4.sh', 'phase_5.sh',  'autodock_gpu_ad.sh', 
-                        'final_extraction.sh', 'split_chunks.sh', 'phase_3_concluding_combination.sh', 'phase_a.sh']
+        bash_scripts = ['prepare_ligands_ad.sh', 'phase_1.sh', 'phase_2.sh', 'phase_3.sh', 'phase_4.sh',
+                        'phase_5.sh',  'autodock_gpu_ad.sh', 'final_extraction.sh', 'split_chunks.sh', 
+                        'phase_3_concluding_combination.sh', 'phase_a.sh']
 
         bash_scripts = [path + f for f in bash_scripts] # appending path to DeepDocking dir.
         try:
