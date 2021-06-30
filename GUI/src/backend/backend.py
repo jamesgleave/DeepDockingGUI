@@ -89,12 +89,10 @@ class Core:
         # Here we update the user data and the project data to be read by the backend
         self.user_data = json.loads(open('src/backend/db.json').read())
         self.update_path = self.user_data['remote_gui_path'] + "update_gui.sh "
-        self.update_command = "bash " \
-                              + self.update_path \
-                              + self.user_data['project_path'] \
-                              + "/" + self.loaded_project_name \
-                              + " " + self.user_data['remote_gui_path'] \
-                              + " " + self.__ssh_connection.user
+        self.update_command = f"bash {self.update_path} " \
+                              f"{self.user_data['project_path']}/{self.loaded_project_name} " \
+                              f"{self.user_data['remote_gui_path']} " \
+                              f"{self.__ssh_connection.user}"
 
         # Updating project information by reading the json file associated with the currently loaded project.
         self.loaded_project_information = json.loads(open('src/backend/projects/{}.json'.format(
@@ -129,8 +127,9 @@ class Core:
                 pickle_name = "{}_data.pickle".format(self.__ssh_connection.user)
                 # Get the path to the pickle (in the user's directory)
                 user_path = f"/Users/{self.__ssh_connection.user}/"
+                pickle_path = self.user_data['remote_gui_path'] + user_path + pickle_name
                 # Read the pickle off the remote cluster
-                pickled_data = self.__ssh_connection.read(self.user_data['remote_gui_path'] + user_path + pickle_name)
+                pickled_data = self.__ssh_connection.read(pickle_path)
                 # add to the debug message
                 debug_message += Colours.OK_CYAN + "- Reading data from the cluster...\n"
                 # load the data from the pickle and add to the debug message
@@ -511,11 +510,6 @@ class Backend:
 
         # Update the user info
         self.update_user_info()
-
-        # If the jobs are running, we must cancel them before loading another project
-        if self.core.project_loaded:
-            # self.cancel_jobs()
-            pass
 
         # Tell the core we have a project loaded
         self.core.project_loaded = True
