@@ -3,7 +3,6 @@
 #SBATCH --ntasks=1
 #SBATCH --mem=0               # memory per node
 #SBATCH --job-name=phase_4
-#SBATCH --partition=gpu-long
 #SBATCH --output=slurm-%x.%j.out
 #SBATCH --error=slurm-%x.%j.err
 
@@ -15,6 +14,7 @@
 ###  > Get rid of smile_directory and sdf_directory for they are unused
 ###************************************************************************
 
+echo Partition: $SLURM_JOB_PARTITION
 echo "Passed Parameters:"
 echo "Current Iteration: $1"
 echo "Number of CPUs: $2"
@@ -39,7 +39,8 @@ num_molec=`sed -n '9p' $3/logs.txt`
 local_path=$6  # Should be the path to the deep docking source scripts
 save_path=$3
 
-slurm_args=$(sed -n '2p' ${local_path}/slurm_args/${project_name}_slurm_args.txt)
+# getting slurm args for gpu req scripts (with cpus-per-task and gpu_partition)
+slurm_args_g=$(sed -n '4p' ${local_path}/slurm_args/${project_name}_slurm_args.txt)
 
 # This should activate the conda environment
 source ~/.bashrc
@@ -68,7 +69,7 @@ cd $save_path/iteration_$1/simple_job
 # We must deactivate it before running!
 source ~/.bashrc
 source $local_path/deactivation_script.sh
-for f in *;do sbatch $slurm_args $f;done
+for f in *;do sbatch $slurm_args_g $f;done
 
 echo "running phase_changer"
 source ~/.bashrc

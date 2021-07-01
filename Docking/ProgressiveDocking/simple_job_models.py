@@ -219,6 +219,7 @@ for i in range(len(all_hyperparas)):
         ref.write("#SBATCH --output=slurm-phase_4-%x.%j.out\n")
         ref.write("#SBATCH --error=slurm-phase_4-%x.%j.err\n")
         ref.write('\n')
+        ref.write("echo Partition: $SLURM_JOB_PARTITION \n")
 
         cwd = os.getcwd()
         ref.write('cd {}\n'.format(cwd))

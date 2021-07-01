@@ -460,7 +460,7 @@ class Backend:
                                  self.project_data["specifications"]["num_cpu"],
                                  '"{}"'.format(self.project_data["specifications"]["partition"]),
                                  '"{}"'.format(headers), self.loaded_project)
-        stdout = self.send_command(command, debug=True)
+        stdout = self.send_command(command)
 
     def create_new_project(self, project_name, log_file_contents, specifications):
         """Creates a new project in the deep docking project directory"""
@@ -499,7 +499,7 @@ class Backend:
                                  specifications["num_cpu"],
                                  '"{}"'.format(specifications["partition"]),
                                  '"{}"'.format(headers), self.loaded_project)
-        stdout = self.send_command(command, debug=True)
+        stdout = self.send_command(command)
         return out
 
     def load_project(self, project_name):
@@ -531,7 +531,7 @@ class Backend:
                                  self.project_data["specifications"]["num_cpu"],
                                  '"{}"'.format(self.project_data["specifications"]["partition"]),
                                  '"{}"'.format(headers), self.loaded_project)
-        stdout = self.send_command(command, debug=True)
+        stdout = self.send_command(command)
 
         print("Project Loaded; Updated Specs:")
         for line in stdout.read().decode('ascii').split("\n"):

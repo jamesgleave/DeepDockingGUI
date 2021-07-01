@@ -1,7 +1,6 @@
 #!/bin/bash
 #SBATCH --job-name=autodock
 #SBATCH --gres=gpu:1
-#SBATCH --partition=gpu-long
 #SBATCH --mem-per-gpu=0
 #SBATCH --output=slurm-phase_3-%x.%j.out
 #SBATCH --error=slurm-phase_3-%x.%j.err
@@ -18,6 +17,8 @@ nr=$7                #NUMBER OF RUNS
 
 ad_path=$8
 scripts=$9
+
+echo Partition: $SLURM_JOB_PARTITION
 
 # This should activate the conda environment
 source ~/.bashrc

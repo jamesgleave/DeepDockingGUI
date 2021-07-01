@@ -1,6 +1,4 @@
 #!/bin/bash
-#SBATCH --cpus-per-task=24
-#SBATCH --partition=normal
 #SBATCH --ntasks=1
 #SBATCH --mem=0               # memory per node
 #SBATCH --job-name=phase_a
@@ -26,6 +24,7 @@ percent_fist_mol=${15}
 percent_last_mol=${16}
 extension=".smi"
 
+echo Partition: $SLURM_JOB_PARTITION
 # Print the start time
 echo Starting Time: $(date)
 
@@ -56,6 +55,9 @@ slurm_args_no_cpu=$(sed -n '1p' ${local_path}/slurm_args/${project_name}_slurm_a
 # for ["phase_2.sh", "phase_3.sh", "phase_4.sh", "phase_5.sh", "split_chunks.sh"]
 slurm_args=$(sed -n '2p' ${local_path}/slurm_args/${project_name}_slurm_args.txt) # for everything else
 
+# GPU required scripts arguments (different partition)
+slurm_args_no_cpu_g=$(sed -n '3p' ${local_path}/slurm_args/${project_name}_slurm_args.txt)
+slurm_args_g=$(sed -n '4p' ${local_path}/slurm_args/${project_name}_slurm_args.txt)
 
 echo Job ID: $SLURM_JOBID
 echo Current Phase: $current_phase
@@ -140,7 +142,7 @@ for ((n_it = $current_it; n_it <= $final_iteration; n_it++)); do
 
 		#		python $local_path/phase_maker.py -tpos $t_cpu -pf phase_4
 		python jobid_writer.py -file_path $project_path/$project_name -n_it $n_it -jid phase_4 -jn phase_4.sh
-		sbatch $slurm_args_no_cpu $local_path/phase_4.sh $n_it $t_cpu $project_path/$project_name $is_last $final_iteration $local_path $percent_fist_mol $percent_last_mol
+		sbatch $slurm_args_no_cpu_g $local_path/phase_4.sh $n_it $t_cpu $project_path/$project_name $is_last $final_iteration $local_path $percent_fist_mol $percent_last_mol
 		python $local_path/check_phase.py -pf phase_4.sh -itr $file_path/$protein/iteration_$n_it
 
 		# Signify Complete

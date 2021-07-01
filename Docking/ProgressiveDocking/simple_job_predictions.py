@@ -55,6 +55,7 @@ for f in part_files:
         ref.write("#SBATCH --output=slurm-phase_5-%x.%j.out\n")
         ref.write("#SBATCH --error=slurm-phase_5-%x.%j.err\n")
         ref.write('\n')
+        ref.write("echo Partition: $SLURM_JOB_PARTITION \n")
 
         cwd = os.getcwd()
         ref.write('cd {}\n'.format(cwd))

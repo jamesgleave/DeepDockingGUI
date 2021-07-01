@@ -1,6 +1,5 @@
 #!/bin/bash
 #SBATCH --cpus-per-task=24
-#SBATCH --partition=normal
 #SBATCH --ntasks=1
 #SBATCH --job-name=split_chunks
 #SBATCH --output=slurm-phase_2-%x.%j.out

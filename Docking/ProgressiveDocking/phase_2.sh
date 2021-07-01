@@ -1,6 +1,5 @@
 #!/bin/bash
 #SBATCH --cpus-per-task=1
-#SBATCH --partition=normal
 #SBATCH --mem=0               # memory per node
 #SBATCH --job-name=phase_2
 #SBATCH --output=slurm-%x.%j.out
@@ -14,6 +13,7 @@ project_path=$4  # path to project
 iteration=$5
 project_name=$(basename "$project_path")
 
+echo Partition: $SLURM_JOB_PARTITION
 echo Args:
 echo Extension: $extension
 echo Chunk Size: $chunk_n_lines
