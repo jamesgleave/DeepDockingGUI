@@ -423,7 +423,8 @@ class Backend:
         Updates the specifications for starting a run (num cpu, etc)
         specifications =
         {"iteration": ...,
-        "partition": "...",
+        "gpu_partition": "...",
+        "cpu_partition": "...",
         "total_iterations": ...,
         "num_cpu": ...,
         "is_final_iteration": ...,
@@ -433,7 +434,8 @@ class Backend:
         "optimize_models": ...}
         """
         # preprocessing the data:
-        specifications['partition'] = '""' if specifications["partition"] == "Default"  else specifications["partition"]
+        specifications['gpu_partition'] = '""' if specifications["gpu_partition"] == "Default"  else specifications["gpu_partition"]
+        specifications['cpu_partition'] = '""' if specifications["cpu_partition"] == "Default"  else specifications["cpu_partition"]
 
         # Update the user info
         self.update_user_info()
@@ -454,12 +456,13 @@ class Backend:
         headers = headers = "".join(self.project_data["specifications"]['slurm_headers'])
 
         # update the files on the cluster
-        command = "python3 {}/setup_slurm_specifications.py --path {} --n_cpu {} --partition {} --custom_headers {} --project_name {}"
+        command = "python3 {}/setup_slurm_specifications.py --path {} --n_cpu {} --cpu_partition \"{}\" --gpu_partition \"{}\" --custom_headers \"{}\" --project_name {}"
         command = command.format(self.user_data["remote_path"],
                                  self.user_data["remote_path"],
                                  self.project_data["specifications"]["num_cpu"],
-                                 '"{}"'.format(self.project_data["specifications"]["partition"]),
-                                 '"{}"'.format(headers), self.loaded_project)
+                                 self.project_data["specifications"]["cpu_partition"],
+                                 self.project_data["specifications"]["gpu_partition"],
+                                 headers, self.loaded_project)
         stdout = self.send_command(command)
 
     def create_new_project(self, project_name, log_file_contents, specifications):
@@ -493,12 +496,13 @@ class Backend:
         headers = headers = "".join(specifications["slurm_headers"])
 
         # update the files on the cluster
-        command = "python3 {}/setup_slurm_specifications.py --path {} --n_cpu {} --partition {} --custom_headers {} --project_name {}"
+        command = "python3 {}/setup_slurm_specifications.py --path {} --n_cpu {} --cpu_partition \"{}\" --gpu_partition \"{}\" --custom_headers \"{}\" --project_name {}"
         command = command.format(self.user_data["remote_path"],
                                  self.user_data["remote_path"],
                                  specifications["num_cpu"],
-                                 '"{}"'.format(specifications["partition"]),
-                                 '"{}"'.format(headers), self.loaded_project)
+                                 specifications["cpu_partition"],
+                                 specifications["gpu_partition"],
+                                 headers, self.loaded_project)
         stdout = self.send_command(command)
         return out
 
@@ -525,12 +529,13 @@ class Backend:
         headers = headers = "".join(self.project_data["specifications"]['slurm_headers'])
 
         # update the files on the cluster
-        command = "python3 {}/setup_slurm_specifications.py --path {} --n_cpu {} --partition {} --custom_headers {} --project_name {}"
+        command = "python3 {}/setup_slurm_specifications.py --path {} --n_cpu {} --cpu_partition \"{}\" --gpu_partition \"{}\" --custom_headers \"{}\" --project_name {}"
         command = command.format(self.user_data["remote_path"],
                                  self.user_data["remote_path"],
                                  self.project_data["specifications"]["num_cpu"],
-                                 '"{}"'.format(self.project_data["specifications"]["partition"]),
-                                 '"{}"'.format(headers), self.loaded_project)
+                                 self.project_data["specifications"]["cpu_partition"],
+                                 self.project_data["specifications"]["gpu_partition"],
+                                 headers, self.loaded_project)
         stdout = self.send_command(command)
 
         print("Project Loaded; Updated Specs:")

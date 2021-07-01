@@ -1,6 +1,5 @@
 #!/bin/bash
 #SBATCH --cpus-per-task=24
-#SBATCH --partition=normal
 #SBATCH --ntasks=1
 #SBATCH --mem=0               # memory per node
 #SBATCH --job-name=phase_f

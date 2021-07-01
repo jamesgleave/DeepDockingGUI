@@ -150,7 +150,8 @@ function displayProjectInfo(projectInfo){
                 input.value = specs.specifications[input.id];
 
             // Making sure GPU partition shows Default and not No data... for placeholder
-            document.getElementById("partition").placeholder = "Default";
+            document.getElementById("cpu_partition").placeholder = "Default";
+            document.getElementById("gpu_partition").placeholder = "Default";
         }else
             inputs.forEach(i => i.placeholder = 'No data...');
 

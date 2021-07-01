@@ -323,7 +323,8 @@ def newProject():
                                          "licences": 280,
                                          "optimize_models": False,
                                          'num_cpu': arguments['num_cpu'], 
-                                         'partition': arguments['partition'], 
+                                         'gpu_partition': arguments['gpu_partition'],
+                                         'cpu_partition': arguments['cpu_partition'], 
                                          'total_iterations': arguments['total_iterations'],
                                          'percent_last_mol': arguments['percent_last_mol'], 
                                          'percent_first_mol': arguments['percent_first_mol'], 
@@ -397,8 +398,11 @@ def getProjectInfo():
                 data['specs'] = json.load(f)
         
         # Makes sure not to display ""
-        if data['specs']['specifications']['partition'] == '""':
-            data['specs']['specifications']['partition'] = ''
+        if data['specs']['specifications']['gpu_partition'] == '""':
+            data['specs']['specifications']['gpu_partition'] = ''
+
+        if data['specs']['specifications']['cpu_partition'] == '""':
+            data['specs']['specifications']['cpu_partition'] = ''
 
     except (FileNotFoundError, IndexError): 
         # returns None if there are no projects or invalid name
