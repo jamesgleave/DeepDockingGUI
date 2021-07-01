@@ -24,8 +24,7 @@ echo "Final Iteration: $4"
 echo "Total Iterations: $5"
 echo "Path To Deep Docking Source Scripts: $6"
 echo "Percent First Mol: $7"
-echo "Threshold: $8"
-echo "Percent Last Mol: $9"
+echo "Percent Last Mol: $8"
 
 # Reading the log file
 file_path=`sed -n '1p' $3/logs.txt`
@@ -59,7 +58,7 @@ if [ $? != 0 ]; then
 fi
 
 echo "Creating simple jobs"
-python simple_job_models.py -n_it $1 -time 00-04:00 -file_path $file_path/$project_name -nhp $num_hyperparameters -titr $5 -n_mol $num_molec --save_path $save_path --percent_first_mols $7 -ct $8 --percent_last_mols $9
+python simple_job_models.py -n_it $1 -time 00-04:00 -file_path $file_path/$project_name -nhp $num_hyperparameters -titr $5 -n_mol $num_molec --save_path $save_path --percent_first_mols $7 --percent_last_mols $8
 
 # Executes all the files that were created in the simple_jobs directory
 echo "Running simple jobs"

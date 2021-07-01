@@ -35,9 +35,9 @@ cd $project_path/iteration_$iteration
 # Start running the chunking
 echo Starting Phase 2
 echo Chunking Train, Test, and Valid Sets...
-sbatch $slurm_args_no_cpu $script_path/split_chunks.sh smile/train_smiles_final_updated.smi $extension train $chunk_n_lines $script_path
-sbatch $slurm_args_no_cpu $script_path/split_chunks.sh smile/test_smiles_final_updated.smi $extension test $chunk_n_lines $script_path
-sbatch $slurm_args_no_cpu $script_path/split_chunks.sh smile/valid_smiles_final_updated.smi $extension valid $chunk_n_lines $script_path
+sbatch $slurm_args_no_cpu $script_path/split_chunks.sh smile/train_smiles_final_updated.smi $extension train $chunk_n_lines $script_path $project_name
+sbatch $slurm_args_no_cpu $script_path/split_chunks.sh smile/test_smiles_final_updated.smi $extension test $chunk_n_lines $script_path $project_name
+sbatch $slurm_args_no_cpu $script_path/split_chunks.sh smile/valid_smiles_final_updated.smi $extension valid $chunk_n_lines $script_path $project_name
 
 # wait for completion
 echo Finished Chunking

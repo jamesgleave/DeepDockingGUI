@@ -393,7 +393,7 @@ class InstallationAssistant:
             file_path = local + "/Docking/GUI/" + fp
             # making sure to get rid of carriage returns (for windows users)
             file_content = open(file_path, "rb").read().replace(b'\r', b'')
-            with ftp_client.open(remote+"/"+fp, "wb") as f:
+            with ftp_client.open(remote+"/GUI/"+fp, "wb") as f:
                 f.write(file_content)
             progress.current += 1
             progress()
@@ -403,7 +403,7 @@ class InstallationAssistant:
             file_path = local + "/Docking/ML/" + fp
             # making sure to get rid of carriage returns (for windows users)
             file_content = open(file_path, "rb").read().replace(b'\r', b'')
-            with ftp_client.open(remote+"/"+fp, "wb") as f:
+            with ftp_client.open(remote+"/ML/"+fp, "wb") as f:
                 f.write(file_content)
             progress.current += 1
             progress()

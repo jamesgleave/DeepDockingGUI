@@ -142,8 +142,6 @@ def run_all_phases(project_name, specifications, logs):
     chunk_size = round((mols_to_dock * 3)/num_chunks)
     # percent first mol to be true positives
     percent_first_mol = specifications['percent_first_mol']
-    # The threshold for phase 1
-    threshold = specifications['threshold']
     # The percent last mol
     percent_last_mol = specifications['percent_last_mol']
 
@@ -153,7 +151,7 @@ def run_all_phases(project_name, specifications, logs):
               f"{t_cpu} {project_path} {project_name} {top_n} {current_it} {current_phase} " \
               f"{mols_to_dock} {final_iteration} {local_path} {path_to_auto_dock} " \
               f"{path_to_fld_file} {num_energy_evaluations} {num_runs} {chunk_size} " \
-              f"{percent_first_mol} {threshold} {percent_last_mol}"
+              f"{percent_first_mol} {percent_last_mol}"
     return command
 
 

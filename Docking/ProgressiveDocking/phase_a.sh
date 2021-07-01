@@ -23,8 +23,7 @@ num_energy_evaluations=${12} # number of energy evaluations for docking
 num_runs=${13}               # number of runs for docking
 chunk_size=${14}             # the size of the chunks for phase 2
 percent_fist_mol=${15}
-threshold=${16}
-percent_last_mol=${17}
+percent_last_mol=${16}
 extension=".smi"
 
 # Print the start time
@@ -46,7 +45,6 @@ echo - Number Of Energy Evaluations: $num_energy_evaluations
 echo - Number Of Autodock GPU Runs: $num_runs
 echo - Chunk Size: $chunk_size
 echo - Percent First Mol: $percent_fist_mol
-echo - Threshold: $threshold
 echo - Percent Last Mol: $percent_last_mol
 
 # Grab everything from the logs file
@@ -142,7 +140,7 @@ for ((n_it = $current_it; n_it <= $final_iteration; n_it++)); do
 
 		#		python $local_path/phase_maker.py -tpos $t_cpu -pf phase_4
 		python jobid_writer.py -file_path $project_path/$project_name -n_it $n_it -jid phase_4 -jn phase_4.sh
-		sbatch $slurm_args_no_cpu $local_path/phase_4.sh $n_it $t_cpu $project_path/$project_name $is_last $final_iteration $local_path $percent_fist_mol $threshold $percent_last_mol
+		sbatch $slurm_args_no_cpu $local_path/phase_4.sh $n_it $t_cpu $project_path/$project_name $is_last $final_iteration $local_path $percent_fist_mol $percent_last_mol
 		python $local_path/check_phase.py -pf phase_4.sh -itr $file_path/$protein/iteration_$n_it
 
 		# Signify Complete
