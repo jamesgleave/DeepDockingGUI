@@ -18,9 +18,7 @@ def print(*args, **kwargs):
     __builtin__.print('\t simple_jobs: ', end="")
     return __builtin__.print(*args, **kwargs)
 
-
 START_TIME = time.time()
-
 
 parser = argparse.ArgumentParser()
 parser.add_argument('-n_it','--iteration_no',required=True)
@@ -34,13 +32,8 @@ parser.add_argument('-save', '--save_path', required=False, default=None)
 
 # allowing for variable number of molecules to test and validate from:
 parser.add_argument('-n_mol', '--number_mol', required=False, default=1000000)
-
 parser.add_argument('-pfm', '--percent_first_mols', required=False, default=1)  # these two inputs must be percentages (e.g. 100 for 100%)
 parser.add_argument('-plm', '--percent_last_mols', required=False, default=0.01)
-
-
-# Pass the threshold
-parser.add_argument('-ct', required=False, default=0.9)
 
 # Flag for switching between functions that determine how many mols to be left at the end of iteration 
 #   if not provided it defaults to a linear dec
@@ -55,7 +48,6 @@ io_args, extra_args = parser.parse_known_args()
 n_it = int(io_args.iteration_no)
 nhp = int(io_args.number_of_hyp)
 titr = int(io_args.total_iterations)
-ct = float(io_args.ct) #TODO THIS IS NOT USED -> INVESTIGATE
 
 
 # Handle the time
@@ -243,18 +235,10 @@ for i in range(len(all_hyperparas)):
         ref.write('#SBATCH --job-name=phase_4\n')
         ref.write('#SBATCH --mem=0               # memory per node\n')
         ref.write('#SBATCH --time='+new_time+'            # time (DD-HH:MM)\n')
-
-        # Reads the custom header file to add the custom headers and partition
-        try:
-            with open("custom_slurm_header.txt", "r") as custom_slurm_header:
-                for line in custom_slurm_header.readlines():
-                    ref.write(line)
-        except OSError:
-            pass
-
         ref.write("#SBATCH --output=slurm-phase_4-%x.%j.out\n")
         ref.write("#SBATCH --error=slurm-phase_4-%x.%j.err\n")
         ref.write('\n')
+        ref.write("echo Partition: $SLURM_JOB_PARTITION \n")
 
         cwd = os.getcwd()
         ref.write('cd {}\n'.format(cwd))

@@ -94,12 +94,10 @@ class Core:
         # Here we update the user data and the project data to be read by the backend
         self.user_data = json.loads(open('src/backend/db.json').read())
         self.update_path = self.user_data['remote_gui_path'] + "update_gui.sh "
-        self.update_command = "bash " \
-                              + self.update_path \
-                              + self.user_data['project_path'] \
-                              + "/" + self.loaded_project_name \
-                              + " " + self.user_data['remote_gui_path'] \
-                              + " " + self.__ssh_connection.user
+        self.update_command = f"bash {self.update_path} " \
+                              f"{self.user_data['project_path']}/{self.loaded_project_name} " \
+                              f"{self.user_data['remote_gui_path']} " \
+                              f"{self.__ssh_connection.user}"
 
         # Updating project information by reading the json file associated with the currently loaded project.
         self.loaded_project_information = json.loads(open('src/backend/projects/{}.json'.format(
@@ -144,8 +142,9 @@ class Core:
                 pickle_name = "{}_data.pickle".format(self.__ssh_connection.user)
                 # Get the path to the pickle (in the user's directory)
                 user_path = f"/Users/{self.__ssh_connection.user}/"
+                pickle_path = self.user_data['remote_gui_path'] + user_path + pickle_name
                 # Read the pickle off the remote cluster
-                pickled_data = self.__ssh_connection.read(self.user_data['remote_gui_path'] + user_path + pickle_name)
+                pickled_data = self.__ssh_connection.read(pickle_path)
                 # add to the debug message
                 debug_message += Colours.OK_CYAN + "- Reading data from the cluster...\n"
                 # load the data from the pickle and add to the debug message
@@ -364,7 +363,7 @@ class Backend:
         return "fetching" if core_status == 0 else "ready"
 
     """ The following section of the backend deals with user interaction with the cluster"""
-    def send_command(self, command, debug, redirect=True):
+    def send_command(self, command, debug=False, redirect=True):
         cd = "cd {}; ".format(self.user_data['docking_path'])
 
         # We sometimes want the stdout so do not always redirect it
@@ -470,7 +469,8 @@ class Backend:
         Updates the specifications for starting a run (num cpu, etc)
         specifications =
         {"iteration": ...,
-        "partition": "...",
+        "gpu_partition": "...",
+        "cpu_partition": "...",
         "total_iterations": ...,
         "num_cpu": ...,
         "is_final_iteration": ...,
@@ -480,7 +480,8 @@ class Backend:
         "optimize_models": ...}
         """
         # preprocessing the data:
-        specifications['partition'] = '""' if specifications["partition"] == "Default"  else specifications["partition"]
+        specifications['gpu_partition'] = '""' if specifications["gpu_partition"] == "Default"  else specifications["gpu_partition"]
+        specifications['cpu_partition'] = '""' if specifications["cpu_partition"] == "Default"  else specifications["cpu_partition"]
 
         # Update the user info
         self.update_user_info()
@@ -497,25 +498,18 @@ class Backend:
         with open(f'src/backend/projects/{self.loaded_project}.json', 'w') as new_db:
             new_db.write(json.dumps(self.project_data))
 
-        # Add the custom headers (if any)
-        headers = ""
-        # We loop through the headers and concatenate them into comma separated values to be parsed on the cluster
-        if len(self.project_data["specifications"]['slurm_headers']) > 0:
-            for header in self.project_data["specifications"]['slurm_headers']:
-                headers += header + ","
-            # Remove the trailing comma
-            headers = headers[:-1]
-        else:
-            headers = '""'
+        # Joining the headers (seperated by user inputted #SBATCH)
+        headers = headers = "".join(self.project_data["specifications"]['slurm_headers'])
 
         # update the files on the cluster
-        command = "python3 {}/setup_slurm_specifications.py --path {} --n_cpu {} --partition {} --custom_headers {}"
+        command = "python3 {}/setup_slurm_specifications.py --path {} --n_cpu {} --cpu_partition \"{}\" --gpu_partition \"{}\" --custom_headers \"{}\" --project_name {}"
         command = command.format(self.user_data["remote_path"],
                                  self.user_data["remote_path"],
                                  self.project_data["specifications"]["num_cpu"],
-                                 '"' + self.project_data["specifications"]["partition"] + '"',
-                                 headers)
-        stdout = self.send_command(command, debug=False)
+                                 self.project_data["specifications"]["cpu_partition"],
+                                 self.project_data["specifications"]["gpu_partition"],
+                                 headers, self.loaded_project)
+        stdout = self.send_command(command)
 
     def create_new_project(self, project_name, log_file_contents, specifications):
         """Creates a new project in the deep docking project directory"""
@@ -544,25 +538,18 @@ class Backend:
                           " - Reason: Creating New Project"
             self.core.force_update(header=log_message)
 
-        # Add the custom headers (if any)
-        headers = ""
-        # We loop through the headers and concatenate them into comma separated values to be parsed on the cluster
-        if len(specifications['slurm_headers']) > 0:
-            for header in specifications['slurm_headers']:
-                headers += header + ","
-            # Remove the trailing comma
-            headers = headers[:-1]
-        else:
-            headers = '""'
+        # Joining the headers (seperated by user inputted #SBATCH)
+        headers = headers = "".join(specifications["slurm_headers"])
 
         # update the files on the cluster
-        command = "python3 {}/setup_slurm_specifications.py --path {} --n_cpu {} --partition {} --custom_headers {}"
+        command = "python3 {}/setup_slurm_specifications.py --path {} --n_cpu {} --cpu_partition \"{}\" --gpu_partition \"{}\" --custom_headers \"{}\" --project_name {}"
         command = command.format(self.user_data["remote_path"],
                                  self.user_data["remote_path"],
                                  specifications["num_cpu"],
-                                 specifications["partition"],
-                                 headers)
-        stdout = self.send_command(command, debug=False)
+                                 specifications["cpu_partition"],
+                                 specifications["gpu_partition"],
+                                 headers, self.loaded_project)
+        stdout = self.send_command(command)
         return out
 
     def load_project(self, project_name):
@@ -574,11 +561,6 @@ class Backend:
         # Update the user info
         self.update_user_info()
 
-        # If the jobs are running, we must cancel them before loading another project
-        if self.core.project_loaded:
-            # self.cancel_jobs()
-            pass
-
         # Tell the core we have a project loaded
         self.core.project_loaded = True
         
@@ -588,25 +570,19 @@ class Backend:
                           " - Reason: Loading Project"
             self.core.force_update(header=log_message)
 
-        # Add the custom headers (if any)
-        headers = ""
-        # We loop through the headers and concatenate them into comma separated values to be parsed on the cluster
-        if len(self.project_data["specifications"]['slurm_headers']) > 0:
-            for header in self.project_data["specifications"]['slurm_headers']:
-                headers += header + ","
-            # Remove the trailing comma
-            headers = headers[:-1]
-        else:
-            headers = '""'
+        
+        # Joining the headers (seperated by user inputted #SBATCH)
+        headers = headers = "".join(self.project_data["specifications"]['slurm_headers'])
 
         # update the files on the cluster
-        command = "python3 {}/setup_slurm_specifications.py --path {} --n_cpu {} --partition {} --custom_headers {}"
+        command = "python3 {}/setup_slurm_specifications.py --path {} --n_cpu {} --cpu_partition \"{}\" --gpu_partition \"{}\" --custom_headers \"{}\" --project_name {}"
         command = command.format(self.user_data["remote_path"],
                                  self.user_data["remote_path"],
                                  self.project_data["specifications"]["num_cpu"],
-                                 '"' + self.project_data["specifications"]["partition"] + '"',
-                                 headers)
-        stdout = self.send_command(command, debug=False)
+                                 self.project_data["specifications"]["cpu_partition"],
+                                 self.project_data["specifications"]["gpu_partition"],
+                                 headers, self.loaded_project)
+        stdout = self.send_command(command)
 
         print("Project Loaded; Updated Specs:")
         for line in stdout.read().decode('ascii').split("\n"):
@@ -696,7 +672,7 @@ class Backend:
 
         iteration = self.core.loaded_project_information['specifications']['iteration']
 
-        # Used to reset a phase if it fails
+        # Used to reset a phase if it fails TODO: USE SBATCH INSTEAD? TO KEEP TRACK?
         command = f"bash reset{phase}.sh " \
                   f"{self.user_data['project_path']}/{self.loaded_project}/iteration_{iteration} " \
                   f"{self.loaded_project} " \

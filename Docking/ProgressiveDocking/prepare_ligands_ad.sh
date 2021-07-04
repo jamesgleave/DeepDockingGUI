@@ -1,6 +1,4 @@
 #!/bin/bash
-#SBATCH --cpus-per-task=24
-#SBATCH --partition=normal
 #SBATCH --job-name=prepare
 #SBATCH --output=slurm-phase_2-%x.%j.out
 #SBATCH --error=slurm-phase_2-%x.%j.err

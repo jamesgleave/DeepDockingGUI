@@ -56,7 +56,6 @@ def judge(slurm_files, project_name, phase_job, remove_slurms=True, test=False):
 
 
 if __name__ == "__main__":
-    # TODO Ensure this can cancel pending jobs too!
     parser = argparse.ArgumentParser()
     parser.add_argument("--project_name", type=str)
     parser.add_argument("--username", type=str)

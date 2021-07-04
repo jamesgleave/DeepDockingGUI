@@ -390,21 +390,30 @@ class InstallationAssistant:
         # Installing docking files
         for fp in docking_files:
             file_path = local + "/Docking/ProgressiveDocking/" + fp
-            ftp_client.put(file_path, remote + "/" + fp)
+            # making sure to get rid of carriage returns (for windows users)
+            file_content = open(file_path, "rb").read().replace(b'\r', b'')
+            with ftp_client.open(remote+"/"+fp, "wb") as f:
+                f.write(file_content)
             progress.current += 1
             progress()
 
         # Installing GUI files
         for fp in gui_files:
             file_path = local + "/Docking/GUI/" + fp
-            ftp_client.put(file_path, remote + "/GUI/" + fp)
+            # making sure to get rid of carriage returns (for windows users)
+            file_content = open(file_path, "rb").read().replace(b'\r', b'')
+            with ftp_client.open(remote+"/GUI/"+fp, "wb") as f:
+                f.write(file_content)
             progress.current += 1
             progress()
 
-        # Installing GUI files
+        # Installing ML files
         for fp in ml_files:
             file_path = local + "/Docking/ML/" + fp
-            ftp_client.put(file_path, remote + "/ML/" + fp)
+            # making sure to get rid of carriage returns (for windows users)
+            file_content = open(file_path, "rb").read().replace(b'\r', b'')
+            with ftp_client.open(remote+"/ML/"+fp, "wb") as f:
+                f.write(file_content)
             progress.current += 1
             progress()
 

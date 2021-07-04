@@ -7,5 +7,3 @@ python3 reset.py --project_name "$2" --username "$3" --scripts "$4"
 cd $1
 
 rm -r res
-
-# TODO CANCEL JOBS TOO

@@ -79,7 +79,7 @@ def extract_glide_score(filen):
             scores = get_scores(ref)
              
     except Exception as e:
-        print('Exception occured in Extract_labels.py: ', e)
+        print('Handled exception: ', e)
         # file is already decompressed
         with open(filen, 'r') as ref:
             scores = get_scores(ref)               
@@ -91,7 +91,7 @@ def extract_glide_score(filen):
     elif 'train' in os.path.basename(filen):
         new_name = 'training'
     else:
-        print("Could not generate new training set")
+        print("FAIL! Could not generate new training set. Exiting...")
         exit()
 
     with open(file_path+'/'+protein+'/iteration_'+str(n_it)+'/' + new_name + '_' + 'labels.txt', 'w') as ref:
@@ -137,7 +137,7 @@ if __name__ == '__main__':
         files.append(f)
     
     print("num files in", path, ":", len(files))
-    print("Files:", [os.path.basename(f) for f in files])
+    print("Files to extract from:", [os.path.basename(f) for f in files])
     if len(files) == 0:
         print('NO FILES IN: ', path)
         print('CANCEL JOB...')
@@ -151,9 +151,9 @@ if __name__ == '__main__':
         # renaming from f1_f2_f3 to f3_labels.txt
         for f in glob.glob(path_labels):
             try:
-                print(f, end=": ")
+                print(f)
                 print(iter_path+'/'+f.split('/')[-1].split('_')[2]+'_'+'labels.txt')
                 os.rename(f, iter_path+'/'+f.split('/')[-1].split('_')[2]+'_'+'labels.txt')
             except IndexError:
-                print("\nIndex error on renaming", f) # Occurs if it is already correctly named. (deprecated use)
+                print("Handled error on renaming", f) # Occurs if it is already correctly named. (deprecated use)
 
