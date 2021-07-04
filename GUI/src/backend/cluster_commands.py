@@ -178,19 +178,20 @@ def read_top_hits(ssh, itr_path=""):
     try:
         return ftp_client.open(itr_path + "/top_hits.csv").readlines()
     except FileNotFoundError:
+        print("Could not find", itr_path + "/top_hits.csv")
         return []
 
 
 def read_final_top_hits(ssh, final_iteration_path):
     # open an ftp client to do work on the cluster
     ftp_client = ssh.ssh.open_sftp()
-    print("Looking at", final_iteration_path + "/smiles.csv")
     try:
         # getting just the first 1000 (the top of the top hits):
         with ftp_client.open(final_iteration_path + "/smiles.csv") as f:
             top_1000 = [f.readline() for i in range(1000)]
             return top_1000                
     except FileNotFoundError:
+        print("Could not find", final_iteration_path + "/smiles.csv")
         return []
 
 
