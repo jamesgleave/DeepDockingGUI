@@ -11,10 +11,12 @@ try:
     from .DataHistory import DataHistory
     from .backend_exceptions import *
     from .cluster_commands import *
+    from .EventHandler import EventHandler
 except:
     from DataHistory import DataHistory
     from backend_exceptions import *
     from cluster_commands import *
+    from EventHandler import EventHandler
 
 import threading
 import pickle
@@ -63,6 +65,9 @@ class Core:
                               + " " + self.__ssh_connection.user
 
     def start(self):
+        # Call the event handler before starting
+        EventHandler.OnBackendStart(self)
+
         self.running = True
         while self.running:
             self.update()
@@ -89,17 +94,25 @@ class Core:
         # Here we update the user data and the project data to be read by the backend
         self.user_data = json.loads(open('src/backend/db.json').read())
         self.update_path = self.user_data['remote_gui_path'] + "update_gui.sh "
-        self.update_command = "bash " \
-                              + self.update_path \
-                              + self.user_data['project_path'] \
-                              + "/" + self.loaded_project_name \
-                              + " " + self.user_data['remote_gui_path'] \
-                              + " " + self.__ssh_connection.user
+        self.update_command = f"bash {self.update_path} " \
+                              f"{self.user_data['project_path']}/{self.loaded_project_name} " \
+                              f"{self.user_data['remote_gui_path']} " \
+                              f"{self.__ssh_connection.user}"
 
         # Updating project information by reading the json file associated with the currently loaded project.
         self.loaded_project_information = json.loads(open('src/backend/projects/{}.json'.format(
             self.loaded_project_name)).read()
             )
+
+        # Before we enter the update, we should store some information about the previous update
+        # Store the state of the final phase before updating to check if we will trigger an OnFinalPhase* event
+        try:
+            # If we have info, setup the prior knowledge
+            prior_update_itr = self.loaded_project_information['specifications']['iteration']
+            prior_final_phase_state = self.model_data["iteration_" + str(prior_update_itr)]['itr']['final_phase']
+        except KeyError:
+            # If we do not have any previous iteration information, we should just initialize this to None
+            prior_final_phase_state = None
 
         debug_message = "\n" + Colours.HEADER + "Updating Data:\n"
         if update_condition or forced:
@@ -129,8 +142,9 @@ class Core:
                 pickle_name = "{}_data.pickle".format(self.__ssh_connection.user)
                 # Get the path to the pickle (in the user's directory)
                 user_path = f"/Users/{self.__ssh_connection.user}/"
+                pickle_path = self.user_data['remote_gui_path'] + user_path + pickle_name
                 # Read the pickle off the remote cluster
-                pickled_data = self.__ssh_connection.read(self.user_data['remote_gui_path'] + user_path + pickle_name)
+                pickled_data = self.__ssh_connection.read(pickle_path)
                 # add to the debug message
                 debug_message += Colours.OK_CYAN + "- Reading data from the cluster...\n"
                 # load the data from the pickle and add to the debug message
@@ -139,18 +153,23 @@ class Core:
             except FileNotFoundError:
                 debug_message += Colours.FAIL + "- No model data present!\n"
                 self.model_data = {}
+                EventHandler.OnDataReadError(self)
             except UnicodeDecodeError or KeyError as e:
                 debug_message += Colours.FAIL + "- There was a problem getting the data!\n"
                 debug_message += Colours.FAIL + f"  - {e}\n"
+                EventHandler.OnDataReadError(self)
             except Exception as e:
                 debug_message += Colours.FAIL + "- There was an unexpected problem getting the data!\n"
                 debug_message += Colours.FAIL + f"  - {e}\n"
+                EventHandler.OnDataReadError(self)
 
             """Here we are updating the current iteration in the project file if it has been changed."""
             current_iteration = len(self.model_data.keys())
-            
             if self.loaded_project_information['specifications']['iteration'] != current_iteration:
                 self.loaded_project_information['specifications']['iteration'] = current_iteration
+
+                # Call the on iteration change callback
+                EventHandler.OnIterationChange(self)
 
                 # Check to see if it is the final iteration
                 if current_iteration == self.loaded_project_information['specifications']['total_iterations']:
@@ -169,7 +188,13 @@ class Core:
             try:
                 current_phase = self.model_data[list(self.model_data.keys())[-1]]["itr"]["current_phase"]
                 if self.loaded_project_information['specifications']['current_phase'] != current_phase:
+                    # Change the phase for the loaded project
                     self.loaded_project_information['specifications']['current_phase'] = current_phase
+
+                    # Call the phase change callback
+                    EventHandler.OnPhaseChange(self)
+
+                    # Update the project information
                     with open('src/backend/projects/{}.json'.format(self.loaded_project_name), 'w') as new_db:
                         new_db.write(json.dumps(self.loaded_project_information))
 
@@ -190,6 +215,8 @@ class Core:
                 # Add error info to the log message
                 error_info = self.model_data["iteration_" + str(current_iteration)]['itr']['crash_report']
                 if len(error_info) > 0:
+                    # Call error callback
+                    EventHandler.OnErrorDetected(self)
                     debug_message += Colours.WARNING + "- Error Information " + \
                                      self.model_data["iteration_" +
                                                      str(current_iteration)]['itr']['crash_report'][-1]['traceback'] + "\n"
@@ -231,6 +258,24 @@ class Core:
                     debug_message += Colours.OK_GREEN + "- Final Extraction -> " + status + "\n"
             except KeyError:
                 pass
+
+            """
+            Here we are checking if we have encountered a final phase event.
+            """
+            if prior_final_phase_state is not None:
+                # check the final phase status
+                true_final_phase_status = self.model_data["iteration_" + str(current_iteration)]['itr']['final_phase']
+                final_phase_started = prior_final_phase_state == "locked" and true_final_phase_status == "running"
+                final_phase_finished = prior_final_phase_state == "running" and true_final_phase_status == "finished"
+
+                # If the final phase is finished, the project is finished
+                if final_phase_finished:
+                    EventHandler.OnFinalPhaseEnd(self)
+                    EventHandler.OnProjectFinished(self)
+
+                # If the project has started the final phase, run callback
+                if final_phase_started:
+                    EventHandler.OnFinalPhaseStart(self)
 
             # Conclude the update
             end_time = time.time()
@@ -318,7 +363,7 @@ class Backend:
         return "fetching" if core_status == 0 else "ready"
 
     """ The following section of the backend deals with user interaction with the cluster"""
-    def send_command(self, command, debug, redirect=True):
+    def send_command(self, command, debug=False, redirect=True):
         cd = "cd {}; ".format(self.user_data['docking_path'])
 
         # We sometimes want the stdout so do not always redirect it
@@ -424,7 +469,8 @@ class Backend:
         Updates the specifications for starting a run (num cpu, etc)
         specifications =
         {"iteration": ...,
-        "partition": "...",
+        "gpu_partition": "...",
+        "cpu_partition": "...",
         "total_iterations": ...,
         "num_cpu": ...,
         "is_final_iteration": ...,
@@ -434,7 +480,8 @@ class Backend:
         "optimize_models": ...}
         """
         # preprocessing the data:
-        specifications['partition'] = '""' if specifications["partition"] == "Default"  else specifications["partition"]
+        specifications['gpu_partition'] = '""' if specifications["gpu_partition"] == "Default"  else specifications["gpu_partition"]
+        specifications['cpu_partition'] = '""' if specifications["cpu_partition"] == "Default"  else specifications["cpu_partition"]
 
         # Update the user info
         self.update_user_info()
@@ -451,25 +498,18 @@ class Backend:
         with open(f'src/backend/projects/{self.loaded_project}.json', 'w') as new_db:
             new_db.write(json.dumps(self.project_data))
 
-        # Add the custom headers (if any)
-        headers = ""
-        # We loop through the headers and concatenate them into comma separated values to be parsed on the cluster
-        if len(self.project_data["specifications"]['slurm_headers']) > 0:
-            for header in self.project_data["specifications"]['slurm_headers']:
-                headers += header + ","
-            # Remove the trailing comma
-            headers = headers[:-1]
-        else:
-            headers = '""'
+        # Joining the headers (seperated by user inputted #SBATCH)
+        headers = headers = "".join(self.project_data["specifications"]['slurm_headers'])
 
         # update the files on the cluster
-        command = "python3 {}/setup_slurm_specifications.py --path {} --n_cpu {} --partition {} --custom_headers {}"
+        command = "python3 {}/setup_slurm_specifications.py --path {} --n_cpu {} --cpu_partition \"{}\" --gpu_partition \"{}\" --custom_headers \"{}\" --project_name {}"
         command = command.format(self.user_data["remote_path"],
                                  self.user_data["remote_path"],
                                  self.project_data["specifications"]["num_cpu"],
-                                 '"' + self.project_data["specifications"]["partition"] + '"',
-                                 headers)
-        stdout = self.send_command(command, debug=False)
+                                 self.project_data["specifications"]["cpu_partition"],
+                                 self.project_data["specifications"]["gpu_partition"],
+                                 headers, self.loaded_project)
+        stdout = self.send_command(command)
 
     def create_new_project(self, project_name, log_file_contents, specifications):
         """Creates a new project in the deep docking project directory"""
@@ -498,25 +538,18 @@ class Backend:
                           " - Reason: Creating New Project"
             self.core.force_update(header=log_message)
 
-        # Add the custom headers (if any)
-        headers = ""
-        # We loop through the headers and concatenate them into comma separated values to be parsed on the cluster
-        if len(specifications['slurm_headers']) > 0:
-            for header in specifications['slurm_headers']:
-                headers += header + ","
-            # Remove the trailing comma
-            headers = headers[:-1]
-        else:
-            headers = '""'
+        # Joining the headers (seperated by user inputted #SBATCH)
+        headers = headers = "".join(specifications["slurm_headers"])
 
         # update the files on the cluster
-        command = "python3 {}/setup_slurm_specifications.py --path {} --n_cpu {} --partition {} --custom_headers {}"
+        command = "python3 {}/setup_slurm_specifications.py --path {} --n_cpu {} --cpu_partition \"{}\" --gpu_partition \"{}\" --custom_headers \"{}\" --project_name {}"
         command = command.format(self.user_data["remote_path"],
                                  self.user_data["remote_path"],
                                  specifications["num_cpu"],
-                                 specifications["partition"],
-                                 headers)
-        stdout = self.send_command(command, debug=False)
+                                 specifications["cpu_partition"],
+                                 specifications["gpu_partition"],
+                                 headers, self.loaded_project)
+        stdout = self.send_command(command)
         return out
 
     def load_project(self, project_name):
@@ -528,11 +561,6 @@ class Backend:
         # Update the user info
         self.update_user_info()
 
-        # If the jobs are running, we must cancel them before loading another project
-        if self.core.project_loaded:
-            # self.cancel_jobs()
-            pass
-
         # Tell the core we have a project loaded
         self.core.project_loaded = True
         
@@ -542,25 +570,19 @@ class Backend:
                           " - Reason: Loading Project"
             self.core.force_update(header=log_message)
 
-        # Add the custom headers (if any)
-        headers = ""
-        # We loop through the headers and concatenate them into comma separated values to be parsed on the cluster
-        if len(self.project_data["specifications"]['slurm_headers']) > 0:
-            for header in self.project_data["specifications"]['slurm_headers']:
-                headers += header + ","
-            # Remove the trailing comma
-            headers = headers[:-1]
-        else:
-            headers = '""'
+        
+        # Joining the headers (seperated by user inputted #SBATCH)
+        headers = headers = "".join(self.project_data["specifications"]['slurm_headers'])
 
         # update the files on the cluster
-        command = "python3 {}/setup_slurm_specifications.py --path {} --n_cpu {} --partition {} --custom_headers {}"
+        command = "python3 {}/setup_slurm_specifications.py --path {} --n_cpu {} --cpu_partition \"{}\" --gpu_partition \"{}\" --custom_headers \"{}\" --project_name {}"
         command = command.format(self.user_data["remote_path"],
                                  self.user_data["remote_path"],
                                  self.project_data["specifications"]["num_cpu"],
-                                 '"' + self.project_data["specifications"]["partition"] + '"',
-                                 headers)
-        stdout = self.send_command(command, debug=False)
+                                 self.project_data["specifications"]["cpu_partition"],
+                                 self.project_data["specifications"]["gpu_partition"],
+                                 headers, self.loaded_project)
+        stdout = self.send_command(command)
 
         print("Project Loaded; Updated Specs:")
         for line in stdout.read().decode('ascii').split("\n"):
@@ -574,7 +596,7 @@ class Backend:
         return self.project_data
 
     def cancel_jobs(self):
-        """Cancels all jobs the user is running. Warning: this will not only cancel deep docking jobs."""
+        """Cancels all jobs the user is running."""
         command = f"python3 {self.user_data['remote_path']}/reset.py " \
                   f"--project_name {self.loaded_project} " \
                   f"--username {self.user_data['username']} " \
@@ -650,7 +672,7 @@ class Backend:
 
         iteration = self.core.loaded_project_information['specifications']['iteration']
 
-        # Used to reset a phase if it fails
+        # Used to reset a phase if it fails TODO: USE SBATCH INSTEAD? TO KEEP TRACK?
         command = f"bash reset{phase}.sh " \
                   f"{self.user_data['project_path']}/{self.loaded_project}/iteration_{iteration} " \
                   f"{self.loaded_project} " \

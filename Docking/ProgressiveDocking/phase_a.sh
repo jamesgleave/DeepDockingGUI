@@ -1,6 +1,4 @@
 #!/bin/bash
-#SBATCH --cpus-per-task=24
-#SBATCH --partition=normal
 #SBATCH --ntasks=1
 #SBATCH --mem=0               # memory per node
 #SBATCH --job-name=phase_a
@@ -23,10 +21,10 @@ num_energy_evaluations=${12} # number of energy evaluations for docking
 num_runs=${13}               # number of runs for docking
 chunk_size=${14}             # the size of the chunks for phase 2
 percent_fist_mol=${15}
-threshold=${16}
-percent_last_mol=${17}
+percent_last_mol=${16}
 extension=".smi"
 
+echo Partition: $SLURM_JOB_PARTITION
 # Print the start time
 echo Starting Time: $(date)
 
@@ -46,17 +44,20 @@ echo - Number Of Energy Evaluations: $num_energy_evaluations
 echo - Number Of Autodock GPU Runs: $num_runs
 echo - Chunk Size: $chunk_size
 echo - Percent First Mol: $percent_fist_mol
-echo - Threshold: $threshold
 echo - Percent Last Mol: $percent_last_mol
 
 # Grab everything from the logs file
 file_path=$(sed -n '1p' $2/$3/logs.txt)
 protein=$(sed -n '2p' $2/$3/logs.txt)
-#n_mol=`sed -n '9p' $2/$3/logs.txt`
-#morgan_directory=`sed -n '4p' $2/$3/logs.txt`
-#smile_directory=`sed -n '5p' $2/$3/logs.txt`
-#sdf_directory=`sed -n '6p' $2/$3/logs.txt`
-#docking_method=`sed -n '7p' $2/$3/logs.txt`
+
+# Getting custom slurm arguments
+slurm_args_no_cpu=$(sed -n '1p' ${local_path}/slurm_args/${project_name}_slurm_args.txt)
+# for ["phase_2.sh", "phase_3.sh", "phase_4.sh", "phase_5.sh", "split_chunks.sh"]
+slurm_args=$(sed -n '2p' ${local_path}/slurm_args/${project_name}_slurm_args.txt) # for everything else
+
+# GPU required scripts arguments (different partition)
+slurm_args_no_cpu_g=$(sed -n '3p' ${local_path}/slurm_args/${project_name}_slurm_args.txt)
+slurm_args_g=$(sed -n '4p' ${local_path}/slurm_args/${project_name}_slurm_args.txt)
 
 echo Job ID: $SLURM_JOBID
 echo Current Phase: $current_phase
@@ -85,7 +86,7 @@ for ((n_it = $current_it; n_it <= $final_iteration; n_it++)); do
 
 		#		python $local_path/phase_maker.py -tpos $t_cpu -pf phase_1
 		python jobid_writer.py -file_path $project_path/$project_name -n_it $n_it -jid phase_1 -jn phase_1.sh
-		sbatch $local_path/phase_1.sh $n_it $t_cpu $project_path $project_name $mols_to_dock $local_path
+		sbatch $slurm_args $local_path/phase_1.sh $n_it $t_cpu $project_path $project_name $mols_to_dock $local_path
 		python $local_path/check_phase.py -pf phase_1.sh -itr $file_path/$protein/iteration_$n_it
 
 		# Signify Complete
@@ -104,7 +105,7 @@ for ((n_it = $current_it; n_it <= $final_iteration; n_it++)); do
 
 		#		python $local_path/phase_maker.py -tpos $t_cpu -pf phase_2
 		python jobid_writer.py -file_path $project_path/$project_name -n_it $n_it -jid phase_2 -jn phase_2.sh
-		sbatch $local_path/phase_2.sh $extension $chunk_size $local_path $project_path/$project_name $n_it
+		sbatch $slurm_args_no_cpu $local_path/phase_2.sh $extension $chunk_size $local_path $project_path/$project_name $n_it
 		python $local_path/check_phase.py -pf phase_2.sh -itr $file_path/$protein/iteration_$n_it
 
 		# Signify Complete
@@ -122,7 +123,7 @@ for ((n_it = $current_it; n_it <= $final_iteration; n_it++)); do
 		echo ""
 
 		python jobid_writer.py -file_path $project_path/$project_name -n_it $n_it -jid phase_3 -jn phase_3.sh
-		sbatch $local_path/phase_3.sh $path_to_fld_file $num_energy_evaluations $num_runs $path_to_auto_dock $project_path/$project_name $n_it $local_path
+		sbatch $slurm_args_no_cpu $local_path/phase_3.sh $path_to_fld_file $num_energy_evaluations $num_runs $path_to_auto_dock $project_path/$project_name $n_it $local_path
 		python $local_path/check_phase.py -pf phase_3.sh -itr $file_path/$protein/iteration_$n_it
 
 		# Signify Complete
@@ -141,7 +142,7 @@ for ((n_it = $current_it; n_it <= $final_iteration; n_it++)); do
 
 		#		python $local_path/phase_maker.py -tpos $t_cpu -pf phase_4
 		python jobid_writer.py -file_path $project_path/$project_name -n_it $n_it -jid phase_4 -jn phase_4.sh
-		sbatch $local_path/phase_4.sh $n_it $t_cpu $project_path/$project_name $is_last $final_iteration $local_path $percent_fist_mol $threshold $percent_last_mol
+		sbatch $slurm_args_no_cpu_g $local_path/phase_4.sh $n_it $t_cpu $project_path/$project_name $is_last $final_iteration $local_path $percent_fist_mol $percent_last_mol
 		python $local_path/check_phase.py -pf phase_4.sh -itr $file_path/$protein/iteration_$n_it
 
 		# Signify Complete
@@ -159,7 +160,7 @@ for ((n_it = $current_it; n_it <= $final_iteration; n_it++)); do
 		echo ""
 
 		python jobid_writer.py -file_path $project_path/$project_name -n_it $n_it -jid phase_5 -jn phase_5.sh
-		sbatch $local_path/phase_5.sh $n_it $project_path/$project_name $local_path $t_cpu
+		sbatch $slurm_args_no_cpu $local_path/phase_5.sh $n_it $project_path/$project_name $local_path $t_cpu
 		python $local_path/check_phase.py -pf phase_5.sh -itr $file_path/$protein/iteration_$n_it
 
 		# Signify Complete
@@ -198,7 +199,7 @@ echo ""
 final_phase=$project_path/$project_name/iteration_$final_iteration/final_phase.info
 touch $final_phase
 echo Pending >| $final_phase
-sbatch final_extraction.sh $project_path/$project_name $t_cpu $final_iteration $local_path $top_n >>$final_phase
+sbatch $slurm_args final_extraction.sh $project_path/$project_name $t_cpu $final_iteration $local_path $top_n >>$final_phase
 
 # Print the end time
 echo End Time: $(date)

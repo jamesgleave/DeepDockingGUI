@@ -5,6 +5,7 @@ GUI/node_modules
 *.pyc
 db.json
 installation/installation_information.json
+installation/*.out
 activation_script.sh
 GUI/src/backend/projects/*.json
 __pycache__

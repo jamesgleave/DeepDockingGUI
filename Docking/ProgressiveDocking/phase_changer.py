@@ -121,18 +121,3 @@ elif pf == 'phase_5.sh':
                 break
             else:
                 time.sleep(60)
-
-elif pf == 'final_phase.sh':
-    while 1 == 1:
-        all_sdfs = len(glob.glob(itr_dir + '/to_dock/sdf/*.sdf*'))
-        fct = len(glob.glob(itr_dir + '/to_dock/docked/*.sdf*'))
-        if fct == all_sdfs:
-            with open(itr_dir + '/phase_f.sh', 'w') as ref:
-                ref.write('finished\n')
-            break
-        else:
-            time.sleep(300)
-
-elif pf == 'final_phase_alternate.sh' or pf == 'final_phase_alternate_1.sh':
-    with open(itr_dir + '/phase_f.sh', 'w') as ref:
-        ref.write('finished\n')

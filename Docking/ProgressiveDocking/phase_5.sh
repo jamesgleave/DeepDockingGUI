@@ -26,17 +26,23 @@ num_molec=`sed -n '9p' $2/logs.txt`
 
 progressive_docking_path=$3
 save_path=$2
+project_name=$(basename "$2")
 
+echo Partition: $SLURM_JOB_PARTITION
 echo "Passed Parameters:"
 echo "Current Iteration: $1"
 echo "Project Path: $2"
-echo Project Name: $(basename "$2")
+echo Project Name: $project_name
 echo "Scripts: $3"
 echo "Number of CPUs: $4"
 
 # This should activate the conda environment
 source ~/.bashrc
 source $progressive_docking_path/activation_script.sh
+
+# getting slurm args for gpu req scripts (with cpus-per-task and gpu_partition)
+slurm_args_g=$(sed -n '4p' ${progressive_docking_path}/slurm_args/${project_name}_slurm_args.txt)
+
 
 python jobid_writer.py -file_path $file_path/$protein -n_it $1 -jid $SLURM_JOB_NAME -jn $SLURM_JOB_NAME.sh --save_path $save_path
 
@@ -51,7 +57,7 @@ source ~/.bashrc
 source $progressive_docking_path/deactivation_script.sh
 cd $save_path/iteration_$1/simple_job_predictions/
 echo "running simple_jobs"
-for f in *;do sbatch $f; done
+for f in *;do sbatch $slurm_args_g $f; done
 
 echo "waiting for event phase change"
 source ~/.bashrc
@@ -64,7 +70,7 @@ source $progressive_docking_path/deactivation_script.sh
 
 echo Phase 5 is finished. Now searching for top predicted molecules.
 cd $progressive_docking_path/GUI
-sbatch run_search.sh $2 $4 $1 1000
+sbatch run_search.sh $2 $4 $1 1000 #TODO: slurm args for this?
 
 # Clean up the slurm files
 echo Cleaning slurm files

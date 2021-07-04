@@ -1,6 +1,5 @@
 #!/bin/bash
 #SBATCH --cpus-per-task=24
-#SBATCH --partition=normal
 #SBATCH --ntasks=1
 #SBATCH --mem=0               # memory per node
 #SBATCH --job-name=phase_1
@@ -15,6 +14,7 @@ project_name=$4
 mol_to_dock=$5  # Replace with sample size (training set)
 local_path=$6
 
+echo Partition: $SLURM_JOB_PARTITION
 echo Args:
 echo Iteration: $iteration
 echo Total CPUs: $t_cpu

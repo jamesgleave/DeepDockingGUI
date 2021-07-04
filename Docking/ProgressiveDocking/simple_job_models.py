@@ -18,9 +18,7 @@ def print(*args, **kwargs):
     __builtin__.print('\t simple_jobs: ', end="")
     return __builtin__.print(*args, **kwargs)
 
-
 START_TIME = time.time()
-
 
 parser = argparse.ArgumentParser()
 parser.add_argument('-n_it','--iteration_no',required=True)
@@ -34,13 +32,8 @@ parser.add_argument('-save', '--save_path', required=False, default=None)
 
 # allowing for variable number of molecules to test and validate from:
 parser.add_argument('-n_mol', '--number_mol', required=False, default=1000000)
-
 parser.add_argument('-pfm', '--percent_first_mols', required=False, default=1)  # these two inputs must be percentages (e.g. 100 for 100%)
 parser.add_argument('-plm', '--percent_last_mols', required=False, default=0.01)
-
-
-# Pass the threshold
-parser.add_argument('-ct', required=False, default=0.9)
 
 # Flag for switching between functions that determine how many mols to be left at the end of iteration 
 #   if not provided it defaults to a linear dec
@@ -55,7 +48,6 @@ io_args, extra_args = parser.parse_known_args()
 n_it = int(io_args.iteration_no)
 nhp = int(io_args.number_of_hyp)
 titr = int(io_args.total_iterations)
-ct = float(io_args.ct) #TODO THIS IS NOT USED -> INVESTIGATE
 
 
 # Handle the time
@@ -136,26 +128,27 @@ if dynamic_hyperparameters:
     oss_range = [5, 20]
 
 else:
-    # Use predefined sizes
-    num_units = [100, 1500, 2000]
-    dropout = [0.2, 0.5]
-    learn_rate = [0.0001]
+    # Use predefined ranges/values
+    num_units = [(900, 1150), (1150, 1400)]
+    dropout = [(0.6, 0.75), (0.75, 0.9)]
+    learn_rate = [(0.00014, 0.00020)]
     bin_array = [2, 3]
-    wt = [2, 3]
+    wt = [(2.20, 5.0)]
 
     if nhp < 144:
-       bs = [256]
+        bs = [256]
     else:
         bs = [128, 256]
 
     if nhp < 48:
-        oss = [10]
+        oss = [(10, 20), (20, 30), (30, 40)]
     elif nhp < 72:
         oss = [5, 10]
     else:
         oss = [5, 10, 20]
 
 # Precalculate the number of models
+import random
 number_of_models = len(num_units) * len(dropout) * len(learn_rate) * len(bin_array) * len(wt) * len(bs) * len(oss)
 print("Number of models:", number_of_models)
 
@@ -207,7 +200,25 @@ for o in oss:   # Over Sample Size
                 for lr in learn_rate:
                     for ba in bin_array:
                         for w in wt:    # Weight
-                            all_hyperparas.append([o,batch,nu,do,lr,ba,w,cf_start])
+                            # We now create a random search between two values and add them to a list of hps
+                            hypers = []
+                            # Look at each hp
+                            for hp in [o,batch,nu,do,lr,ba,w,cf_start]:
+                                # If it is a tuple, then we have a range of values
+                                if type(hp) is tuple:
+                                    min_val = hp[0]
+                                    max_val = hp[1]
+                                    # Check if it is floats and use uniform
+                                    if type(min_val) is float and type(max_val) is float:
+                                        hypers.append(random.uniform(min_val, max_val))
+                                    elif type(min_val) is int and type(max_val) is int:
+                                        hypers.append(random.randint(min_val, max_val))
+                                else:
+                                    hypers.append(hp)
+
+                            # print the params for debugging
+                            print("HP:", hypers)
+                            all_hyperparas.append(hypers)
 
 print('Total Hyperparameters:', len(all_hyperparas))
 # Creating all the jobs for each hyperparameter combination:
@@ -224,18 +235,10 @@ for i in range(len(all_hyperparas)):
         ref.write('#SBATCH --job-name=phase_4\n')
         ref.write('#SBATCH --mem=0               # memory per node\n')
         ref.write('#SBATCH --time='+new_time+'            # time (DD-HH:MM)\n')
-
-        # Reads the custom header file to add the custom headers and partition
-        try:
-            with open("custom_slurm_header.txt", "r") as custom_slurm_header:
-                for line in custom_slurm_header.readlines():
-                    ref.write(line)
-        except OSError:
-            pass
-
         ref.write("#SBATCH --output=slurm-phase_4-%x.%j.out\n")
         ref.write("#SBATCH --error=slurm-phase_4-%x.%j.err\n")
         ref.write('\n')
+        ref.write("echo Partition: $SLURM_JOB_PARTITION \n")
 
         cwd = os.getcwd()
         ref.write('cd {}\n'.format(cwd))

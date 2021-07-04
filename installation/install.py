@@ -129,6 +129,14 @@ def install_deep_docking(simulate):
     installation_information['env_deactivation_command'] = env_deactivation
     installation_information['local_env_activation_command'] = local_activation_command
     installation_information['username'] = connection.user
+
+    # Email address
+    if input("Do you want email updates? Enter 'y' to enter email address: ") == 'y':
+        email_address = input("Email Address: ")
+        installation_information["email"] = email_address
+    else:
+        installation_information["email"] = "NA"
+
     json_info = json.dumps(installation_information)
 
     # Save the user information
@@ -142,6 +150,7 @@ def install_deep_docking(simulate):
         pass
     
     input("All done! You are good to go!")
+
 
 def print_txt_message(text_file):
     txt_contents = open(text_file).readlines()
@@ -265,8 +274,8 @@ class InstallationAssistant:
         progress_bar()
 
         # install pybel
-        out = self.command("conda activate DeepDockingRemote; pip install pybel")
-        lines += out.readlines()
+        # out = self.command("conda activate DeepDockingRemote; conda install -c openbabel openbabel")
+        lines += []
         write_to_out(lines)
         progress_bar.current += 1
         progress_bar()
@@ -381,21 +390,30 @@ class InstallationAssistant:
         # Installing docking files
         for fp in docking_files:
             file_path = local + "/Docking/ProgressiveDocking/" + fp
-            ftp_client.put(file_path, remote + "/" + fp)
+            # making sure to get rid of carriage returns (for windows users)
+            file_content = open(file_path, "rb").read().replace(b'\r', b'')
+            with ftp_client.open(remote+"/"+fp, "wb") as f:
+                f.write(file_content)
             progress.current += 1
             progress()
 
         # Installing GUI files
         for fp in gui_files:
             file_path = local + "/Docking/GUI/" + fp
-            ftp_client.put(file_path, remote + "/GUI/" + fp)
+            # making sure to get rid of carriage returns (for windows users)
+            file_content = open(file_path, "rb").read().replace(b'\r', b'')
+            with ftp_client.open(remote+"/GUI/"+fp, "wb") as f:
+                f.write(file_content)
             progress.current += 1
             progress()
 
-        # Installing GUI files
+        # Installing ML files
         for fp in ml_files:
             file_path = local + "/Docking/ML/" + fp
-            ftp_client.put(file_path, remote + "/ML/" + fp)
+            # making sure to get rid of carriage returns (for windows users)
+            file_content = open(file_path, "rb").read().replace(b'\r', b'')
+            with ftp_client.open(remote+"/ML/"+fp, "wb") as f:
+                f.write(file_content)
             progress.current += 1
             progress()
 
