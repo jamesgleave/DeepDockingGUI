@@ -30,16 +30,16 @@ file_path = io_args.file_path
 tot_process = int(io_args.tot_process)
 sof = io_args.software
 
-if is_final=='False' or is_final=='false':
+if is_final == 'False' or is_final == 'false':
     is_final = False
-elif is_final=='True' or is_final=='true':
+elif is_final == 'True' or is_final == 'true':
     is_final = True
 else:
     raise TypeError('-if parameter must be a boolean (true/false)')
 
-if sof=='GLIDE':
+if sof == 'GLIDE':
     key_word = 'r_i_docking_score'
-elif sof=='OEDDOCKING':
+elif sof == 'OEDDOCKING':
     key_word = 'FRED Chemgauss4 score'
 elif sof == "AUTODOCK_GPU":
     key_word = 'ADSCOR'
@@ -155,5 +155,5 @@ if __name__ == '__main__':
                 print(iter_path+'/'+f.split('/')[-1].split('_')[2]+'_'+'labels.txt')
                 os.rename(f, iter_path+'/'+f.split('/')[-1].split('_')[2]+'_'+'labels.txt')
             except IndexError:
-                print("Handled error on renaming", f) # Occurs if it is already correctly named. (deprecated use)
+                print("Handled error on renaming", f)  # Occurs if it is already correctly named. (deprecated use)
 

@@ -107,11 +107,11 @@ def get_molecules_remaining(project_path, iteration_root) -> dict:
         est_num_left = -1
 
     try:
-        pred = pd.read_csv(path + '/Mol_ct_file_updated.csv')
+        pred = pd.read_csv(iteration_root + '/morgan_1024_predictions/passed_file_ct.txt', names=["file", "mol_count"])
     except FileNotFoundError:
         return {'true': -1, 'estimate': est_num_left, 'error': -1}
 
-    true_mol_rem = sum(pred.Number_of_Molecules)
+    true_mol_rem = sum(pred.mol_count)
 
     if est_num_left > 0:
         error = (abs(est_num_left - true_mol_rem) / true_mol_rem) * 100
