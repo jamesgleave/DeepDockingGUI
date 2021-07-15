@@ -137,7 +137,7 @@ def run_all_phases(project_name, specifications, logs):
     num_energy_evaluations = specifications['num_energy_evaluations']
     # number of runs for autodock
     num_runs = specifications['num_runs']
-    # chunk size for phase 3
+    # chunk size for phase 2
     num_chunks = int(specifications['num_chunks'])
     chunk_size = round((mols_to_dock * 3)/num_chunks)
     # percent first mol to be true positives
