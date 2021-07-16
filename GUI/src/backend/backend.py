@@ -451,6 +451,23 @@ class Backend:
             smiles.append(smile)
         return smiles
 
+    def save_final_phase_results(self, save_location=""):
+        # Reads the top_hits.csv file generated at the end of docking
+        lines = read_final_top_hits(self.ssh, self.user_data['project_path'] +
+                                    f"/{self.loaded_project}/"
+                                    f"iteration_{self.project_data['specifications']['iteration']}")
+
+        # The name of the file
+        save_name = f"{save_location}/final_results-{self.loaded_project}-{len(lines)}.smiles"
+
+        # Write to the file
+        with open(save_name, "w") as f:
+            for line in lines[1:]:
+                _, smile, _ = line.split(" ")
+                if smile == "":
+                    break
+                f.write(smile + "\n")
+
     def update_user_info(self):
         """Updates the user info by reading the database json file and the project file"""
         # TODO: Sibling files not recognizing each other when called from another file path.
@@ -570,7 +587,6 @@ class Backend:
                           " - Reason: Loading Project"
             self.core.force_update(header=log_message)
 
-        
         # Joining the headers (seperated by user inputted #SBATCH)
         headers = headers = "".join(self.project_data["specifications"]['slurm_headers'])
 
@@ -659,6 +675,45 @@ class Backend:
 
         # Update the backend right away
         self.core.force_update(header=log_message)
+
+    def reset_project_to(self, iteration, phase, auto_restart=False):
+        """
+        Resets a project to a specified point
+
+        :param iteration:
+        :param phase:
+        :param auto_restart
+        :return:
+        """
+
+        # Ensure that the iteration is valid
+        current_iteration = self.core.loaded_project_information['specifications']['iteration']
+        assert iteration <= current_iteration, "Cannot revert to an iteration which has not happened yet..."
+
+        # Ensure phase is correct
+        assert not (0 < phase < 6), "Invalid phase - must be between 1 and 5"
+
+        # Remove each iteration after the desired iteration
+        for i in range(iteration + 1, current_iteration + 1):
+            try:
+                # Delete the directory
+                command = f"rm -r {self.user_data['project_path']}/{self.loaded_project}/iteration_{i}"
+                print(command)
+
+                # Send command
+                out = self.send_command(command, False)
+
+                # Return the output and wait until the operation is finished
+                output = out.read()
+            except FileNotFoundError as e:
+                print("Error Caught:", e)
+
+        # Reset the phase
+        print("Output:", self.reset_phase(phase))
+
+        # If auto restart is true, we restart phase a after resetting the phase
+        if auto_restart:
+            self.run_phase(0)
 
     def reset_phase(self, phase=None):
 
