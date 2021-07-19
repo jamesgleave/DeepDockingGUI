@@ -13,13 +13,13 @@
     project_name=
 
     <<The objective for the tuner. It is the name of model metric to minimize or maximize>>
-    objective=val_precision
+    objective=val_loss
 
     <<The direction of the objective... that is to min or max the objective>>
-    direction=max
+    direction=min
 
     <<Total number of trials (model configurations) to test at most>>
-    max_trials=5
+    max_trials=10
 
     <<The maximum number of epochs to train one model. It is recommended to use early stopping>>
     max_epochs=15
@@ -28,11 +28,11 @@
     factor=3
 
     <<The number of hyperband iterations to perform>>
-    hyperband_iterations=2
+    hyperband_iterations=3
 
 
 <<Search Parameters>>
     steps_per_epoch=1000
     validation_steps=100
     epochs=10
-    batch_size=64
+    batch_size=256
