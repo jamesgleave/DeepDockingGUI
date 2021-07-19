@@ -358,6 +358,13 @@ class Backend:
         dh = DataHistory(self.core.get_model_data())
         return dh
 
+    def force_pull(self) -> DataHistory:
+        self.core.force_update()
+        # while self.core.updating:
+        #     time.sleep(1)
+        dh = DataHistory(self.core.get_model_data())
+        return dh
+
     def status(self):
         core_status = len(self.core.model_data.keys())
         return "fetching" if core_status == 0 else "ready"
