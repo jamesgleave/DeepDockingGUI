@@ -78,13 +78,17 @@ Enter the provided link into your browser.
 
 Logging in is an important step in order for the server to set up an SSH connection with the cluster. To log in, just use the same username and password as in the installation step to connect to the cluster.
 
-## Start a Run
+## Creating/ loading a project
 <p align="center">
   <img src="./util/figures/start_a_run_full.png" width="600">
   <p align="center">
     <b>Figure 2:</b> The Start a Run tab when a project is loaded up.
   </p>
 </p>
+
+If this is 
+
+
 
 
 ## Progress
