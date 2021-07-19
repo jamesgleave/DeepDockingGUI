@@ -6,11 +6,17 @@ Deep docking (DD) is a deep learning-based tool developed to accelerate docking-
 
 ## Prerequisites
 #### Remote Computer (cloud, cluster, ...):
-* Autodock GPU installed
 * Slurm workload manager installed.
-* A program to create 3D conformations from SMILES
+* Autodock GPU installed
 * Anaconda/Conda
   * Anaconda must be configured to allow for environment activation/deactivation using bash scripting.
+* `OpenBabel` to be used for 3d conformer generation. If you want to use `openeye` instead, follow the following steps:
+  * Comment out the `obabel` line (line 24) in the `DeepDockingGUI\Docking\ProgressiveDocking\prepare_ligands_ad.sh` file.
+  * Uncomment the `openeye` line (line 23)
+  * It recomended to add `#SBATCH --cpus-per-task=24` to the top of the file to boost performance.
+* An library of molecules that have already been prepared for docking with tautomer generation
+  * If you want to prepare the library on the fly with `openeye` instead, uncomment out lines 19 and 20 of the same `prepare_ligands_ad.sh` file
+
 
 #### Local Computer (laptop, desktop, ...)
 * Node.js (https://nodejs.org/en/download/)
@@ -149,6 +155,8 @@ If the progress tab says it is on phase 6 that means you have successfully compl
 From the top scoring tab (figure 7) we can download a list of the top 1000 molecules, which will be a subset of the `smiles.csv` file after the final phase. Here we can also view the Murcko Scaffold of the most common molecule or view each individual molecule by clicking on their respective SMILE. 
 
 # Common Issues + Fixes:
+
+## hdf5 issue
 ```python
   File "[...]/site-packages/tensorflow/python/keras/saving/hdf5_format.py", line 210, in load_model_from_hdf5
     model_config = json.loads(model_config.decode('utf-8'))
@@ -157,6 +165,8 @@ AttributeError: 'str' Object has no attribute 'decode'
   >This error is followed by an `IndexError` on line 264 of `get_model_image` and is most likely a dependancy issue with keras, make sure you have version 2.10.0 of `h5py` (versions 3.0+ cause issues) installed on the cluster side in the `DeepDockingRemote` conda environment. You can check the version by first activating the conda environment and then typing `pip show h5py`.<br>
   >You can install/downgrade it using pip: `pip install h5py==2.10.0` 
 
+
+## Cached client
 ```bash
 > dd_gui@2.0.0 start-lin /path/to/Deep-Docking/GUI
 > export FLASK_APP=server.py && export FLASK_ENV=local_host && flask run
