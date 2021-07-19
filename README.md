@@ -114,6 +114,9 @@ Once you create a project it will automatically be loaded up and will look somet
 ## Progress
 <p align="center">
   <img src="./util/figures/Monitor.png" width="600">
+  <p align="center">
+    <b>Figure x:</b> The progress tab. The progess tab displayes information about a user's current project.
+  </p>
 </p>
 
 ## What does it all mean?
