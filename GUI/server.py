@@ -139,6 +139,7 @@ def topScoring():
             SMILES_list = BACKEND.get_top_hits()
 
         if sendImage:
+            assert len(SMILES_list) > 0, "No smiles found, please try again."
             # Getting most common murckoscaffold when none provided
             MODE_SCAFFOLD = getModeMurckoScaffoldImage(SMILES_list)
             img_io = serve_pil_image(MODE_SCAFFOLD)
