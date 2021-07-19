@@ -6,7 +6,7 @@ Deep docking (DD) is a deep learning-based tool developed to accelerate docking-
 
 ## Prerequisites
 #### Remote Computer (cloud, cluster, ...):
-* Slurm workload manager installed.
+* SLURM workload manager installed.
 * Autodock GPU installed
 * Anaconda/Conda
   * Anaconda must be configured to allow for environment activation/deactivation using bash scripting.
