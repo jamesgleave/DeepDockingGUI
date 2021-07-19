@@ -41,7 +41,7 @@ The installer will set up a local Conda environment and all the *Node.js* module
 <p align="center">
   <img src="./util/figures/DDGUI-DD.png" width="600">
   <p align="center">
-    <b>Figure x:</b> Dependency diagram illustrating the main components of the Deep Docking GUI.
+    <b>Figure 1:</b> Dependency diagram illustrating the main components of the Deep Docking GUI.
     </p>
 </p>
 
@@ -81,7 +81,7 @@ Enter the provided link into your browser.
 <p align="center">
   <img src="./util/figures/login_screen.png" width="600">
   <p align="center">
-    <b>Figure x:</b> The login screen that the user will first encounter.
+    <b>Figure 2:</b> The login screen that the user will first encounter.
   </p>
 </p>
 
@@ -94,42 +94,47 @@ When you first launch the GUI you must first create a new project before being a
 <p align="center">
   <img src="./util/figures/new_project_info.png" width="800">
   <p align="center">
-    <b>Figure x:</b> The Start a Run tab when a project is loaded up.
+    <b>Figure 3:</b> The Start a Run tab when a project is loaded up.
   </p>
 </p>
 
-When you click on the *Create New Project* button a popup should appear that looks like figure x. Here you can enter all the information needed to run a DD project or just leave them blank if you want to stick to default values.
+When you click on the *Create New Project* button a popup should appear that looks like figure 3. Here you can enter all the information needed to run a DD project or just leave them blank if you want to stick to default values.
 
 <p align="center">
   <img src="./util/figures/start_a_run_full.png" width="600">
   <p align="center">
-    <b>Figure x:</b> The Start a Run tab when a project is loaded up.
+    <b>Figure 4:</b> The Start a Run tab when a project is loaded up.
   </p>
 </p>
 
-Once you create a project it will automatically be loaded up and will look something like figure x (except you won't be able to access the models or top scoring tabs until later on in the run).
+Once you create a project it will automatically be loaded up and will look something like figure 4 (except you won't be able to access the models or top scoring tabs until later on in the run).
 
 ## 4. Monitoring 
 
 ## Progress
 <p align="center">
-  <img src="./util/figures/Monitor.png" width="600">
+  <img src="./util/figures/Monitor.png" width="800">
   <p align="center">
-    <b>Figure x:</b> The progress tab. The progess tab displayes information about a user's current project.
+    <b>Figure 5:</b> The progress tab. The progess tab displayes information about a user's current project.
   </p>
 </p>
 
-## What does it all mean?
-The progress tab presents all information regarding a user's current DD-Run. The current iteration and phase are shown in the top left corner, along with the indicator light. The indicator light is used to communicate the state of a user's project. A solid yellow indicator light means that all slurm jobs are pending, while a blinking yellow light means that more than half of the jobs are pending. If the indicator light is blinking green, the project is running without issue. In the top right corner, there are phase ETAs. There are three different time estimations: worst case, best case, and average case. These time estimations can be slightly inaccurate, as many processes in DD may vary significantly in time, and idle jobs can sometimes be unaccounted for. The 'molecules remaining' portion plots the estimated number of molecules predicted by the models using training metrics (Predicted by Model) versus the actual number of molecules predicted by the models in phase 5 (Actual Value)
+The progress tab (figure 5) presents all information regarding a user's current DD-Run. The current iteration and phase are shown in the top left corner, along with the indicator light. The indicator light is used to communicate the state of a user's project. A solid yellow indicator light means that all slurm jobs are pending, while a blinking yellow light means that more than half of the jobs are pending. If the indicator light is blinking green, the project is running without issue. 
+
+In the top right corner, there are phase ETAs. There are three different time estimations: worst case, best case, and average case. These time estimations can be slightly inaccurate, as many processes in DD may vary significantly in time, and idle jobs can sometimes be unaccounted for. 
+
+The 'molecules remaining' portion plots the estimated number of molecules predicted by the models using training metrics (Predicted by Model) versus the actual number of molecules predicted by the models in phase 5 (Actual Value).
 
 
 ## Models
 <p align="center">
-  <img src="./util/figures/Progress.png" width="600">
+  <img src="./util/figures/Progress.png" width="800">
+  <p align="center">
+    <b>Figure 6:</b> The models tab becomes accessible once phase 4 begins and displays all relevent information in regards to model training. 
+  </p>
 </p>
 
-## 5. The Models
-The models' tab displays all information regarding the models. The user can switch through all training/validation metrics (including custom metrics). The 'Estimated Time Remaining' figure in the lower right includes a rough time estimation for training completion based on early stopping probability. In the navigation bar at the bottom of the page, the user can select any completed or in-progress iterations, choose any model, and show the average model performance across all models. The view architecture button generates an image of the models' architecture to display on the screen.
+The models tab (figure 6) displays all information regarding the models. The user can switch through all training/validation metrics (including custom metrics). The 'Estimated Time Remaining' figure in the lower right includes a rough time estimation for training completion based on early stopping probability. In the navigation bar at the bottom of the page, the user can select any completed or in-progress iterations, choose any model, and show the average model performance across all models. The view architecture button generates an image of the models' architecture to display on the screen.
 
 ## 5. Final results
 If the progress tab says it is on phase 6 that means you have successfully completed an entire Deep Docking run! The output of this run will be located on the cluster in the folder for the last iteration of the project under the name `smiles.csv` (which contains the smiles with their corresponding IDs).
@@ -137,13 +142,13 @@ If the progress tab says it is on phase 6 that means you have successfully compl
 <p align="center">
   <img src="./util/figures/top_scoring_full.png" width="600">
   <p align="center">
-    <b>Figure x:</b> The Top Scoring tab becomes accessable after phase 5 of the first iteration. It displays the top 1000 molecules that the model predicted to be a hit.
+    <b>Figure 7:</b> The Top Scoring tab becomes accessable after phase 5 of the first iteration. It displays the top 1000 molecules that the model predicted to be a hit.
   </p>
 </p>
 
-From the top scoring tab (figure x) we can download a list of the top 1000 molecules, which will be a subset of the `smiles.csv` file after the final phase. Here we can also view the Murcko Scaffold of the most common molecule or view each individual molecule by clicking on their respective SMILE. 
+From the top scoring tab (figure 7) we can download a list of the top 1000 molecules, which will be a subset of the `smiles.csv` file after the final phase. Here we can also view the Murcko Scaffold of the most common molecule or view each individual molecule by clicking on their respective SMILE. 
 
-## Common Issues + Fixes:
+# Common Issues + Fixes:
 ```python
   File "[...]/site-packages/tensorflow/python/keras/saving/hdf5_format.py", line 210, in load_model_from_hdf5
     model_config = json.loads(model_config.decode('utf-8'))
