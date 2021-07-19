@@ -113,8 +113,11 @@ Once you create a project it will automatically be loaded up and will look somet
 
 ## Progress
 <p align="center">
-  <img src="./util/figures/progress_full.png" width="600">
+  <img src="./util/figures/Monitor.png" width="600">
 </p>
+
+## What does it all mean?:
+The progress tab presents all information regarding a user's current DD-Run. The current iteration and phase are shown in the top left corner, along with the indicator light. The indicator light is used to communicate the state of a user's project. A solid yellow indicator light means that all slurm jobs are pending, while a blinking yellow light means that more than half of the jobs are pending. If the indicator light is blinking green, the project is running without issue. In the top right corner, there are phase ETAs. There are three different time estimations: worst case, best case, and average case. These time estimations can be slightly inaccurate, as many processes in DD may vary significantly in time, and idle jobs can sometimes be unaccounted for. The 'molecules remaining' portion plots the estimated number of molecules predicted by the models using training metrics (Predicted by Model) versus the actual number of molecules predicted by the models in phase 5 (Actual Value)
 
 
 ## Models
