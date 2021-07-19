@@ -40,7 +40,12 @@ The installer will set up a local Conda environment and all the *Node.js* module
 ## 0. Architecture
 <p align="center">
   <img src="./util/figures/DDGUI-DD.png" width="600">
+  <p align="center">
+    <b>Figure x:</b> Dependency diagram illustrating the main components of the Deep Docking GUI.
+    </p>
 </p>
+
+From figure 1 we can see how the GUI works. The user interacts with the GUI through the GUI client (a browser) which communicates with the locally hosted server via HTTP. Then the server utilizes a Backend object to create an SSH connection with the cluster to send and receive information. It then can serve that information to the GUI client or send scripts and commands to be run on the cluster.
 
 ## 1. Starting up the GUI
 After installation, a new Conda environment on your local device called *DeepDockingLocal* should now be available. To start up the GUI, activate the *DeepDockingLocal* environment then navigate to `Deep-Docking/GUI` and run the appropriate command to start up the server.
@@ -76,24 +81,33 @@ Enter the provided link into your browser.
 <p align="center">
   <img src="./util/figures/login_screen.png" width="600">
   <p align="center">
-    <b>Figure 1:</b> The login screen that the user will first encounter.
+    <b>Figure x:</b> The login screen that the user will first encounter.
   </p>
 </p>
-
-
 
 Logging in is an important step in order for the server to set up an SSH connection with the cluster. To log in, just use the same username and password as in the installation step to connect to the cluster.
 
 ## 3. Creating/ loading a project
+
+When you first launch the GUI you must first create a new project before being able to access any of the other buttons.
+
 <p align="center">
-  <img src="./util/figures/start_a_run_full.png" width="600">
+  <img src="./util/figures/new_project_info.png" width="800">
   <p align="center">
-    <b>Figure 2:</b> The Start a Run tab when a project is loaded up.
+    <b>Figure x:</b> The Start a Run tab when a project is loaded up.
   </p>
 </p>
 
-If this is 
+When you click on the *Create New Project* button a popup should appear that looks like figure x. Here you can enter all the information needed to run a DD project or just leave them blank if you want to stick to default values.
 
+<p align="center">
+  <img src="./util/figures/start_a_run_full.png" width="600">
+  <p align="center">
+    <b>Figure x:</b> The Start a Run tab when a project is loaded up.
+  </p>
+</p>
+
+Once you create a project it will automatically be loaded up and will look something like figure x (except you won't be able to access the models or top scoring tabs until later on in the run).
 
 ## 4. Monitoring 
 
@@ -120,8 +134,6 @@ This should be located on the cluster in the folder for the last iteration of th
 The Top Scoring tab allows you to download the top 1000 hits of that smiles file from the GUI directly. 
 
 
-
-**Figure 1:** Dependency diagram illustrating the main components of the Deep Docking GUI. The user interacts with the GUI through the GUI client (a browser) which communicates with the locally hosted server via HTTP. The server utilizes the Backend object to create an SSH connection with the cluster and send and receive information from it. It then can serve information to the GUI client or send scripts and commands to run on the cluster.
 
 ## Common Issues + Fixes:
 ```python
