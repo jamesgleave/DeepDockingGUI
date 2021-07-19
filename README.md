@@ -113,7 +113,7 @@ Once you create a project it will automatically be loaded up and will look somet
 
 ## Progress
 <p align="center">
-  <img src="./util/figures/Monitor.png" width="600">
+  <img src="./util/figures/Monitor.png" width="800">
 </p>
 
 ## What does it all mean?:
@@ -126,17 +126,16 @@ The progress tab presents all information regarding a user's current DD-Run. The
 </p>
 
 ## 5. Final results
-
+If the progress tab says it is on phase 6 that means you have successfully completed an entire Deep Docking run! The output of this run will be located on the cluster in the folder for the last iteration of the project under the name `smiles.csv` (which contains the smiles with their corresponding IDs).
 ## Top Scoring
 <p align="center">
   <img src="./util/figures/top_scoring_full.png" width="600">
+  <p align="center">
+    <b>Figure x:</b> The Top Scoring tab becomes accessable after phase 5 of the first iteration. It displays the top 1000 molecules that the model predicted to be a hit.
+  </p>
 </p>
 
-## Where to get final top hits:
-This should be located on the cluster in the folder for the last iteration of the project under the name `smiles.csv` (contains the smiles with their corresponding IDs).
-The Top Scoring tab allows you to download the top 1000 hits of that smiles file from the GUI directly. 
-
-
+From the top scoring tab (figure x) we can download a list of the top 1000 molecules, which will be a subset of the `smiles.csv` file after the final phase. Here we can also view the Murcko Scaffold of the most common molecule or view each individual molecule by clicking on their respective SMILE. 
 
 ## Common Issues + Fixes:
 ```python
