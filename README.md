@@ -36,7 +36,13 @@ install-windows
 The installer will set up a local Conda environment and all the *Node.js* modules needed to run the local server. Then will request access to the SLURM cluster where it will install all the scripts needed to run Deep Docking projects and set up another Conda environment to run them.
 
 # Getting started
-## Starting up the GUI
+
+## 0. Architecture
+<p align="center">
+  <img src="./util/figures/DDGUI-DD.png" width="600">
+</p>
+
+## 1. Starting up the GUI
 After installation, a new Conda environment on your local device called *DeepDockingLocal* should now be available. To start up the GUI, activate the *DeepDockingLocal* environment then navigate to `Deep-Docking/GUI` and run the appropriate command to start up the server.
 
 For mac and linux:
@@ -66,7 +72,7 @@ Enter the provided link into your browser.
  * Running on http://127.0.0.1:5000/ (Press CTRL+C to quit)
 ```
 
-## Logging in
+## 2. Logging in
 <p align="center">
   <img src="./util/figures/login_screen.png" width="600">
   <p align="center">
@@ -78,7 +84,7 @@ Enter the provided link into your browser.
 
 Logging in is an important step in order for the server to set up an SSH connection with the cluster. To log in, just use the same username and password as in the installation step to connect to the cluster.
 
-## Creating/ loading a project
+## 3. Creating/ loading a project
 <p align="center">
   <img src="./util/figures/start_a_run_full.png" width="600">
   <p align="center">
@@ -89,7 +95,7 @@ Logging in is an important step in order for the server to set up an SSH connect
 If this is 
 
 
-
+## 4. Monitoring 
 
 ## Progress
 <p align="center">
@@ -102,22 +108,18 @@ If this is
   <img src="./util/figures/models_full.png" width="600">
 </p>
 
+## 5. Final results
 
 ## Top Scoring
 <p align="center">
   <img src="./util/figures/top_scoring_full.png" width="600">
 </p>
 
-
-
 ## Where to get final top hits:
 This should be located on the cluster in the folder for the last iteration of the project under the name `smiles.csv` (contains the smiles with their corresponding IDs).
 The Top Scoring tab allows you to download the top 1000 hits of that smiles file from the GUI directly. 
 
-## Architecture
-<p align="center">
-  <img src="./util/figures/DDGUI-DD.png" width="600">
-</p>
+
 
 **Figure 1:** Dependency diagram illustrating the main components of the Deep Docking GUI. The user interacts with the GUI through the GUI client (a browser) which communicates with the locally hosted server via HTTP. The server utilizes the Backend object to create an SSH connection with the cluster and send and receive information from it. It then can serve information to the GUI client or send scripts and commands to run on the cluster.
 
