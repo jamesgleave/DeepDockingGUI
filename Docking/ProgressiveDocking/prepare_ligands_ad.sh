@@ -20,8 +20,8 @@ fld=$name'_'pdbqt
 # wait $!
 
 # obabel takes a lot longer than openeye, but both of the following lines work for 3d conformer generation
-$openeye oeomega classic -in $name'_'h.smi -out $name'.'sdf  -strictstereo false -maxconfs 1 -mpi_np 20 -log $name'.'log -prefix $name
-# obabel -ismi $name'_'h.smi -O $name'.'sdf --gen3d --fast
+# $openeye oeomega classic -in $name'_'h.smi -out $name'.'sdf  -strictstereo false -maxconfs 1 -mpi_np 20 -log $name'.'log -prefix $name
+obabel -ismi $name'_'h.smi -O $name'.'sdf --gen3d --fast
 wait $!
 
 rm -r $fld

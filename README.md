@@ -1,7 +1,7 @@
-# DeepDockingGUI - v2.5.10
+# DeepDockingGUI - v2.5.11
 
 
-## Deep Docking - Democratize Drug Development
+## What is Deep Docking?
 Deep docking (DD) is a deep learning-based tool developed to accelerate docking-based virtual screening. Using NVIDIA's own Autodock-GPU,  one can screen extensive chemical libraries like ZINC15 (containing > 1.3 billion molecules) 50 times faster than typical docking. For further details into the processes behind DD, please refer to our paper (https://doi.org/10.1021/acscentsci.0c00229). 
 
 ## Prerequisites
@@ -9,7 +9,7 @@ Deep docking (DD) is a deep learning-based tool developed to accelerate docking-
 * Autodock GPU installed
 * Slurm workload manager installed.
 * A program to create 3D conformations from SMILES
-* Anaconda/Conda (optional)
+* Anaconda/Conda
   * Anaconda must be configured to allow for environment activation/deactivation using bash scripting.
 
 #### Local Computer (laptop, desktop, ...)
@@ -18,48 +18,104 @@ Deep docking (DD) is a deep learning-based tool developed to accelerate docking-
 * Python version >= 3
 
 ## Installation
-To get started, clone or download the Deep-Docking repository to your local computer. Once downloaded, navigate to the installation directory and run 
+To get started, clone or download the Deep-Docking repository to your local computer. Once downloaded, navigate to the `installation` directory and run the appropriate install for your OS.
+
+For mac and linux users run:
 ```bash 
-bash install-linux.sh or source install-linux.sh
+bash install-linux.sh
 ```
-for mac and linux users and
-```bash 
+or
+```bash
+source install-linux.sh
+```
+
+And for windows users run:
+```dos 
 install-windows
 ```
-for windows users.
+The installer will set up a local Conda environment and all the *Node.js* modules needed to run the local server. Then will request access to the SLURM cluster where it will install all the scripts needed to run Deep Docking projects and set up another Conda environment to run them.
 
-Upon running install-{linux/windows}, you will be prompted with straightforward questions, streamlining the installation process. When installation is complete, the application is ready to use. 
+# Getting started
+## Starting up the GUI
+After installation, a new Conda environment on your local device called *DeepDockingLocal* should now be available. To start up the GUI, activate the *DeepDockingLocal* environment then navigate to `Deep-Docking/GUI` and run the appropriate command to start up the server.
 
-
-## Usage
-The installation process will automatically create a new Conda environment on your local device called "DeepDockingLocal". To start DD, activate "DeepDockingLocal," navigate to Deep-Docking/GUI and run:
+For mac and linux:
 ```bash 
 npm run start-lin
 ```
-
-
-for mac and linux users and
+For windows:
 ```bash 
 npm run start-win
 ```
-for windows users. 
-
 
 After running the above, you should see something similar to the following: 
 ```bash 
-> dd_gui@2.0.0 start-{lin/win} 
-> export FLASK_APP=server.py && export FLASK_ENV=local_host && flask run
-  * Serving Flask app "server.py" 
-  * Environment: local_host 
-  * Debug mode: off 
-  * Running on http://123.4.5.6:7890/ (Press CTRL+C to quit)
- ```
+> dd_gui@2.0.0 start-win
+> conda activate DeepDockingLocal && set FLASK_APP=server.py && set FLASK_ENV=local_host && flask run
 
-Go to the web address provided, log in to your cluster, and you are ready to start a DD run.
+ * Serving Flask app "server.py "
+ * Environment: local_host 
+ * Debug mode: off
+
+Open Website On Default Browser? 
+Enter y to launch or any other key to open manually:
+ ```
+Answer the prompt with `y` for it to automatically open the GUI in a default browser. Or just press enter and you will be prompted with this link which you can open up in a browser of your choice.
+```bash
+Enter the provided link into your browser.
+ * Running on http://127.0.0.1:5000/ (Press CTRL+C to quit)
+```
+
+## Logging in
+<p align="center">
+  <img src="./util/figures/login_screen.png" width="600">
+  <p align="center">
+    <b>Figure 1:</b> The login screen that the user will first encounter.
+  </p>
+</p>
+
+
+
+Logging in is an important step in order for the server to set up an SSH connection with the cluster. To log in, just use the same username and password as in the installation step to connect to the cluster.
+
+## Start a Run
+<p align="center">
+  <img src="./util/figures/start_a_run_full.png" width="600">
+  <p align="center">
+    <b>Figure 2:</b> The Start a Run tab when a project is loaded up.
+  </p>
+</p>
+
+
+## Progress
+<p align="center">
+  <img src="./util/figures/progress_full.png" width="600">
+</p>
+
+
+## Models
+<p align="center">
+  <img src="./util/figures/models_full.png" width="600">
+</p>
+
+
+## Top Scoring
+<p align="center">
+  <img src="./util/figures/top_scoring_full.png" width="600">
+</p>
+
+
 
 ## Where to get final top hits:
 This should be located on the cluster in the folder for the last iteration of the project under the name `smiles.csv` (contains the smiles with their corresponding IDs).
 The Top Scoring tab allows you to download the top 1000 hits of that smiles file from the GUI directly. 
+
+## Architecture
+<p align="center">
+  <img src="./util/figures/DDGUI-DD.png" width="600">
+</p>
+
+**Figure 1:** Dependency diagram illustrating the main components of the Deep Docking GUI. The user interacts with the GUI through the GUI client (a browser) which communicates with the locally hosted server via HTTP. The server utilizes the Backend object to create an SSH connection with the cluster and send and receive information from it. It then can serve information to the GUI client or send scripts and commands to run on the cluster.
 
 ## Common Issues + Fixes:
 ```python
