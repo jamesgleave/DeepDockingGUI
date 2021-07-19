@@ -125,8 +125,11 @@ The progress tab presents all information regarding a user's current DD-Run. The
 
 ## Models
 <p align="center">
-  <img src="./util/figures/models_full.png" width="600">
+  <img src="./util/figures/Progress.png" width="600">
 </p>
+
+## 5. The Models
+The models' tab displays all information regarding the models. The user can switch through all training/validation metrics (including custom metrics). The 'Estimated Time Remaining' figure in the lower right includes a rough time estimation for training completion based on early stopping probability. In the navigation bar at the bottom of the page, the user can select any completed or in-progress iterations, choose any model, and show the average model performance across all models. The view architecture button generates an image of the models' architecture to display on the screen.
 
 ## 5. Final results
 
