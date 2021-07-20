@@ -43,16 +43,6 @@ The installer will set up a local Conda environment and all the *Node.js* module
 
 # Getting started
 
-## 0. Architecture
-<p align="center">
-  <img src="./util/figures/DDGUI-DD.png" width="600">
-  <p align="center">
-    <b>Figure 1:</b> Dependency diagram illustrating the main components of the Deep Docking GUI.
-    </p>
-</p>
-
-From figure 1 we can see how the GUI works. The user interacts with the GUI through the GUI client (a browser) which communicates with the locally hosted server via HTTP. Then the server utilizes a Backend object to create an SSH connection with the cluster to send and receive information. It then can serve that information to the GUI client or send scripts and commands to be run on the cluster.
-
 ## 1. Starting up the GUI
 After installation, a new Conda environment on your local device called *DeepDockingLocal* should now be available. To start up the GUI, activate the *DeepDockingLocal* environment then navigate to `Deep-Docking/GUI` and run the appropriate command to start up the server.
 
