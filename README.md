@@ -2,7 +2,7 @@
 
 
 ## What is Deep Docking?
-Deep docking (DD) is a deep learning-based tool developed to accelerate docking-based virtual screening. Using NVIDIA's own Autodock-GPU,  one can screen extensive chemical libraries like ZINC15 (containing > 1.3 billion molecules) 50 times faster than typical docking. For further details into the processes behind DD, please refer to our paper (https://doi.org/10.1021/acscentsci.0c00229). 
+Deep docking (DD) is a deep learning-based tool developed to accelerate docking-based virtual screening. For further details into the processes behind DD, please refer to our paper (https://doi.org/10.1021/acscentsci.0c00229). This repository provides a user-friendly, open-source GUI version based on Autodock-GPU docking that allows to run and analyze DD campaigns on a SLURM cluster.
 
 ## Prerequisites
 #### Remote Computer (cloud, cluster, ...):
@@ -45,7 +45,7 @@ The installer will set up a local Conda environment and all the *Node.js* module
 
 ## 0. Preliminary preparation
 
-## Chemical library
+### Chemical library
 The chemical library must be present in the cluster in SMILES format, with precalculated molecular states at physiological pH (protonation and tautomers). Each state must be assigned to a unique name. The library should be splitted in files with equal number of molecules (it is recommended to set the number of files equal to the number of CPU cores available on a single node of the cluster). Rdkit package (https://www.rdkit.org/docs/GettingStartedInPython.html) must be installed.
 
 Morgan fingerprints can be then calculated by launching a SLURM job, using the scripts provided in *preparation_scripts*:
@@ -54,14 +54,16 @@ Morgan fingerprints can be then calculated by launching a SLURM job, using the s
 sbatch --cpus-per-task n_cpus_per_node compute_morgan_fp.sh SMILES_directory fp_output_directory n_cpus_per_node rdkit-env
 ```
 
-## Receptor maps
+You can obtain a free version of the ZINC20 database that has been already prepared for DD from https://drive.google.com/drive/folders/1-XlN3spOI-bAKhRdfIhA_Q0l2EsITeaD?usp=sharing. 
+
+### Receptor maps
 The GUI utilizes Autodock-GPU for docking, hence the receptor structure must be prepared accordingly and docking maps need to be precalculated (see http://autodock.scripps.edu/faqs-help/how-to for instructions). You can also use the *prepare_receptor.py* script from *preparation_scripts* (AutodockTools and Autogrid must be installed, http://autodock.scripps.edu/resources/adt/index_html) to automatically prepare a structure and calculate the maps:
 
 ```bash
 bash prepare_receptor.py receptor.pdb 'x_size,y_size,z_size' 'x_center,y_center,z_center' path_adt_scripts
 ```
 - receptor.pdb: structure of the receptor that has been properly optimized (adding hydrogens, computing residue states, energy minimization, ...)
-- 'x_size,y_size,z_size': size in points of the docking box (real size n_points*0.375 A)
+- 'x_size,y_size,z_size': size in points of the docking box (point spacing: 0.375 A)
 - 'x_center,y_center,z_center': coordinates of docking box center
 - path_adt_scripts: path to folder with AutodockTools python scripts (prepare_receptor4.py, etc etc..)
 
@@ -129,7 +131,7 @@ Once you create a project it will automatically be loaded up and will look somet
 
 ## 4. Monitoring 
 
-## Progress
+### Progress
 <p align="center">
   <img src="./util/figures/Monitor.png" width="800">
   <p align="center">
@@ -144,7 +146,7 @@ In the top right corner, there are phase ETAs. There are three different time es
 The 'molecules remaining' portion plots the estimated number of molecules predicted by the models using training metrics (Predicted by Model) versus the actual number of molecules predicted by the models in phase 5 (Actual Value).
 
 
-## Models
+### Models
 <p align="center">
   <img src="./util/figures/Progress.png" width="800">
   <p align="center">
@@ -156,7 +158,7 @@ The models tab (figure 6) displays all information regarding the models. The use
 
 ## 5. Final results
 If the progress tab says it is on phase 6 that means you have successfully completed an entire Deep Docking run! The output of this run will be located on the cluster in the folder for the last iteration of the project under the name `smiles.csv` (which contains the smiles with their corresponding IDs).
-## Top Scoring
+### Top Scoring
 <p align="center">
   <img src="./util/figures/top_scoring_full.png" width="600">
   <p align="center">
@@ -186,3 +188,11 @@ AttributeError: 'str' Object has no attribute 'decode'
  npm ERR! code ELIFECYCLE
 ```
  > If you had recently updated the version of GUI you might get this issue. This is an issue with your browser and not the scripts. You need to refresh the cache on the page that you get this error on (see https://bit.ly/3evFrJF for how to refresh cache on your system/browser).
+
+
+# References
+1. Gentile,F. et al. (2020) Deep Docking: A Deep Learning Platform for Augmentation of Structure Based Drug Discovery. ACS Cent. Sci., acscentsci.0c00229.
+2. O’Boyle,N.M. et al. (2011) Open Babel: An open chemical toolbox. J. Cheminform., 3, 33.
+3. Morris,G.M. et al. (2009) AutoDock4 and AutoDockTools4: Automated docking with selective receptor flexibility. J. Comput. Chem., 30, 2785–91.
+4. Santos-Martins,D. et al. (2021) Accelerating AutoDock4 with GPUs and Gradient-Based Local Search. J. Chem. Theory Comput., 17, 1060–1073.
+5. Irwin,J.J. et al. (2020) ZINC20 - A Free Ultralarge-Scale Chemical Database for Ligand Discovery. J. Chem. Inf. Model., 60, 6065–6073.
