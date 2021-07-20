@@ -90,7 +90,7 @@ When you first launch the GUI you must first create a new project before being a
 <p align="center">
   <img src="./util/figures/new_project_info.png" width="800">
   <p align="center">
-    <b>Figure 3:</b> The Start a Run tab when a project is loaded up.
+   <b>Figure 3:</b> The popup window that appears when clicking on <em>Create New Project</em> with labels explaining each of the individual parameters.
   </p>
 </p>
 
