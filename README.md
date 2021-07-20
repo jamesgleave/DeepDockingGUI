@@ -7,15 +7,15 @@ Deep docking (DD) is a deep learning-based tool developed to accelerate docking-
 ## Prerequisites
 #### Remote Computer (cloud, cluster, ...):
 * SLURM workload manager installed.
-* Autodock GPU installed
+* Autodock GPU installed (recommended version: https://github.com/scottlegrand/AutoDock-GPU/tree/relicensing)
 * Anaconda/Conda
   * Anaconda must be configured to allow for environment activation/deactivation using bash scripting.
 * `OpenBabel` to be used for 3d conformer generation. If you want to use `openeye` instead, follow the following steps:
   * Comment out the `obabel` line (line 24) in the `DeepDockingGUI\Docking\ProgressiveDocking\prepare_ligands_ad.sh` file.
   * Uncomment the `openeye` line (line 23)
   * It recomended to add `#SBATCH --cpus-per-task=24` to the top of the file to boost performance.
-* An library of molecules that have already been prepared for docking with tautomer generation
-  * If you want to prepare the library on the fly with `openeye` instead, uncomment out lines 19 and 20 of the same `prepare_ligands_ad.sh` file
+* A library of molecules that have already been prepared for docking with tautomer and protomer generation
+  * If you want to compute ligand states of the library on the fly with `openeye` instead, uncomment out lines 19 and 20 of the same `prepare_ligands_ad.sh` file
 
 
 #### Local Computer (laptop, desktop, ...)
@@ -42,6 +42,28 @@ install-windows
 The installer will set up a local Conda environment and all the *Node.js* modules needed to run the local server. Then will request access to the SLURM cluster where it will install all the scripts needed to run Deep Docking projects and set up another Conda environment to run them.
 
 # Getting started
+
+## 0. Preliminary preparation
+
+## Chemical library
+The chemical library must be present in the cluster in SMILES format, with precalculated molecular states at physiological pH (protonation and tautomers). Each state must be assigned to a unique name. The library should be splitted in files with equal number of molecules (it is recommended to set the number of files equal to the number of CPU cores available on a single node of the cluster). Rdkit package (https://www.rdkit.org/docs/GettingStartedInPython.html) must be installed.
+
+Morgan fingerprints can be then calculated by launching a SLURM job, using the scripts provided in *preparation_scripts*:
+
+```bash
+sbatch --cpus-per-task n_cpus_per_node compute_morgan_fp.sh SMILES_directory fp_output_directory n_cpus_per_node rdkit-env
+```
+
+## Receptor maps
+The GUI utilizes Autodock-GPU for docking, hence the receptor structure must be prepared accordingly and docking maps need to be precalculated (see http://autodock.scripps.edu/faqs-help/how-to for instructions). You can also use the *prepare_receptor.py* script from *preparation_scripts* (AutodockTools and Autogrid must be installed, http://autodock.scripps.edu/resources/adt/index_html) to automatically prepare a structure and calculate the maps:
+
+```bash
+bash prepare_receptor.py receptor.pdb 'x_size,y_size,z_size' 'x_center,y_center,z_center' path_adt_scripts
+```
+- receptor.pdb: structure of the receptor that has been properly optimized (adding hydrogens, computing residue states, energy minimization, ...)
+- 'x_size,y_size,z_size': size in points of the docking box (real size n_points*0.375 A)
+- 'x_center,y_center,z_center': coordinates of docking box center
+- path_adt_scripts: path to folder with AutodockTools python scripts (prepare_receptor4.py, etc etc..)
 
 ## 1. Starting up the GUI
 After installation, a new Conda environment on your local device called *DeepDockingLocal* should now be available. To start up the GUI, activate the *DeepDockingLocal* environment then navigate to `Deep-Docking/GUI` and run the appropriate command to start up the server.
