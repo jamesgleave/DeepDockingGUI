@@ -41,7 +41,7 @@ wait
 python $4/prepare_gpf4.py -r $receptor'.'pdbqt -o grid_1_$receptor'.'gpf -p ligand_types='P,SA,S,Cl,Ca,Mn,Fe,Zn,Br,I' -p npts=$grid_points -p gridcenter=$grid_center
 wait
 
-python $4/mnt/c/Program\ \Files\ \(x85\)/MGLTools-1.5.6/Lib/site-packages/AutoDockTools/Utilities24/prepare_gpf4.py -r $receptor'.'pdbqt -o grid_2_$receptor'.'gpf -p ligand_types='H,HD,HS,C,A,N,NA,NS,OA,OS,F,Mg' -p npts=$grid_points -p gridcenter=$grid_center
+python $4/prepare_gpf4.py -r $receptor'.'pdbqt -o grid_2_$receptor'.'gpf -p ligand_types='H,HD,HS,C,A,N,NA,NS,OA,OS,F,Mg' -p npts=$grid_points -p gridcenter=$grid_center
 wait
 
 autogrid4 -p grid_1_$receptor'.'gpf -l grid_1_$receptor'.'log
