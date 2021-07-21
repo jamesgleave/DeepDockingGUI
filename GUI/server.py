@@ -165,7 +165,7 @@ def getProgressData():
     phaseNum = DATA_HISTORY.current_phase
 
     # When the final phase is done we indicate that with phase number 6
-    if DATA_HISTORY.final_phase == "Finished":
+    if DATA_HISTORY.final_phase == "finished":
         phaseNum = 6
 
     data['is_idle'] = DATA_HISTORY.is_idle  # tells us if anything is currently running
