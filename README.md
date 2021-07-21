@@ -1,4 +1,4 @@
-# DeepDockingGUI - v2.5.11
+# DeepDockingGUI - v2.5.12
 
 
 ## What is Deep Docking?
