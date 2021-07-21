@@ -108,12 +108,7 @@ def install_deep_docking(simulate):
                                 'env_activation_command': env_activation,
                                 'path_to_autodock': path_to_autodock}
 
-    json_info = json.dumps(installation_information)
-    with open("installation_information.json", 'w') as file:
-        file.write(json_info)
-
     # This is the information the backend of the gui will use
-    # TODO check OS to specify the activation command (for now it just works for mac)
     local_activation_command = 'conda activate DeepDockingLocal'
     if platform == "linux" or platform == "linux2":
         # linux
@@ -138,7 +133,6 @@ def install_deep_docking(simulate):
         installation_information["email"] = "NA"
 
     json_info = json.dumps(installation_information)
-
     # Save the user information
     with open(local_dir + "/GUI/src/backend/db.json", 'w') as file:
         file.write(json_info)
