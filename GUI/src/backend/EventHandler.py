@@ -38,19 +38,22 @@ class EventHandler:
     @staticmethod
     def OnIterationChange(backend):
         print("Event Handled Iteration Change")
-        if EmailNotificationSettings.ITERATION_CHANGE_UPDATE:
-            address, pw = EmailBot.get_user_pw()
-            bot = EmailBot(address=address, password=pw)
-            user_email = EmailBot.get_user_email()
+        try:
+            if EmailNotificationSettings.ITERATION_CHANGE_UPDATE:
+                address, pw = EmailBot.get_user_pw()
+                bot = EmailBot(address=address, password=pw)
+                user_email = EmailBot.get_user_email()
 
-            # Return if we have no email entered
-            if user_email == "NA" and backend.loaded_project_information['specifications']['iteration'] > 1:
-                return
+                # Return if we have no email entered
+                if user_email == "NA" and backend.loaded_project_information['specifications']['iteration'] > 1:
+                    return
 
-            bot.send_iteration_change_update(backend.user_data["username"],
-                                             user_email,
-                                             backend.loaded_project_name,
-                                             backend.loaded_project_information['specifications']['iteration'])
+                bot.send_iteration_change_update(backend.user_data["username"],
+                                                user_email,
+                                                backend.loaded_project_name,
+                                                backend.loaded_project_information['specifications']['iteration'])
+        except FileNotFoundError:
+            print("Email notifications not implemented yet...")
 
     @staticmethod
     def OnFinalPhaseStart(backend):
