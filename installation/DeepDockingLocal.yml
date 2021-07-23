@@ -11,3 +11,4 @@ dependencies:
   - flask
   - flask-cors
   - python-dotenv
+  - flask_cors
