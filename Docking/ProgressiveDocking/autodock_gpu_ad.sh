@@ -24,7 +24,8 @@ echo Partition: $SLURM_JOB_PARTITION
 source ~/.bashrc
 source $scripts/activation_script.sh
 
-rm -f list.txt *dlg *xml init*
+# $fl, that's the one that need to be changed, I think it's passed to the script tho
+rm -f $lt *dlg *xml init*
 echo "$fl">>$lt
 for i in $lg'/'*pdbqt
 do
@@ -39,6 +40,7 @@ $ad_path'/'autodock_gpu_"$wg"wi -lsmet $sa -filelist $lt -nrun $nr -nev $ne
 wait $!
 
 #EXTRACT SINGLE BEST POSES
+echo $(pwd)
 dlg_fold=$(pwd)                                               #FOLDER WITH ALL DLG FILES FROM AUTODOCK
 mode=lc                                                       #ANALYSIS MODE, LARGEST CLUSTER (lc) or BEST BINDING ENERGY (be)
 out_fold=$dlg_fold'/'results                                  #OUTPUT FOLDER
