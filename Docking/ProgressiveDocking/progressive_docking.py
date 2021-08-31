@@ -287,7 +287,7 @@ num_pos = len(y_pos)
 
 sample_size = np.min([num_neg, num_pos*oss])
 # //2 because we sample 1 from pos and 1 from neg:
-if TRAINING_SIZE != -1: sample_size = TRAINING_SIZE//2
+if TRAINING_SIZE != -1: sample_size = int(sample_size*(TRAINING_SIZE/len(y_train))) # so that it is always the same (e.g. if 100k mol are good and we spec 100k then its the same as if dynamically done)
 
 print("\nOversampling...", "size:", sample_size)
 print("\tNum pos: {} \n\tNum neg: {}".format(num_pos, num_neg))
