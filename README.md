@@ -54,7 +54,7 @@ Morgan fingerprints can be then calculated by launching a SLURM job, using the s
 sbatch --cpus-per-task n_cpus_per_node compute_morgan_fp.sh SMILES_directory fp_output_directory n_cpus_per_node rdkit-env
 ```
 
-You can obtain a free version of the ZINC20 database that has been already prepared for DD from https://drive.google.com/drive/folders/1-XlN3spOI-bAKhRdfIhA_Q0l2EsITeaD?usp=sharing. 
+You can obtain a free version of the ZINC20 database that has been already prepared for DD from https://files.docking.org/zinc20-ML
 
 ### Receptor maps
 The GUI utilizes Autodock-GPU for docking, hence the receptor structure must be prepared accordingly and docking maps need to be precalculated (see http://autodock.scripps.edu/faqs-help/how-to for instructions). You can also use the *prepare_receptor.py* script from *preparation_scripts* (AutodockTools and Autogrid must be installed, http://autodock.scripps.edu/resources/adt/index_html) to automatically prepare a structure and calculate the maps:
