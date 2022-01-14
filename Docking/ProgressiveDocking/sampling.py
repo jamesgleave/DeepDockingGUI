@@ -131,7 +131,7 @@ if __name__ == '__main__':
 
     f_names = []
     # Getting all the morgan_1024_predictions/smile_all_##.txt files
-    for f in glob.glob(data_directory+'/smile_all_*.txt'):
+    for f in glob.glob(data_directory+'/smile*_all_*.txt'):
         f_names.append(f)
 
     print("num_f_names: ", len(f_names))
