@@ -15,7 +15,7 @@ start=`date +%s`
 name=$(pwd| rev | cut -d'/' -f 1 | rev)
 fld=$name'_'pdbqt
 
-# Uncomment the next three lines if you have openeye and want to do tautomer generation on the fly (instead of preparing the library beforehand)
+# Uncomment the next three lines if you have openeye and want to do tautomer generation on the fly (instead of preparing the library beforehand); add also #SBATCH --cpus-per-task=20 at the top as openeye uses MPI 
 # $openeye tautomers -in $name'.'smi -out $name'_'h.smi -maxtoreturn 1 -warts false
 # wait $!
 # mv $name'_'h.smi $name'.'smi       
