@@ -2,7 +2,7 @@
 
 
 ## What is Deep Docking?
-Deep docking (DD) is a deep learning-based tool developed to accelerate docking-based virtual screening. For further details into the processes behind DD, please refer to our paper (https://doi.org/10.1021/acscentsci.0c00229). This repository provides a user-friendly, open-source GUI version based on Autodock-GPU docking that allows to run and analyze DD campaigns on a SLURM cluster.
+Deep docking (DD) is a deep learning-based tool developed to accelerate docking-based virtual screening. For further details into the processes behind DD, please refer to our paper (https://doi.org/10.1021/acscentsci.0c00229). This repository provides a user-friendly, [open-source GUI](https://academic.oup.com/bioinformatics/article-abstract/38/4/1146/6426076) version based on Autodock-GPU docking that allows to run and analyze DD campaigns on a SLURM cluster. 
 
 ## Prerequisites
 #### Remote Computer (cloud, cluster, ...):
